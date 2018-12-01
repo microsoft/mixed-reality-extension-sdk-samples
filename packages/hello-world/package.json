@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "",
-  "main": "built/server.js",
+  "main": "built/app.js",
   "engines": {
     "node": "8.12.0",
     "npm": "6.4.1"
