@@ -10,7 +10,7 @@ newer, which includes NPM 6.4.1 or newer, from nodejs.org
 
 ## How to Build and Run the Hello World sample
 From command prompt:
-* `git clone http://github.com/microsoft/mixed-reality-extension-sdk`
+* `git clone http://github.com/microsoft/mixed-reality-extension-sdk-samples`
 * `cd mixed-reality-extension-sdk-samples\samples\hello-world`
 * `npm install` This will install all dependent packages. (and will do very
 little if there are no changes)
