@@ -27,9 +27,9 @@ You should now see the words "Hello World". Congratulations, you have now deploy
 
 To learn more about the SDK, please read the [MRE SDK readme](https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/README.md).
 
-## Available Samples
-* Hello World - 
-* Solar System 
+## Sample Descriptions
+* Hello World - shows a text that animates when highlighting or clicking on a cube
+* Solar System - loads a 3d model for each planet, generates keyframe animations, and when all assets are ready, start all animations simultaneously.
 
 ## Contributing
 
