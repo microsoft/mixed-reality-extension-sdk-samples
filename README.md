@@ -8,7 +8,7 @@ https://github.com/Microsoft/mixed-reality-extension-sdk).
 * Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or 
 newer, which includes NPM 6.4.1 or newer, from nodejs.org
 
-## How to Build and Run the Hello World sample{#BuildAndRun}
+## How to Build and Run the Hello World sample
 From command prompt:
 * `git clone http://github.com/microsoft/mixed-reality-extension-sdk`
 * `cd mixed-reality-extension-sdk\node`
