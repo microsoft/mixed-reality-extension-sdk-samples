@@ -1,18 +1,22 @@
 # Mixed Reality Extension SDK Samples
 
-The Mixed Reality Extension SDK Samples is the easiest way to build and run your first extension using the [Mixed Reality Extension SDK](https://github.com/Microsoft/mixed-reality-extension-sdk). 
+The Mixed Reality Extension SDK Samples is the easiest way to build and run 
+your first extension using the [Mixed Reality Extension SDK](
+https://github.com/Microsoft/mixed-reality-extension-sdk). 
 
 ## Prerequisites
-* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or newer, which includes NPM 6.4.1 or newer, from nodejs.org
+* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or 
+newer, which includes NPM 6.4.1 or newer, from nodejs.org
 
 ## How to Build and Run the Hello World sample{#BuildAndRun}
 From command prompt:
 * `git clone http://github.com/microsoft/mixed-reality-extension-sdk`
 * `cd mixed-reality-extension-sdk\node`
-* `npm install` This will install all dependent packages. (and will do very little if there are no changes)
+* `npm install` This will install all dependent packages. (and will do very
+little if there are no changes)
 * `npm run build` This should not report any errors.
 * `cd packages/samples/hello-world`
-* `node .` (include the period) This should print "INF: Multi-peer Adapter listening on..."
+* `npm start` This should print "INF: Multi-peer Adapter listening on..."
 
 In AltspaceVR
 * Go to your personal home
@@ -23,13 +27,18 @@ In AltspaceVR
 * For the URL field, please enter `ws://localhost:3901`
 * Click Confirm
 
-You should now see the words "Hello World". Congratulations, you have now deployed a Node.js server with the MRE SDK onto your local machine and connected to it from AltspaceVR.
+You should now see the words "Hello World". Congratulations, you have now 
+deployed a Node.js server with the MRE SDK onto your local machine and 
+connected to it from AltspaceVR.
 
-To learn more about the SDK, please read the [MRE SDK readme](https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/README.md).
+To learn more about the SDK, please read the [MRE SDK readme](
+https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/README.md).
 
 ## Sample Descriptions
-* Hello World - shows a text that animates when highlighting or clicking on a cube
-* Solar System - loads a 3d model for each planet, generates keyframe animations, and when all assets are ready, start all animations simultaneously.
+* Hello World - shows a text that animates when highlighting or clicking on a
+cube
+* Solar System - loads a 3d model for each planet, generates keyframe
+animations, and when all assets are ready, start all animations simultaneously.
 
 ## Contributing
 
