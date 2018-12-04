@@ -1,0 +1,179 @@
+{
+    "accessors": [
+        {
+            "bufferView": 0,
+            "componentType": 5123,
+            "count": 2880,
+            "max": [
+                558
+            ],
+            "min": [
+                0
+            ],
+            "type": "SCALAR"
+        },
+        {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 559,
+            "max": [
+                0.5000001192092896,
+                0.5,
+                0.5000001788139343
+            ],
+            "min": [
+                -0.49999991059303284,
+                -0.5,
+                -0.5
+            ],
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 2,
+            "componentType": 5126,
+            "count": 559,
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ],
+            "type": "VEC3"
+        },
+        {
+            "bufferView": 3,
+            "componentType": 5126,
+            "count": 559,
+            "max": [
+                1.0,
+                0.04912419244647026,
+                1.0,
+                1.0
+            ],
+            "min": [
+                -1.0,
+                -0.04912363365292549,
+                -1.0,
+                1.0
+            ],
+            "type": "VEC4"
+        },
+        {
+            "bufferView": 4,
+            "componentType": 5126,
+            "count": 559,
+            "max": [
+                1.000000238418579,
+                1.0
+            ],
+            "min": [
+                0.0,
+                0.0
+            ],
+            "type": "VEC2"
+        }
+    ],
+    "asset": {
+        "generator": "Khronos Blender glTF 2.0 exporter",
+        "version": "2.0"
+    },
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 5760,
+            "byteOffset": 6528,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 6708,
+            "byteOffset": 12288,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 6708,
+            "byteOffset": 18996,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 8944,
+            "byteOffset": 25704,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 4472,
+            "byteOffset": 34648,
+            "target": 34962
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 39120,
+            "uri": "planet.bin"
+        }
+    ],
+    "images": [
+        {
+            "name": "neptune",
+            "uri": "neptune.jpg"
+        }
+    ],
+    "materials": [
+        {
+            "name": "Material_MR",
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 0
+                }
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "Sphere",
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": 2,
+                        "POSITION": 1,
+                        "TANGENT": 3,
+                        "TEXCOORD_0": 4
+                    },
+                    "indices": 0,
+                    "material": 0
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0,
+            "name": "Planet"
+        }
+    ],
+    "samplers": [
+        {}
+    ],
+    "scene": 0,
+    "scenes": [
+        {
+            "name": "Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "textures": [
+        {
+            "sampler": 0,
+            "source": 0
+        }
+    ]
+}
