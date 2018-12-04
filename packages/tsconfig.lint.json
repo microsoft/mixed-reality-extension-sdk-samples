@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.packages.json",
-  "include": [
-    "hello-world/src/**/*",
-    "solar-system/src/**/*"
-  ]
-}

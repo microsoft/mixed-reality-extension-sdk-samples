@@ -6,17 +6,13 @@
     {
       "type": "npm",
       "script": "build",
-      "path": "packages/samples/solar-system/",
+      "path": "samples/hello-world/",
       "problemMatcher": []
     },
     {
       "type": "npm",
       "script": "build",
-      "problemMatcher": []
-    },
-    {
-      "type": "npm",
-      "script": "lint",
+      "path": "samples/solar-system/",
       "problemMatcher": []
     }
   ]
