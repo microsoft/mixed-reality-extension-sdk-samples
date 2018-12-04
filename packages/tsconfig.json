@@ -1,9 +1,9 @@
 {
   "files": [],
   "references": [
-    /*{
+    {
       "path": "./solar-system"
-    },*/
+    },
     {
       "path": "./hello-world"
     }

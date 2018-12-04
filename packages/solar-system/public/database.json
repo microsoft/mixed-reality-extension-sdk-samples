@@ -1,0 +1,93 @@
+{
+    "sol": {
+        "name": "sol",
+        "diameter": 2782032,
+        "distance": 0,
+        "obliquity": 0,
+        "inclination": 0,
+        "day": 0,
+        "year": 0
+    },
+    "mercury": {
+        "name": "mercury",
+        "parent": "sol",
+        "diameter": 4879,
+        "distance": 57.9,
+        "obliquity": 0.034,
+        "inclination": 7.0,
+        "day": 4222.6,
+        "year": 88.0
+    },
+    "venus": {
+        "name": "venus",
+        "parent": "sol",
+        "diameter": 12104,
+        "distance": 108.2,
+        "obliquity": 177.4,
+        "inclination": 3.4,
+        "day": 2802.0,
+        "year": 224.7,
+        "retrograde": true
+    },
+    "earth": {
+        "name": "earth",
+        "parent": "sol",
+        "diameter": 12756,
+        "distance": 149.6,
+        "obliquity": 23.4,
+        "inclination": 0,
+        "day": 24,
+        "year": 365.2
+    },
+    "mars": {
+        "name": "mars",
+        "parent": "sol",
+        "diameter": 6792,
+        "distance": 227.9,
+        "obliquity": 25.2,
+        "inclination": 1.9,
+        "day": 24.7,
+        "year": 687.0
+    },
+    "jupiter": {
+        "name": "jupiter",
+        "parent": "sol",
+        "diameter": 142984,
+        "distance": 778.6,
+        "obliquity": 3.1,
+        "inclination": 1.3,
+        "day": 9.9,
+        "year": 4331
+    },
+    "saturn": {
+        "name": "saturn",
+        "parent": "sol",
+        "diameter": 120536,
+        "distance": 1433.5,
+        "obliquity": 26.7,
+        "inclination": 2.5,
+        "day": 9.9,
+        "year": 10747
+    },
+    "uranus": {
+        "name": "uranus",
+        "parent": "sol",
+        "diameter": 51118,
+        "distance": 2872.5,
+        "obliquity": 97.8,
+        "inclination": 0.8,
+        "day": 17.2,
+        "year": 30589,
+        "retrograde": true
+    },
+    "neptune": {
+        "name": "neptune",
+        "parent": "sol",
+        "diameter": 49528,
+        "distance": 4495.1,
+        "obliquity": 28.3,
+        "inclination": 1.8,
+        "day": 16.1,
+        "year": 59800
+    }
+}
