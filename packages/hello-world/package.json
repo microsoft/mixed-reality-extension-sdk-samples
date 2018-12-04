@@ -23,7 +23,7 @@
     "typescript": "3.0.3"
   },
   "dependencies": {
-    "mixed-reality-extension-sdk": "file:../../../mixed-reality-extension-sdk/node/packages/sdk/mixed-reality-extension-sdk-0.1.0.tgz",
+    "@microsoft/mixed-reality-extension-sdk": "^0.1.0",
     "restify": "^7.2.0"
   }
 }
