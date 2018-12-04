@@ -55,7 +55,7 @@ class SolarSystem {
     constructor() {
         this.server = new MRESDK.WebHost({
             baseDir: resolvePath(__dirname, '../public'),
-            baseUrl: 'http://localhost:3902/',
+            baseUrl: 'http://localhost:3901/',
             logger: this.logger = new MRESDK.ConsoleLogger(),
             port: 3902
         });
