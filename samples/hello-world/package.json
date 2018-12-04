@@ -4,26 +4,34 @@
   "private": true,
   "description": "",
   "main": "built/app.js",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "keywords": [
+    "mixed reality",
+    "virtual reality",
+    "vr",
+    "altspacevr",
+    "sample",
+    "node"
+  ],
   "engines": {
-    "node": "8.12.0",
-    "npm": "6.4.1"
+    "node": ">=8.12.0",
+    "npm": ">=6.4.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "tsc --build --clean",
-    "build": "tsc --build",
+    "build": "tslint -p ./tsconfig.json src/**/*.ts && tsc --build",
+    "lint": "tslint -p ./tsconfig.json src/**/*.ts",
     "start": "node .",
     "debug": "node --nolazy --inspect-brk=9229 ."
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^10.3.1",
-    "@types/restify": "^7.2.0",
+    "tslint": "5.11.0",
     "typescript": "3.0.3"
   },
   "dependencies": {
-    "@microsoft/mixed-reality-extension-sdk": "^0.1.0",
-    "restify": "^7.2.0"
+    "@microsoft/mixed-reality-extension-sdk": "^0.1.0"
   }
 }

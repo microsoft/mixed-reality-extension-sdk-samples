@@ -15,7 +15,7 @@ import {
     TextAnchorLocation,
     Vector3,
     WebHost
-} from 'mixed-reality-extension-sdk';
+} from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 
 /**

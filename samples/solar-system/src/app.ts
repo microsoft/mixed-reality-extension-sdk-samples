@@ -3,8 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as MRESDK from 'mixed-reality-extension-sdk';
-import * as MRERPC from 'mixed-reality-extension-sdk/built/rpc';
+import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 
 /**
@@ -39,7 +38,7 @@ interface CelestialBodySet {
 }
 
 // Data source: https://nssdc.gsfc.nasa.gov/planetary/dataheet/
-// ('sol' config modified for scale and dramatic effect)
+// (some settings modified for scale and dramatic effect)
 // tslint:disable-next-line:no-var-requires
 const database: Database = require('../public/database.json');
 
@@ -49,7 +48,6 @@ const database: Database = require('../public/database.json');
 class SolarSystem {
     private celestialBodies: CelestialBodySet = {};
     private animationsRunning = false;
-    private rpc: MRERPC.ContextRPC;
     private server: MRESDK.WebHost;
     private context: MRESDK.Context;
     private logger: MRESDK.Logger;
@@ -61,17 +59,10 @@ class SolarSystem {
             logger: this.logger = new MRESDK.ConsoleLogger(),
             port: 3902
         });
-        //this.logger.disable('success', 'debug');
+        // this.logger.disable('success', 'debug');
 
         this.server.adapter.onConnection((context) => {
             this.context = context;
-
-            this.rpc = new MRERPC.ContextRPC(this.context);
-            this.rpc.on('button-up', (buttonName: string, testBool: boolean) => {
-                this.context.logger.log('debug',
-                    `The ${buttonName} button was pressed with a test boolean value of ${testBool}`);
-            });
-
             this.context.onUserJoined(user => this.userJoined(user));
             this.context.onUserLeft(user => this.userLeft(user));
             this.context.onStarted(() => this.started());
@@ -122,7 +113,6 @@ class SolarSystem {
 
     private userJoined(user: MRESDK.User) {
         this.logger.log('debug', `user-joined: ${user.name}, ${user.id}`);
-        this.rpc.send('log', { message: 'user joined', testBoolean: true });
     }
 
     private userLeft(user: MRESDK.User) {
@@ -368,4 +358,5 @@ class SolarSystem {
     }
 }
 
+// Boot up the app
 export default new SolarSystem();
