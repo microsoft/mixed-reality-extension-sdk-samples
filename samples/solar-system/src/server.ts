@@ -11,7 +11,7 @@ process.on('uncaughtException', (err) => console.log('uncaughtException', err));
 process.on('unhandledRejection', (reason) => console.log('unhandledRejection', reason));
 
 const logger = new ConsoleLogger();
-// logger.disable('debug', 'success');
+logger.disable('debug', 'success');
 
  // Start listening for connections, and serve static files
 const server = new WebHost({
