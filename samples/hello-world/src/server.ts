@@ -7,15 +7,18 @@ import { ConsoleLogger, WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 import HelloWorld from './app';
 
+process.on('uncaughtException', (err) => console.log('uncaughtException', err));
+process.on('unhandledRejection', (reason) => console.log('unhandledRejection', reason));
+
 const logger = new ConsoleLogger();
 // logger.disable('debug', 'success');
 
- // Set up static file hosting, initialize adapter
+ // Start listening for connections, and serve static files
 const server = new WebHost({
-    baseDir: resolvePath(__dirname, '../public'),
-    port: 3901,
-    logger
+   baseDir: resolvePath(__dirname, '../public'),
+   port: 3901,
+   logger
 });
 
-// When the webhost is set up, initialize the MRE system
+// Handle new application sessions
 server.adapter.onConnection(context => new HelloWorld(context, server.baseUrl));

@@ -85,6 +85,7 @@
     "no-any": false,
     "no-arg": true,
     "no-conditional-assignment": true,
+    "no-console": false,
     "no-construct": true,
     "no-debugger": true,
     "no-default-export": false,
