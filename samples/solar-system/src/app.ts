@@ -4,7 +4,6 @@
  */
 
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
-import { resolve as resolvePath } from 'path';
 
 /**
  * Solar system database
@@ -45,33 +44,19 @@ const database: Database = require('../public/database.json');
 /**
  * Solar System Application
  */
-class SolarSystem {
+export default class SolarSystem {
     private celestialBodies: CelestialBodySet = {};
     private animationsRunning = false;
-    private server: MRESDK.WebHost;
-    private context: MRESDK.Context;
-    private logger: MRESDK.Logger;
 
-    constructor() {
-        this.server = new MRESDK.WebHost({
-            baseDir: resolvePath(__dirname, '../public'),
-            baseUrl: 'http://localhost:3901/',
-            logger: this.logger = new MRESDK.ConsoleLogger(),
-            port: 3902
-        });
-        // this.logger.disable('success', 'debug');
-
-        this.server.adapter.onConnection((context) => {
-            this.context = context;
-            this.context.onUserJoined(user => this.userJoined(user));
-            this.context.onUserLeft(user => this.userLeft(user));
-            this.context.onStarted(() => this.started());
-            this.context.onStopped(() => this.stopped());
-        });
+    constructor(private context: MRESDK.Context, private baseUrl: string) {
+        this.context.onUserJoined(user => this.userJoined(user));
+        this.context.onUserLeft(user => this.userLeft(user));
+        this.context.onStarted(() => this.started());
+        this.context.onStopped(() => this.stopped());
     }
 
     private started = async () => {
-        this.logger.log('info', `session started ${this.context.sessionId}`);
+        this.context.logger.log('info', `session started ${this.context.sessionId}`);
 
         await this.createSolarSystem();
 
@@ -108,15 +93,15 @@ class SolarSystem {
     }
 
     private stopped() {
-        this.logger.log('info', `session stopped ${this.context.sessionId}`);
+        this.context.logger.log('info', `session stopped ${this.context.sessionId}`);
     }
 
     private userJoined(user: MRESDK.User) {
-        this.logger.log('debug', `user-joined: ${user.name}, ${user.id}`);
+        this.context.logger.log('debug', `user-joined: ${user.name}, ${user.id}`);
     }
 
     private userLeft(user: MRESDK.User) {
-        this.logger.log('debug', `user-left: ${user.name}`);
+        this.context.logger.log('debug', `user-left: ${user.name}`);
     }
 
     private createSolarSystem(): Promise<any> {
@@ -147,7 +132,7 @@ class SolarSystem {
     }
 
     private createBody(bodyName: string): Promise<any> {
-        this.logger.log('debug', `Loading ${bodyName}`);
+        this.context.logger.log('debug', `Loading ${bodyName}`);
 
         const facts = database[bodyName];
 
@@ -204,7 +189,7 @@ class SolarSystem {
                 }
             });
             const model = MRESDK.Actor.CreateFromGLTF(this.context, {
-                resourceUrl: `${this.server.baseUrl}/assets/${bodyName}.gltf`,
+                resourceUrl: `${this.baseUrl}/assets/${bodyName}.gltf`,
                 colliderType: 'sphere',
                 actor: {
                     name: `${bodyName}-body`,
@@ -243,7 +228,7 @@ class SolarSystem {
                 this.createAnimations(bodyName)
             ]);
         } catch (e) {
-            this.logger.log('error', "createBody failed", bodyName, e);
+            this.context.logger.log('error', "createBody failed", bodyName, e);
         }
     }
 
@@ -357,6 +342,3 @@ class SolarSystem {
         }
     }
 }
-
-// Boot up the app
-export default new SolarSystem();

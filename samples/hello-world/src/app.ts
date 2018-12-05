@@ -8,45 +8,21 @@ import {
     AnimationKeyframe,
     AnimationWrapMode,
     ButtonBehavior,
-    ConsoleLogger,
     Context,
-    Logger,
     Quaternion,
     TextAnchorLocation,
-    Vector3,
-    WebHost
+    Vector3
 } from '@microsoft/mixed-reality-extension-sdk';
-import { resolve as resolvePath } from 'path';
 
 /**
  * The main class of this app. All the logic goes here.
  */
-class HelloWorld {
-    private logger: Logger;
-    private context: Context;
-    private webHost: WebHost;
+export default class HelloWorld {
     private text: Actor = null;
     private cube: Actor = null;
 
-    constructor() {
-        this.logger = new ConsoleLogger();
-        this.logger.disable('debug', 'success');
-
-        // Set up static file hosting, initialize adapter
-        this.webHost = new WebHost({
-            baseDir: resolvePath(__dirname, '../public'),
-            baseUrl: 'http://localhost:3901',
-            port: 3901,
-            logger: this.logger
-        });
-
-        // When the webhost is set up, initialize the MRE system
-        this.webHost.adapter.onConnection(context => {
-            // Four events are emitted by contexts: onStarted, onStopped, onUserJoined, and onUserLeft.
-            // For this app we only care about the started event so we can set up.
-            this.context = context;
-            context.onStarted(() => this.started());
-        });
+    constructor(private context: Context, private baseUrl: string) {
+        this.context.onStarted(() => this.started());
     }
 
     /**
@@ -90,12 +66,12 @@ class HelloWorld {
             // Optionally, we also repeat the animation infinitely.
             wrapMode: AnimationWrapMode.Loop
         })
-            .catch(reason => this.logger.log('error', `Failed to create spin animation: ${reason}`));
+            .catch(reason => this.context.logger.log('error', `Failed to create spin animation: ${reason}`));
 
         // Load a glTF model
         const cubePromise = Actor.CreateFromGLTF(this.context, {
             // at the given URL
-            resourceUrl: `${this.webHost.baseUrl}/altspace-cube.glb`,
+            resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
             // and spawn box colliders around the meshes.
             colliderType: 'box',
             // Also apply the following generic actor properties.
@@ -119,21 +95,21 @@ class HelloWorld {
             keyframes: this.growAnimationData,
             events: []
         })
-            .catch(reason => this.logger.log('error', `Failed to create grow animation: ${reason}`));
+            .catch(reason => this.context.logger.log('error', `Failed to create grow animation: ${reason}`));
 
         this.cube.createAnimation({
             animationName: 'ShrinkOut',
             keyframes: this.shrinkAnimationData,
             events: []
         })
-            .catch(reason => this.logger.log('error', `Failed to create shrink animation: ${reason}`));
+            .catch(reason => this.context.logger.log('error', `Failed to create shrink animation: ${reason}`));
 
         this.cube.createAnimation({
             animationName: 'DoAFlip',
             keyframes: this.generateSpinKeyframes(0.5, Vector3.Right()),
             events: []
         })
-            .catch(reason => this.logger.log('error', `Failed to create flip animation: ${reason}`));
+            .catch(reason => this.context.logger.log('error', `Failed to create flip animation: ${reason}`));
 
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
@@ -191,6 +167,3 @@ class HelloWorld {
         value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
     }];
 }
-
-// Boot up the app
-export default new HelloWorld();
