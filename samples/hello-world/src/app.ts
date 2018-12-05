@@ -144,11 +144,21 @@ class HelloWorld {
         const buttonBehavior = this.cube.setBehavior(ButtonBehavior);
 
         // Trigger the grow/shrink animations on hover.
-        buttonBehavior.hover.on('started', () => this.cube.startAnimation('GrowIn'));
-        buttonBehavior.hover.on('stopped', () => this.cube.startAnimation('ShrinkOut'));
+        buttonBehavior.onHover('enter', (userId: string) => {
+            this.cube.startAnimation('GrowIn');
+        }
+        );
+        buttonBehavior.onHover('exit', (userId: string) => {
+            this.cube.startAnimation('ShrinkOut');
+        }
+        );
 
         // When clicked, do a 360 sideways.
-        buttonBehavior.click.on('started', () => this.cube.startAnimation('DoAFlip'));
+        buttonBehavior.onClick('pressed', (userId: string) => {
+            this.text.startAnimation('Spin');
+        }
+        );
+
     }
 
     /**
