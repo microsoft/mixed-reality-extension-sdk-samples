@@ -65,3 +65,5 @@ built/
 *.blend1
 
 app.zip
+
+.openode
