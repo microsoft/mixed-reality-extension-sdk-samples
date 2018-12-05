@@ -106,7 +106,7 @@ export default class HelloWorld {
 
         this.cube.createAnimation({
             animationName: 'DoAFlip',
-            keyframes: this.generateSpinKeyframes(0.5, Vector3.Right()),
+            keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
             events: []
         })
             .catch(reason => this.context.logger.log('error', `Failed to create flip animation: ${reason}`));
@@ -131,7 +131,7 @@ export default class HelloWorld {
 
         // When clicked, do a 360 sideways.
         buttonBehavior.onClick('pressed', (userId: string) => {
-            this.text.startAnimation('Spin');
+            this.cube.startAnimation('DoAFlip');
         }
         );
 
@@ -157,6 +157,9 @@ export default class HelloWorld {
             value: { transform: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } }
         }, {
             time: 1 * duration,
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
+        }, {
+            time: 2 * duration,
             value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
         }];
     }
