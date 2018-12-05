@@ -57,7 +57,7 @@ class SolarSystem {
             baseDir: resolvePath(__dirname, '../public'),
             baseUrl: 'http://localhost:3901/',
             logger: this.logger = new MRESDK.ConsoleLogger(),
-            port: 3902
+            port: 3901
         });
         // this.logger.disable('success', 'debug');
 
