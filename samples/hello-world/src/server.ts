@@ -16,7 +16,6 @@ const logger = new ConsoleLogger();
  // Start listening for connections, and serve static files
 const server = new WebHost({
    baseDir: resolvePath(__dirname, '../public'),
-   port: 3901,
    logger
 });
 
