@@ -1,7 +1,7 @@
 # Mixed Reality Extension SDK Samples
 
 The Mixed Reality Extension SDK Samples is the easiest way to build and run 
-your first extension using the [Mixed Reality Extension SDK](
+your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality Extension SDK](
 https://github.com/Microsoft/mixed-reality-extension-sdk). 
 
 ## Prerequisites
