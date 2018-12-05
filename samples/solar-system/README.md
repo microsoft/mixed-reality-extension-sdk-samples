@@ -1,3 +1,5 @@
+Loads a 3D model for each planet and generates keyframe animations for planetary orbit and rotation. When all assets are ready, start all animations simultaneously.
+
 ## Editing
 
 * Open this folder in VSCode.
