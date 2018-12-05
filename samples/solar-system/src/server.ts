@@ -8,7 +8,7 @@ import { resolve as resolvePath } from 'path';
 import SolarSystem from './app';
 
 const logger = new ConsoleLogger();
-logger.disable('debug', 'success');
+// logger.disable('debug', 'success');
 
  // Set up static file hosting, initialize adapter
 const server = new WebHost({
