@@ -1,7 +1,8 @@
 # Mixed Reality Extension SDK Samples
 
 The Mixed Reality Extension SDK Samples is the easiest way to build and run 
-your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality Extension SDK](
+your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality
+Extension SDK](
 https://github.com/Microsoft/mixed-reality-extension-sdk). 
 
 ## Prerequisites
@@ -24,11 +25,15 @@ In AltspaceVR
 * Click Basics group
 * Click on SDKApp
 * For the URL field, enter `ws://localhost:3901`
+* Enter a session ID (This step will eventually be optional. For now, put in 
+any random value)
 * Click Confirm
+* If the app doesn't seem to load, click on the gear icon next the MRE object
+in to the present objects list, and make sure "Is Playing" is checked.
 
-You should now see the words "Hello World". Congratulations, you have now 
-deployed a Node.js server with the MRE SDK onto your local machine and 
-connected to it from AltspaceVR.
+You should now see the words "Hello World" above a spinning cube. 
+Congratulations, you have now deployed a Node.js server with the MRE SDK onto
+your local machine and connected to it from AltspaceVR.
 
 ### Hosting in the Cloud
 In order for other AltspaceVR users to see your SDK app running, it must be hosted in a way they can connect to it. To learn about cloud hosting and other solutions, checkout [DEPLOYING.md](https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/DEPLOYING.md) in the SDK repo.
