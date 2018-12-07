@@ -32,6 +32,9 @@ any random value)
 * Click Confirm
 * If the app doesn't seem to load, click on the gear icon next the MRE object
 in to the present objects list, and make sure "Is Playing" is checked.
+* After the app has been placed, you will see the MRE Anchor (the white box 
+with red/green/blue spikes on it), rendering on top of the MRE. You can use the
+anchor move the MRE around. To hide the anchor, uncheck "Edit Mode".
 
 You should now see the words "Hello World" above a spinning cube. 
 Congratulations, you have now deployed a Node.js server with the MRE SDK onto
