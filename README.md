@@ -23,12 +23,15 @@ In AltspaceVR
 * Activate the Space Editor
 * Click Basics group
 * Click on SDKApp
-* For the URL field, please enter `ws://localhost:3901`
+* For the URL field, enter `ws://localhost:3901`
 * Click Confirm
 
 You should now see the words "Hello World". Congratulations, you have now 
 deployed a Node.js server with the MRE SDK onto your local machine and 
 connected to it from AltspaceVR.
+
+### Hosting in the Cloud
+In order for other AltspaceVR users to see your SDK app running, it must be hosted in a way they can connect to it. To learn about cloud hosting and other solutions, checkout [DEPLOYING.md](https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/DEPLOYING.md) in the SDK repo.
 
 To learn more about the SDK, please read the [MRE SDK readme](
 https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/README.md).
