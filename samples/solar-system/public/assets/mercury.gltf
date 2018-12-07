@@ -131,7 +131,8 @@
             "pbrMetallicRoughness": {
                 "baseColorTexture": {
                     "index": 0
-                }
+                },
+                "metallicFactor": 0
             }
         }
     ],
