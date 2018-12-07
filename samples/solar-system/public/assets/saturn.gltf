@@ -237,7 +237,6 @@
     ],
     "materials": [
         {
-            "doubleSided": true,
             "name": "Material.001",
             "pbrMetallicRoughness": {
                 "baseColorTexture": {
@@ -294,7 +293,17 @@
         },
         {
             "mesh": 0,
-            "name": "Rings"
+            "name": "Rings-Bottom"
+        },
+        {
+            "mesh": 0,
+            "name": "Rings-Top",
+            "rotation": [
+                0,
+                0,
+                1,
+                0
+            ]
         }
     ],
     "samplers": [
@@ -305,6 +314,7 @@
         {
             "name": "Scene",
             "nodes": [
+                2,
                 1,
                 0
             ]

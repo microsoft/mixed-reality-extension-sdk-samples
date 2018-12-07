@@ -140,7 +140,7 @@ export default class SolarSystem {
         const scaleMultiplier = Math.pow(facts.diameter, 1 / 3) / 25;
 
         const positionValue = { x: distanceMultiplier, y: 0, z: 0 };
-        const scaleValue = { x: scaleMultiplier, y: scaleMultiplier, z: scaleMultiplier };
+        const scaleValue = { x: scaleMultiplier / 2, y: scaleMultiplier / 2, z: scaleMultiplier / 2 };
         const obliquityValue = MRESDK.Quaternion.RotationAxis(
             MRESDK.Vector3.Forward(), facts.obliquity * MRESDK.DegreesToRadians
         ).toJSON();
