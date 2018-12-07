@@ -1,5 +1,7 @@
 # Mixed Reality Extension SDK Samples
 
+<img width='200' height='200' src='https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/branding/MRe-RGB.png'/>
+
 The Mixed Reality Extension SDK Samples is the easiest way to build and run 
 your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality
 Extension SDK](
