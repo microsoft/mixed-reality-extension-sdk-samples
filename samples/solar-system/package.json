@@ -21,7 +21,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "tsc --build --clean",
-    "build": "tslint -p ./tsconfig.json src/**/*.ts && tsc --build",
+    "build": "tsc --build",
     "lint": "tslint -p ./tsconfig.json src/**/*.ts",
     "start": "node .",
     "debug": "node --nolazy --inspect-brk=9229 ."
