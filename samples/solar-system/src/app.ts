@@ -56,7 +56,7 @@ export default class SolarSystem {
     }
 
     private started = async () => {
-        this.context.logger.log('info', `session started ${this.context.sessionId}`);
+        console.log(`session started ${this.context.sessionId}`);
 
         await this.createSolarSystem();
 
@@ -79,11 +79,11 @@ export default class SolarSystem {
                 });
 
                 buttonBehavior.onHover('enter', (userId: string) => {
-                    this.context.logger.log('debug', `Hover entered on ${sunEntity.model.name}.`);
+                    console.log(`Hover entered on ${sunEntity.model.name}.`);
                 });
 
                 buttonBehavior.onHover('exit', (userId: string) => {
-                    this.context.logger.log('debug', `Hover exited on ${sunEntity.model.name}.`);
+                    console.log(`Hover exited on ${sunEntity.model.name}.`);
                 });
             });
         }
@@ -93,15 +93,15 @@ export default class SolarSystem {
     }
 
     private stopped() {
-        this.context.logger.log('info', `session stopped ${this.context.sessionId}`);
+        console.log(`session stopped ${this.context.sessionId}`);
     }
 
     private userJoined(user: MRESDK.User) {
-        this.context.logger.log('debug', `user-joined: ${user.name}, ${user.id}`);
+        console.log(`user-joined: ${user.name}, ${user.id}`);
     }
 
     private userLeft(user: MRESDK.User) {
-        this.context.logger.log('debug', `user-left: ${user.name}`);
+        console.log(`user-left: ${user.name}`);
     }
 
     private createSolarSystem(): Promise<any> {
@@ -132,7 +132,7 @@ export default class SolarSystem {
     }
 
     private createBody(bodyName: string): Promise<any> {
-        this.context.logger.log('debug', `Loading ${bodyName}`);
+        console.log(`Loading ${bodyName}`);
 
         const facts = database[bodyName];
 
@@ -228,7 +228,7 @@ export default class SolarSystem {
                 this.createAnimations(bodyName)
             ]);
         } catch (e) {
-            this.context.logger.log('error', "createBody failed", bodyName, e);
+            console.log("createBody failed", bodyName, e);
         }
     }
 
