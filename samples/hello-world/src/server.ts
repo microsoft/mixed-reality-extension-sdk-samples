@@ -4,16 +4,13 @@
  */
 
 import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
-import { resolve as resolvePath } from 'path';
 import HelloWorld from './app';
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
 
 // Start listening for connections, and serve static files
-const server = new WebHost({
-    baseDir: resolvePath(__dirname, '../public')
-});
+const server = new WebHost();
 
 // Handle new application sessions
 server.adapter.onConnection(context => new HelloWorld(context, server.baseUrl));
