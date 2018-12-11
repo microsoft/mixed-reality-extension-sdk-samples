@@ -2,13 +2,13 @@
 
 <img width='200' height='200' src='https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/branding/MRe-RGB.png'/>
 
-The Mixed Reality Extension SDK Samples is the easiest way to build and run 
+The Mixed Reality Extension SDK Samples is the easiest way to build and run
 your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality
 Extension SDK](
-https://github.com/Microsoft/mixed-reality-extension-sdk). 
+https://github.com/Microsoft/mixed-reality-extension-sdk).
 
 ## Prerequisites
-* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or 
+* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or
 newer, which includes NPM 6.4.1 or newer, from nodejs.org
 
 ## How to Build and Run the Hello World sample
@@ -27,16 +27,16 @@ In AltspaceVR
 * Click Basics group
 * Click on SDKApp
 * For the URL field, enter `ws://localhost:3901`
-* Enter a session ID (This step will eventually be optional. For now, put in 
+* Enter a session ID (This step will eventually be optional. For now, put in
 any random value)
 * Click Confirm
 * If the app doesn't seem to load, click on the gear icon next the MRE object
 in to the present objects list, and make sure "Is Playing" is checked.
-* After the app has been placed, you will see the MRE Anchor (the white box 
+* After the app has been placed, you will see the MRE Anchor (the white box
 with red/green/blue spikes on it), rendering on top of the MRE. You can use the
 anchor move the MRE around. To hide the anchor, uncheck "Edit Mode".
 
-You should now see the words "Hello World" above a spinning cube. 
+You should now see the words "Hello World" above a spinning cube.
 Congratulations, you have now deployed a Node.js server with the MRE SDK onto
 your local machine and connected to it from AltspaceVR.
 
@@ -65,3 +65,16 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Developing Apps Against SDK Source Code
+
+If you wish to build and debug the samples against the cloced source code for the SDK, we have provided a script to help
+you to point your app to the local source code package of the SDK rather than the one published to NPM.  To do this you
+will first need to clone the [Mixed Reality Extension SDK](https://github.com/Microsoft/mixed-reality-extension-sdk)
+and add a sdk-path-config.json file that contains the json `{ "sdkPath": "<path_to_sdk>"}` where the `<path_to_sdk>` is
+the path to the root of the SDK repo you cloned.  This needs to be added to any of the sample apps that you wish to do this
+for.  Once added you can simply run the following npm scripts to switch between SDK source code and the NPM package for the
+app.
+
+- `npm run use-sdk-source` to use the SDK source code.
+- `npm run use-sdk-npm` to use the SDK NPM package.
