@@ -68,7 +68,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 ## Developing Apps Against SDK Source Code
 
-If you wish to build and debug the samples against the cloced source code for the SDK, we have provided a script to help
+If you wish to build and debug the samples against the cloned source code for the SDK, we have provided a script to help
 you to point your app to the local source code package of the SDK rather than the one published to NPM.  To do this you
 will first need to clone the [Mixed Reality Extension SDK](https://github.com/Microsoft/mixed-reality-extension-sdk)
 and add a sdk-path-config.json file that contains the json `{ "sdkPath": "<path_to_sdk>"}` where the `<path_to_sdk>` is
