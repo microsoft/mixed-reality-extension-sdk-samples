@@ -2,13 +2,13 @@
 
 <img width='200' height='200' src='https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/branding/MRe-RGB.png'/>
 
-The Mixed Reality Extension SDK Samples is the easiest way to build and run 
+The Mixed Reality Extension SDK Samples is the easiest way to build and run
 your first [AltspaceVR](https://altvr.com/) extension using the [Mixed Reality
 Extension SDK](
-https://github.com/Microsoft/mixed-reality-extension-sdk). 
+https://github.com/Microsoft/mixed-reality-extension-sdk).
 
 ## Prerequisites
-* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or 
+* Install [Node.js 8.12](https://nodejs.org/download/release/v8.12.0/) or
 newer, which includes NPM 6.4.1 or newer, from nodejs.org
 
 ## How to Build and Run the Hello World sample
@@ -27,16 +27,16 @@ In AltspaceVR
 * Click Basics group
 * Click on SDKApp
 * For the URL field, enter `ws://localhost:3901`
-* Enter a session ID (This step will eventually be optional. For now, put in 
+* Enter a session ID (This step will eventually be optional. For now, put in
 any random value)
 * Click Confirm
 * If the app doesn't seem to load, click on the gear icon next the MRE object
 in to the present objects list, and make sure "Is Playing" is checked.
-* After the app has been placed, you will see the MRE Anchor (the white box 
+* After the app has been placed, you will see the MRE Anchor (the white box
 with red/green/blue spikes on it), rendering on top of the MRE. You can use the
 anchor move the MRE around. To hide the anchor, uncheck "Edit Mode".
 
-You should now see the words "Hello World" above a spinning cube. 
+You should now see the words "Hello World" above a spinning cube.
 Congratulations, you have now deployed a Node.js server with the MRE SDK onto
 your local machine and connected to it from AltspaceVR.
 

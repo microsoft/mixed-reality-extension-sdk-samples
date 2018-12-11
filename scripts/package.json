@@ -1,0 +1,16 @@
+{
+  "name": "scripts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "scripts": {
+    "use-sdk-source": "node ./change-sdk-source source",
+    "use-sdk-npm": "node ./change-sdk-source npm"
+  },
+  "devDependencies": {
+    "fs": "0.0.1-security",
+    "shelljs": "^0.8.3"
+  }
+}
