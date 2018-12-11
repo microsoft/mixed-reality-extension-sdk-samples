@@ -65,16 +65,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-## Developing Apps Against SDK Source Code
-
-If you wish to build and debug the samples against the cloned source code for the SDK, we have provided a script to help
-you to point your app to the local source code package of the SDK rather than the one published to NPM.  To do this you
-will first need to clone the [Mixed Reality Extension SDK](https://github.com/Microsoft/mixed-reality-extension-sdk)
-and add a sdk-path-config.json file that contains the json `{ "sdkPath": "<path_to_sdk>"}` where the `<path_to_sdk>` is
-the path to the root of the SDK repo you cloned.  This needs to be added to any of the sample apps that you wish to do this
-for.  Once added you can simply run the following npm scripts to switch between SDK source code and the NPM package for the
-app.
-
-- `npm run use-sdk-source` to use the SDK source code.
-- `npm run use-sdk-npm` to use the SDK NPM package.
