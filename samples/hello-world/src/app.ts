@@ -29,7 +29,6 @@ export default class HelloWorld {
      * Once the context is "started", initialize the app.
      */
     private started() {
-
         // Create a new actor with no mesh, but some text. This operation is asynchronous, so
         // it returns a "forward" promise (a special promise, as we'll see later).
         const textPromise = Actor.CreateEmpty(this.context, {
@@ -65,8 +64,7 @@ export default class HelloWorld {
 
             // Optionally, we also repeat the animation infinitely.
             wrapMode: AnimationWrapMode.Loop
-        })
-            .catch(reason => this.context.logger.log('error', `Failed to create spin animation: ${reason}`));
+        }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
 
         // Load a glTF model
         const cubePromise = Actor.CreateFromGLTF(this.context, {
@@ -94,22 +92,19 @@ export default class HelloWorld {
             animationName: 'GrowIn',
             keyframes: this.growAnimationData,
             events: []
-        })
-            .catch(reason => this.context.logger.log('error', `Failed to create grow animation: ${reason}`));
+        }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
 
         this.cube.createAnimation({
             animationName: 'ShrinkOut',
             keyframes: this.shrinkAnimationData,
             events: []
-        })
-            .catch(reason => this.context.logger.log('error', `Failed to create shrink animation: ${reason}`));
+        }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
 
         this.cube.createAnimation({
             animationName: 'DoAFlip',
             keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
             events: []
-        })
-            .catch(reason => this.context.logger.log('error', `Failed to create flip animation: ${reason}`));
+        }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
 
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
@@ -122,19 +117,15 @@ export default class HelloWorld {
         // Trigger the grow/shrink animations on hover.
         buttonBehavior.onHover('enter', (userId: string) => {
             this.cube.startAnimation('GrowIn');
-        }
-        );
+        });
         buttonBehavior.onHover('exit', (userId: string) => {
             this.cube.startAnimation('ShrinkOut');
-        }
-        );
+        });
 
         // When clicked, do a 360 sideways.
         buttonBehavior.onClick('pressed', (userId: string) => {
             this.cube.startAnimation('DoAFlip');
-        }
-        );
-
+        });
     }
 
     /**
