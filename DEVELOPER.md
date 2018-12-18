@@ -4,7 +4,7 @@ If you wish to build and debug the samples against the cloced source code for th
 you to point your app to the local source code package of the SDK rather than the one published to NPM.  To do this you
 will first need to clone the [Mixed Reality Extension SDK](https://github.com/Microsoft/mixed-reality-extension-sdk)
 and add a sdk-path-config.json file that contains the json `{ "sdkPath": "<path_to_sdk>"}` where the `<path_to_sdk>` is
-the path to the 'node' folder of the SDK repo you cloned. This json file should be added to the `./scripts` directory where the
+the root folder of your SDK repo clone. This json file should be added to the `./scripts` directory where the
 helper script is located.  
 See `sdk-path-config-example.json` as an example that assumes you have cloned the SDK and sample repositories with their default names into the same parent folder.
 
