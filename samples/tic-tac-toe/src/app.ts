@@ -35,7 +35,7 @@ export default class TicTacToe {
             actor: {
                 name: 'Text',
                 transform: {
-                    position: { x: 0, y: 0.5, z: 0 }
+                    position: { x: 0, y: 1.5, z: 0 }
                 },
                 text: {
                     contents: "Tic-Tac-Toe!",
@@ -69,64 +69,67 @@ export default class TicTacToe {
         // TODO: This shouldn't be necessary as playanimation should be awaiting the textanimation first.
         await textAnimationPromise;
 
-        // Load a glTF model
-        const cubePromise = Actor.CreateFromGLTF(this.context, {
-            // at the given URL
-            resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
-            // and spawn box colliders around the meshes.
-            colliderType: 'box',
-            // Also apply the following generic actor properties.
-            actor: {
-                name: 'Altspace Cube',
-                transform: {
-                    position: { x: 0, y: -1, z: 0 },
-                    scale: { x: 0.4, y: 0.4, z: 0.4 }
-                }
+        for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
+            for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
+                // Load a glTF model
+                const cubePromise = Actor.CreateFromGLTF(this.context, {
+                    // at the given URL
+                    resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
+                    // and spawn box colliders around the meshes.
+                    colliderType: 'box',
+                    // Also apply the following generic actor properties.
+                    actor: {
+                        name: 'Altspace Cube',
+                        transform: {
+                            position: { x: (tileIndexX) - 1.0, y: 0.5, z: (tileIndexZ) - 1.0 },
+                            scale: { x: 0.4, y: 0.4, z: 0.4 }
+                        }
+                    }
+                });
+
+                // Grab that early reference again.
+                this.cube = cubePromise.value;
+
+                // Create some animations on the cube.
+                this.cube.createAnimation({
+                    animationName: 'GrowIn',
+                    keyframes: this.growAnimationData,
+                    events: []
+                }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
+
+                this.cube.createAnimation({
+                    animationName: 'ShrinkOut',
+                    keyframes: this.shrinkAnimationData,
+                    events: []
+                }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
+
+                this.cube.createAnimation({
+                    animationName: 'DoAFlip',
+                    keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+                    events: []
+                }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
+
+                // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
+                // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
+                const buttonBehavior = this.cube.setBehavior(ButtonBehavior);
+
+                // Trigger the grow/shrink animations on hover.
+                buttonBehavior.onHover('enter', (userId: string) => {
+                    this.cube.startAnimation('GrowIn');
+                });
+                buttonBehavior.onHover('exit', (userId: string) => {
+                    this.cube.startAnimation('ShrinkOut');
+                });
+
+                // When clicked, do a 360 sideways.
+                buttonBehavior.onClick('pressed', (userId: string) => {
+                    this.cube.startAnimation('DoAFlip');
+                });
             }
-        });
-
-        // Grab that early reference again.
-        this.cube = cubePromise.value;
-
-        // Create some animations on the cube.
-        this.cube.createAnimation({
-            animationName: 'GrowIn',
-            keyframes: this.growAnimationData,
-            events: []
-        }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
-
-        this.cube.createAnimation({
-            animationName: 'ShrinkOut',
-            keyframes: this.shrinkAnimationData,
-            events: []
-        }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
-
-        this.cube.createAnimation({
-            animationName: 'DoAFlip',
-            keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
-            events: []
-        }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
-
+        }
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
         this.text.startAnimation('Spin');
-
-        // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
-        // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-        const buttonBehavior = this.cube.setBehavior(ButtonBehavior);
-
-        // Trigger the grow/shrink animations on hover.
-        buttonBehavior.onHover('enter', (userId: string) => {
-            this.cube.startAnimation('GrowIn');
-        });
-        buttonBehavior.onHover('exit', (userId: string) => {
-            this.cube.startAnimation('ShrinkOut');
-        });
-
-        // When clicked, do a 360 sideways.
-        buttonBehavior.onClick('pressed', (userId: string) => {
-            this.cube.startAnimation('DoAFlip');
-        });
     }
 
     /**
