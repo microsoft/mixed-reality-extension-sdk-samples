@@ -1,4 +1,4 @@
-Shows a text that animates when highlighting or clicking on a cube.
+A Tic-tac-toe game 
 
 ## Editing
 
