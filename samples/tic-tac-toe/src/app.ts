@@ -28,7 +28,7 @@ export default class TicTacToe {
     /**
      * Once the context is "started", initialize the app.
      */
-    private started() {
+    private async started() {
         // Create a new actor with no mesh, but some text. This operation is asynchronous, so
         // it returns a "forward" promise (a special promise, as we'll see later).
         const textPromise = Actor.CreateEmpty(this.context, {
@@ -52,7 +52,7 @@ export default class TicTacToe {
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
-        this.text.createAnimation({
+        const textAnimationPromise = this.text.createAnimation({
             // The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
             animationName: "Spin",
             // Keyframes define the timeline for the animation: where the actor should be, and when.
@@ -66,6 +66,9 @@ export default class TicTacToe {
             wrapMode: AnimationWrapMode.Loop
         }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
 
+        // TODO: This shouldn't be necessary as playanimation should be awaiting the textanimation first.
+        await textAnimationPromise;
+
         // Load a glTF model
         const cubePromise = Actor.CreateFromGLTF(this.context, {
             // at the given URL
@@ -75,8 +78,6 @@ export default class TicTacToe {
             // Also apply the following generic actor properties.
             actor: {
                 name: 'Altspace Cube',
-                // Parent the glTF model to the text actor.
-                parentId: this.text.id,
                 transform: {
                     position: { x: 0, y: -1, z: 0 },
                     scale: { x: 0.4, y: 0.4, z: 0.4 }
