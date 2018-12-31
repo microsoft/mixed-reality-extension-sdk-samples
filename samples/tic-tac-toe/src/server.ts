@@ -5,7 +5,7 @@
 
 import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
-import HelloWorld from './app';
+import TicTacToe from './app';
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
@@ -16,4 +16,4 @@ const server = new WebHost({
 });
 
 // Handle new application sessions
-server.adapter.onConnection(context => new HelloWorld(context, server.baseUrl));
+server.adapter.onConnection(context => new TicTacToe(context, server.baseUrl));

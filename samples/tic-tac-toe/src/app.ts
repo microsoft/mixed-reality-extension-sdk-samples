@@ -17,7 +17,7 @@ import {
 /**
  * The main class of this app. All the logic goes here.
  */
-export default class HelloWorld {
+export default class TicTacToe {
     private text: Actor = null;
     private cube: Actor = null;
 
@@ -38,7 +38,7 @@ export default class HelloWorld {
                     position: { x: 0, y: 0.5, z: 0 }
                 },
                 text: {
-                    contents: "Hello World!",
+                    contents: "Tic-Tac-Toe!",
                     anchor: TextAnchorLocation.MiddleCenter,
                     color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
                     height: 0.3
