@@ -6,6 +6,12 @@
     {
       "type": "npm",
       "script": "build",
+      "path": "samples/tic-tac-toe/",
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build",
       "path": "samples/hello-world/",
       "problemMatcher": []
     },
