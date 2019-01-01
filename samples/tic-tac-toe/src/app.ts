@@ -19,7 +19,6 @@ import {
  */
 export default class TicTacToe {
     private text: Actor = null;
-    private cube: Actor = null;
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -88,22 +87,22 @@ export default class TicTacToe {
                 });
 
                 // Grab that early reference again.
-                this.cube = cubePromise.value;
+                const cube = cubePromise.value;
 
                 // Create some animations on the cube.
-                this.cube.createAnimation({
+                cube.createAnimation({
                     animationName: 'GrowIn',
                     keyframes: this.growAnimationData,
                     events: []
                 }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
 
-                this.cube.createAnimation({
+                cube.createAnimation({
                     animationName: 'ShrinkOut',
                     keyframes: this.shrinkAnimationData,
                     events: []
                 }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
 
-                this.cube.createAnimation({
+                cube.createAnimation({
                     animationName: 'DoAFlip',
                     keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
                     events: []
@@ -111,19 +110,19 @@ export default class TicTacToe {
 
                 // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
                 // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-                const buttonBehavior = this.cube.setBehavior(ButtonBehavior);
+                const buttonBehavior = cube.setBehavior(ButtonBehavior);
 
                 // Trigger the grow/shrink animations on hover.
                 buttonBehavior.onHover('enter', (userId: string) => {
-                    this.cube.startAnimation('GrowIn');
+                    cube.startAnimation('GrowIn');
                 });
                 buttonBehavior.onHover('exit', (userId: string) => {
-                    this.cube.startAnimation('ShrinkOut');
+                    cube.startAnimation('ShrinkOut');
                 });
 
                 // When clicked, do a 360 sideways.
                 buttonBehavior.onClick('pressed', (userId: string) => {
-                    this.cube.startAnimation('DoAFlip');
+                    cube.startAnimation('DoAFlip');
                 });
             }
         }
