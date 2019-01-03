@@ -9,6 +9,7 @@ import {
     AnimationWrapMode,
     ButtonBehavior,
     Context,
+    PrimitiveShape,
     Quaternion,
     TextAnchorLocation,
     Vector3
@@ -120,9 +121,26 @@ export default class TicTacToe {
                     cube.startAnimation('ShrinkOut');
                 });
 
-                // When clicked, do a 360 sideways.
+                // When clicked, put down a game piece
                 buttonBehavior.onClick('pressed', (userId: string) => {
-                    cube.startAnimation('DoAFlip');
+                    const gamePiecePosition: Vector3 = new Vector3(
+                        cube.transform.position.x,
+                        cube.transform.position.y + 0.55,
+                        cube.transform.position.z);
+                    Actor.CreatePrimitive(this.context, {
+                        definition: {
+                            shape: PrimitiveShape.Cylinder,
+                            dimensions: { x: 0, y: 0.2, z: 0 },
+                            radius: 0.4,
+                            uSegments: 16,
+                        },
+                        actor: {
+                            name: 'O',
+                            transform: {
+                                position: gamePiecePosition
+                            }
+                        }
+                    });
                 });
             }
         }
