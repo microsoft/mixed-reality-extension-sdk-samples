@@ -201,6 +201,8 @@ export default class TicTacToe {
                                     }));
                                 }
                                 this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
+                                cube.stopAnimation('GrowIn');
+                                cube.startAnimation('ShrinkOut');
 
                                 const tempGamePiece = this.currentPlayerGamePiece;
                                 this.currentPlayerGamePiece = this.nextPlayerGamePiece;
