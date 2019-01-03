@@ -31,6 +31,17 @@ export default class TicTacToe {
 
     private boardState: GamePiece[] = [];
 
+    private victoryChecks = [
+        [0 * 3 + 0, 0 * 3 + 1, 0 * 3 + 2],
+        [1 * 3 + 0, 1 * 3 + 1, 1 * 3 + 2],
+        [2 * 3 + 0, 2 * 3 + 1, 2 * 3 + 2],
+        [0 * 3 + 0, 1 * 3 + 0, 2 * 3 + 0],
+        [0 * 3 + 1, 1 * 3 + 1, 2 * 3 + 1],
+        [0 * 3 + 2, 1 * 3 + 2, 2 * 3 + 2],
+        [0 * 3 + 0, 1 * 3 + 1, 2 * 3 + 2],
+        [2 * 3 + 0, 1 * 3 + 1, 0 * 3 + 2]
+    ];
+
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
     }
@@ -135,7 +146,7 @@ export default class TicTacToe {
                     }
                 });
 
-                // When clicked, put down a game piece
+                // When clicked, put down a tile, and do a victory check
                 buttonBehavior.onClick('pressed', (userId: string) => {
                     if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
                         console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
@@ -178,6 +189,16 @@ export default class TicTacToe {
                         const tempGamePiece = this.currentPlayerGamePiece;
                         this.currentPlayerGamePiece = this.nextPlayerGamePiece;
                         this.nextPlayerGamePiece = tempGamePiece;
+
+                        for (const victoryCheck of this.victoryChecks) {
+                            if (this.boardState[victoryCheck[0]] !== undefined &&
+                                this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[1]] &&
+                                this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[2]]) {
+                                console.log("Winner: " + GamePiece[tempGamePiece]);
+                                this.text.text.contents = "Winner: " + GamePiece[tempGamePiece];
+                                break;
+                            }
+                        }
                     }
                 });
             }
