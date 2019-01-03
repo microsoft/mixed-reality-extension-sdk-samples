@@ -216,6 +216,16 @@ export default class TicTacToe {
                                         break;
                                     }
                                 }
+
+                                let hasEmptySpace = false;
+                                for (let i = 0; i < 3 * 3; i++) {
+                                    if (this.boardState[i] === undefined) {
+                                        hasEmptySpace = true;
+                                    }
+                                }
+                                if (hasEmptySpace === false) {
+                                    this.beginGameStateCelebration(undefined);
+                                }
                             }
                             break;
                         case GameState.Celebration:
@@ -235,8 +245,14 @@ export default class TicTacToe {
     private beginGameStateCelebration(winner: GamePiece) {
         console.log("BeginGameState Celebration");
         this.gameState = GameState.Celebration;
-        console.log("Winner: " + GamePiece[winner]);
-        this.text.text.contents = "Winner: " + GamePiece[winner];
+        
+        if (winner === undefined) {
+            console.log("Tie");
+            this.text.text.contents = "Tie";
+        } else {
+            console.log("Winner: " + GamePiece[winner]);
+            this.text.text.contents = "Winner: " + GamePiece[winner];
+        }
     }
 
     private beginGameStateIntro() {
