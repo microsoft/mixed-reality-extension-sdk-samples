@@ -303,9 +303,6 @@ export default class TicTacToe {
         }, {
             time: 1 * duration,
             value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
-        }, {
-            time: 2 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
         }];
     }
 
