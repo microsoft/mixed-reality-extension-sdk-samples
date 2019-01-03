@@ -15,12 +15,19 @@ import {
     Vector3
 } from '@microsoft/mixed-reality-extension-sdk';
 
+enum GamePiece {
+    X,
+    O
+}
+
 /**
  * The main class of this app. All the logic goes here.
  */
 export default class TicTacToe {
     private text: Actor = null;
 
+    private currentPlayerGamePiece: GamePiece = GamePiece.X;
+    private nextPlayerGamePiece: GamePiece = GamePiece.O;
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
     }
@@ -123,24 +130,44 @@ export default class TicTacToe {
 
                 // When clicked, put down a game piece
                 buttonBehavior.onClick('pressed', (userId: string) => {
+                    console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
+                        " on: (" + tileIndexX + "," + tileIndexZ + ")");
                     const gamePiecePosition: Vector3 = new Vector3(
                         cube.transform.position.x,
                         cube.transform.position.y + 0.55,
                         cube.transform.position.z);
-                    Actor.CreatePrimitive(this.context, {
-                        definition: {
-                            shape: PrimitiveShape.Cylinder,
-                            dimensions: { x: 0, y: 0.2, z: 0 },
-                            radius: 0.4,
-                            uSegments: 16,
-                        },
-                        actor: {
-                            name: 'O',
-                            transform: {
-                                position: gamePiecePosition
+                    if (this.currentPlayerGamePiece === GamePiece.O) {
+                        Actor.CreatePrimitive(this.context, {
+                            definition: {
+                                shape: PrimitiveShape.Cylinder,
+                                dimensions: { x: 0, y: 0.2, z: 0 },
+                                radius: 0.4,
+                                uSegments: 16,
+                            },
+                            actor: {
+                                name: 'O',
+                                transform: {
+                                    position: gamePiecePosition
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        Actor.CreatePrimitive(this.context, {
+                            definition: {
+                                shape: PrimitiveShape.Box,
+                                dimensions: { x: 0.70, y: 0.2, z: 0.70 }
+                            },
+                            actor: {
+                                name: 'X',
+                                transform: {
+                                    position: gamePiecePosition
+                                }
+                            }
+                        });
+                    }
+                    const tempGamePiece = this.currentPlayerGamePiece;
+                    this.currentPlayerGamePiece = this.nextPlayerGamePiece;
+                    this.nextPlayerGamePiece = tempGamePiece;
                 });
             }
         }
