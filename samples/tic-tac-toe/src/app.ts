@@ -147,12 +147,14 @@ export default class TicTacToe {
 
                 // Trigger the grow/shrink animations on hover.
                 buttonBehavior.onHover('enter', (userId: string) => {
-                    if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
+                    if (this.gameState === GameState.Play &&
+                        this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
                         cube.startAnimation('GrowIn');
                     }
                 });
                 buttonBehavior.onHover('exit', (userId: string) => {
-                    if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
+                    if (this.gameState === GameState.Play &&
+                        this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
                         cube.startAnimation('ShrinkOut');
                     }
                 });
@@ -208,6 +210,8 @@ export default class TicTacToe {
                                 this.currentPlayerGamePiece = this.nextPlayerGamePiece;
                                 this.nextPlayerGamePiece = tempGamePiece;
 
+                                this.text.text.contents = "Next Piece: " + GamePiece[this.currentPlayerGamePiece];
+
                                 for (const victoryCheck of this.victoryChecks) {
                                     if (this.boardState[victoryCheck[0]] !== undefined &&
                                         this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[1]] &&
@@ -245,7 +249,7 @@ export default class TicTacToe {
     private beginGameStateCelebration(winner: GamePiece) {
         console.log("BeginGameState Celebration");
         this.gameState = GameState.Celebration;
-        
+
         if (winner === undefined) {
             console.log("Tie");
             this.text.text.contents = "Tie";
@@ -258,7 +262,7 @@ export default class TicTacToe {
     private beginGameStateIntro() {
         console.log("BeginGameState Intro");
         this.gameState = GameState.Intro;
-        this.text.text.contents = "Tic-Tac-Toe";
+        this.text.text.contents = "Tic-Tac-Toe\nClick To Play";
 
         this.currentPlayerGamePiece = GamePiece.X;
         this.nextPlayerGamePiece = GamePiece.O;
@@ -275,7 +279,7 @@ export default class TicTacToe {
     private beginGameStatePlay() {
         console.log("BeginGameState Play");
         this.gameState = GameState.Play;
-        this.text.text.contents = "Game on!";
+        this.text.text.contents = "First Piece: " + GamePiece[this.currentPlayerGamePiece];
     }
 
     /**
