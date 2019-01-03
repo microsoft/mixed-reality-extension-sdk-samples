@@ -15,6 +15,12 @@ import {
     Vector3
 } from '@microsoft/mixed-reality-extension-sdk';
 
+enum GameState {
+    Intro,
+    Play,
+    Celebration
+}
+
 enum GamePiece {
     X,
     O
@@ -25,6 +31,8 @@ enum GamePiece {
  */
 export default class TicTacToe {
     private text: Actor = null;
+
+    private gameState: GameState;
 
     private currentPlayerGamePiece: GamePiece = GamePiece.X;
     private nextPlayerGamePiece: GamePiece = GamePiece.O;
@@ -146,59 +154,69 @@ export default class TicTacToe {
                     }
                 });
 
-                // When clicked, put down a tile, and do a victory check
                 buttonBehavior.onClick('pressed', (userId: string) => {
-                    if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                        console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
-                            " on: (" + tileIndexX + "," + tileIndexZ + ")");
-                        const gamePiecePosition: Vector3 = new Vector3(
-                            cube.transform.position.x,
-                            cube.transform.position.y + 0.55,
-                            cube.transform.position.z);
-                        if (this.currentPlayerGamePiece === GamePiece.O) {
-                            Actor.CreatePrimitive(this.context, {
-                                definition: {
-                                    shape: PrimitiveShape.Cylinder,
-                                    dimensions: { x: 0, y: 0.2, z: 0 },
-                                    radius: 0.4,
-                                    uSegments: 16,
-                                },
-                                actor: {
-                                    name: 'O',
-                                    transform: {
-                                        position: gamePiecePosition
+                    switch (this.gameState) {
+                        case GameState.Intro:
+                            this.beginGameStatePlay();
+                            break;
+                        case GameState.Play:
+                            // When clicked, put down a tile, and do a victory check
+                            if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
+                                console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
+                                    " on: (" + tileIndexX + "," + tileIndexZ + ")");
+                                const gamePiecePosition: Vector3 = new Vector3(
+                                    cube.transform.position.x,
+                                    cube.transform.position.y + 0.55,
+                                    cube.transform.position.z);
+                                if (this.currentPlayerGamePiece === GamePiece.O) {
+                                    Actor.CreatePrimitive(this.context, {
+                                        definition: {
+                                            shape: PrimitiveShape.Cylinder,
+                                            dimensions: { x: 0, y: 0.2, z: 0 },
+                                            radius: 0.4,
+                                            uSegments: 16,
+                                        },
+                                        actor: {
+                                            name: 'O',
+                                            transform: {
+                                                position: gamePiecePosition
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Actor.CreatePrimitive(this.context, {
+                                        definition: {
+                                            shape: PrimitiveShape.Box,
+                                            dimensions: { x: 0.70, y: 0.2, z: 0.70 }
+                                        },
+                                        actor: {
+                                            name: 'X',
+                                            transform: {
+                                                position: gamePiecePosition
+                                            }
+                                        }
+                                    });
+                                }
+                                this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
+
+                                const tempGamePiece = this.currentPlayerGamePiece;
+                                this.currentPlayerGamePiece = this.nextPlayerGamePiece;
+                                this.nextPlayerGamePiece = tempGamePiece;
+
+                                for (const victoryCheck of this.victoryChecks) {
+                                    if (this.boardState[victoryCheck[0]] !== undefined &&
+                                        this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[1]] &&
+                                        this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[2]]) {
+                                        this.beginGameStateCelebration(tempGamePiece);
+                                        break;
                                     }
                                 }
-                            });
-                        } else {
-                            Actor.CreatePrimitive(this.context, {
-                                definition: {
-                                    shape: PrimitiveShape.Box,
-                                    dimensions: { x: 0.70, y: 0.2, z: 0.70 }
-                                },
-                                actor: {
-                                    name: 'X',
-                                    transform: {
-                                        position: gamePiecePosition
-                                    }
-                                }
-                            });
-                        }
-                        this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
-
-                        const tempGamePiece = this.currentPlayerGamePiece;
-                        this.currentPlayerGamePiece = this.nextPlayerGamePiece;
-                        this.nextPlayerGamePiece = tempGamePiece;
-
-                        for (const victoryCheck of this.victoryChecks) {
-                            if (this.boardState[victoryCheck[0]] !== undefined &&
-                                this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[1]] &&
-                                this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[2]]) {
-                                console.log("Winner: " + GamePiece[tempGamePiece]);
-                                this.text.text.contents = "Winner: " + GamePiece[tempGamePiece];
-                                break;
                             }
-                        }
+                            break;
+                        case GameState.Celebration:
+                        default:
+                            this.beginGameStateIntro();
+                            break;
                     }
                 });
             }
@@ -206,6 +224,26 @@ export default class TicTacToe {
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
         this.text.startAnimation('Spin');
+        this.beginGameStateIntro();
+    }
+    
+    private beginGameStateCelebration(winner: GamePiece) {
+        console.log("BeginGameState Celebration");
+        this.gameState = GameState.Celebration;
+        console.log("Winner: " + GamePiece[winner]);
+        this.text.text.contents = "Winner: " + GamePiece[winner];
+    }
+    
+    private beginGameStateIntro() {
+        console.log("BeginGameState Intro");
+        this.gameState = GameState.Intro;
+        this.text.text.contents = "Tic-Tac-Toe";
+    }
+    
+    private beginGameStatePlay() {
+        console.log("BeginGameState Play");
+        this.gameState = GameState.Play;
+        this.text.text.contents = "Game on!";
     }
 
     /**
