@@ -9,6 +9,7 @@ import {
     AnimationWrapMode,
     ButtonBehavior,
     Context,
+    ForwardPromise,
     PrimitiveShape,
     Quaternion,
     TextAnchorLocation,
@@ -34,10 +35,12 @@ export default class TicTacToe {
 
     private gameState: GameState;
 
-    private currentPlayerGamePiece: GamePiece = GamePiece.X;
-    private nextPlayerGamePiece: GamePiece = GamePiece.O;
+    private currentPlayerGamePiece: GamePiece;
+    private nextPlayerGamePiece: GamePiece;
 
-    private boardState: GamePiece[] = [];
+    private boardState: GamePiece[];
+
+    private gamePieceActors: Array<ForwardPromise<Actor>>;
 
     private victoryChecks = [
         [0 * 3 + 0, 0 * 3 + 1, 0 * 3 + 2],
@@ -169,7 +172,7 @@ export default class TicTacToe {
                                     cube.transform.position.y + 0.55,
                                     cube.transform.position.z);
                                 if (this.currentPlayerGamePiece === GamePiece.O) {
-                                    Actor.CreatePrimitive(this.context, {
+                                    this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
                                         definition: {
                                             shape: PrimitiveShape.Cylinder,
                                             dimensions: { x: 0, y: 0.2, z: 0 },
@@ -182,9 +185,9 @@ export default class TicTacToe {
                                                 position: gamePiecePosition
                                             }
                                         }
-                                    });
+                                    }));
                                 } else {
-                                    Actor.CreatePrimitive(this.context, {
+                                    this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
                                         definition: {
                                             shape: PrimitiveShape.Box,
                                             dimensions: { x: 0.70, y: 0.2, z: 0.70 }
@@ -195,7 +198,7 @@ export default class TicTacToe {
                                                 position: gamePiecePosition
                                             }
                                         }
-                                    });
+                                    }));
                                 }
                                 this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
 
@@ -226,20 +229,31 @@ export default class TicTacToe {
         this.text.startAnimation('Spin');
         this.beginGameStateIntro();
     }
-    
+
     private beginGameStateCelebration(winner: GamePiece) {
         console.log("BeginGameState Celebration");
         this.gameState = GameState.Celebration;
         console.log("Winner: " + GamePiece[winner]);
         this.text.text.contents = "Winner: " + GamePiece[winner];
     }
-    
+
     private beginGameStateIntro() {
         console.log("BeginGameState Intro");
         this.gameState = GameState.Intro;
         this.text.text.contents = "Tic-Tac-Toe";
+
+        this.currentPlayerGamePiece = GamePiece.X;
+        this.nextPlayerGamePiece = GamePiece.O;
+        this.boardState = [];
+
+        if (this.gamePieceActors !== undefined) {
+            for (const actor of this.gamePieceActors) {
+                actor.value.destroy();
+            }
+        }
+        this.gamePieceActors = [];
     }
-    
+
     private beginGameStatePlay() {
         console.log("BeginGameState Play");
         this.gameState = GameState.Play;
