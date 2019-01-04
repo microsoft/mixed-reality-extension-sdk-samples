@@ -175,6 +175,7 @@ export default class TicTacToe {
                     switch (this.gameState) {
                         case GameState.Intro:
                             this.beginGameStatePlay();
+                            cube.startAnimation('GrowIn');
                             break;
                         case GameState.Play:
                             // When clicked, put down a tile, and do a victory check
