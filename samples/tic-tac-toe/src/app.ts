@@ -27,6 +27,8 @@ enum GamePiece {
     O
 }
 
+const boardSize = 4;
+
 /**
  * The main class of this app. All the logic goes here.
  */
@@ -102,141 +104,149 @@ export default class TicTacToe {
         // TODO: This shouldn't be necessary as playanimation should be awaiting the textanimation first.
         await textAnimationPromise;
 
-        for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
-            for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
-                // Load a glTF model
-                const cubePromise = Actor.CreateFromGLTF(this.context, {
-                    // at the given URL
-                    resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
-                    // and spawn box colliders around the meshes.
-                    colliderType: 'box',
-                    // Also apply the following generic actor properties.
-                    actor: {
-                        name: 'Altspace Cube',
-                        transform: {
-                            position: { x: (tileIndexX) - 1.0, y: 0.5, z: (tileIndexZ) - 1.0 },
-                            scale: { x: 0.4, y: 0.4, z: 0.4 }
+        for (let tileIndexX = 0; tileIndexX < boardSize; tileIndexX++) {
+            for (let tileIndexY = 0; tileIndexY < boardSize; tileIndexY++) {
+                for (let tileIndexZ = 0; tileIndexZ < boardSize; tileIndexZ++) {
+                    // Load a glTF model
+                    const cubePromise = Actor.CreateFromGLTF(this.context, {
+                        // at the given URL
+                        resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
+                        // and spawn box colliders around the meshes.
+                        colliderType: 'box',
+                        // Also apply the following generic actor properties.
+                        actor: {
+                            name: 'Altspace Cube',
+                            transform: {
+                                position: { x: (tileIndexX) - 1.0, y: tileIndexY + 0.5, z: (tileIndexZ) - 1.0 },
+                                scale: { x: 0.4, y: 0.4, z: 0.4 }
+                            }
                         }
-                    }
-                });
+                    });
 
-                // Grab that early reference again.
-                const cube = cubePromise.value;
+                    // Grab that early reference again.
+                    const cube = cubePromise.value;
 
-                // Create some animations on the cube.
-                cube.createAnimation({
-                    animationName: 'GrowIn',
-                    keyframes: this.growAnimationData,
-                    events: []
-                }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
+                    // Create some animations on the cube.
+                    cube.createAnimation({
+                        animationName: 'GrowIn',
+                        keyframes: this.growAnimationData,
+                        events: []
+                    }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
 
-                cube.createAnimation({
-                    animationName: 'ShrinkOut',
-                    keyframes: this.shrinkAnimationData,
-                    events: []
-                }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
+                    cube.createAnimation({
+                        animationName: 'ShrinkOut',
+                        keyframes: this.shrinkAnimationData,
+                        events: []
+                    }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
 
-                cube.createAnimation({
-                    animationName: 'DoAFlip',
-                    keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
-                    events: []
-                }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
+                    cube.createAnimation({
+                        animationName: 'DoAFlip',
+                        keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+                        events: []
+                    }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
 
-                // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
-                // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-                const buttonBehavior = cube.setBehavior(ButtonBehavior);
+                    // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
+                    // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
+                    const buttonBehavior = cube.setBehavior(ButtonBehavior);
 
-                // Trigger the grow/shrink animations on hover.
-                buttonBehavior.onHover('enter', (userId: string) => {
-                    if (this.gameState === GameState.Play &&
-                        this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                        cube.startAnimation('GrowIn');
-                    }
-                });
-                buttonBehavior.onHover('exit', (userId: string) => {
-                    if (this.gameState === GameState.Play &&
-                        this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                        cube.startAnimation('ShrinkOut');
-                    }
-                });
-
-                buttonBehavior.onClick('pressed', (userId: string) => {
-                    switch (this.gameState) {
-                        case GameState.Intro:
-                            this.beginGameStatePlay();
+                    // Trigger the grow/shrink animations on hover.
+                    buttonBehavior.onHover('enter', (userId: string) => {
+                        if (this.gameState === GameState.Play &&
+                            this.boardState[this.getBoardIndex(tileIndexX, tileIndexY, tileIndexZ)] === undefined) {
                             cube.startAnimation('GrowIn');
-                            break;
-                        case GameState.Play:
-                            // When clicked, put down a tile, and do a victory check
-                            if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                                console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
-                                    " on: (" + tileIndexX + "," + tileIndexZ + ")");
-                                const gamePiecePosition: Vector3 = new Vector3(
-                                    cube.transform.position.x,
-                                    cube.transform.position.y + 0.55,
-                                    cube.transform.position.z);
-                                if (this.currentPlayerGamePiece === GamePiece.O) {
-                                    this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
-                                        definition: {
-                                            shape: PrimitiveShape.Cylinder,
-                                            dimensions: { x: 0, y: 0.2, z: 0 },
-                                            radius: 0.4,
-                                            uSegments: 16,
-                                        },
-                                        actor: {
-                                            name: 'O',
-                                            transform: {
-                                                position: gamePiecePosition
+                        }
+                    });
+                    buttonBehavior.onHover('exit', (userId: string) => {
+                        if (this.gameState === GameState.Play &&
+                            this.boardState[this.getBoardIndex(tileIndexX, tileIndexY, tileIndexZ)] === undefined) {
+                            cube.startAnimation('ShrinkOut');
+                        }
+                    });
+
+                    buttonBehavior.onClick('pressed', (userId: string) => {
+                        switch (this.gameState) {
+                            case GameState.Intro:
+                                this.beginGameStatePlay();
+                                cube.startAnimation('GrowIn');
+                                break;
+                            case GameState.Play:
+                                // When clicked, put down a tile, and do a victory check
+                                if (this.boardState[this.getBoardIndex(tileIndexX, tileIndexY, tileIndexZ)]
+                                    === undefined) {
+                                    console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
+                                        " on: (" + tileIndexX + "," + tileIndexY + "," + tileIndexZ + ")");
+                                    const gamePiecePosition: Vector3 = new Vector3(
+                                        cube.transform.position.x,
+                                        cube.transform.position.y + 0.55,
+                                        cube.transform.position.z);
+                                    if (this.currentPlayerGamePiece === GamePiece.O) {
+                                        this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
+                                            definition: {
+                                                shape: PrimitiveShape.Cylinder,
+                                                dimensions: { x: 0, y: 0.2, z: 0 },
+                                                radius: 0.4,
+                                                uSegments: 16,
+                                            },
+                                            actor: {
+                                                name: 'O',
+                                                transform: {
+                                                    position: gamePiecePosition
+                                                }
                                             }
-                                        }
-                                    }));
-                                } else {
-                                    this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
-                                        definition: {
-                                            shape: PrimitiveShape.Box,
-                                            dimensions: { x: 0.70, y: 0.2, z: 0.70 }
-                                        },
-                                        actor: {
-                                            name: 'X',
-                                            transform: {
-                                                position: gamePiecePosition
+                                        }));
+                                    } else {
+                                        this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
+                                            definition: {
+                                                shape: PrimitiveShape.Box,
+                                                dimensions: { x: 0.70, y: 0.2, z: 0.70 }
+                                            },
+                                            actor: {
+                                                name: 'X',
+                                                transform: {
+                                                    position: gamePiecePosition
+                                                }
                                             }
+                                        }));
+                                    }
+                                    this.boardState[this.getBoardIndex(tileIndexX, tileIndexY, tileIndexZ)]
+                                        = this.currentPlayerGamePiece;
+                                    cube.stopAnimation('GrowIn');
+                                    cube.startAnimation('ShrinkOut');
+
+                                    const tempGamePiece = this.currentPlayerGamePiece;
+                                    this.currentPlayerGamePiece = this.nextPlayerGamePiece;
+                                    this.nextPlayerGamePiece = tempGamePiece;
+
+                                    this.text.text.contents = "Next Piece: " + GamePiece[this.currentPlayerGamePiece];
+
+                                    let hasEmptySpace = false;
+                                    for (let i = 0; i < boardSize * boardSize * boardSize; i++) {
+                                        if (this.boardState[i] === undefined) {
+                                            hasEmptySpace = true;
                                         }
-                                    }));
-                                }
-                                this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
-                                cube.stopAnimation('GrowIn');
-                                cube.startAnimation('ShrinkOut');
-
-                                const tempGamePiece = this.currentPlayerGamePiece;
-                                this.currentPlayerGamePiece = this.nextPlayerGamePiece;
-                                this.nextPlayerGamePiece = tempGamePiece;
-
-                                this.text.text.contents = "Next Piece: " + GamePiece[this.currentPlayerGamePiece];
-
-                                let hasEmptySpace = false;
-                                for (let i = 0; i < 3 * 3; i++) {
-                                    if (this.boardState[i] === undefined) {
-                                        hasEmptySpace = true;
+                                    }
+                                    if (hasEmptySpace === false) {
+                                        this.beginGameStateCelebration(undefined);
                                     }
                                 }
-                                if (hasEmptySpace === false) {
-                                    this.beginGameStateCelebration(undefined);
-                                }
-                            }
-                            break;
-                        case GameState.Celebration:
-                        default:
-                            this.beginGameStateIntro();
-                            break;
-                    }
-                });
+                                break;
+                            case GameState.Celebration:
+                            default:
+                                this.beginGameStateIntro();
+                                break;
+                        }
+                    });
+                }
             }
         }
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
         this.textAnchor.startAnimation('Spin');
         this.beginGameStateIntro();
+    }
+
+    private getBoardIndex(x: number, y: number, z: number): number {
+        return x * boardSize * boardSize + y * boardSize + z;
     }
 
     private beginGameStateCelebration(winner: GamePiece) {
