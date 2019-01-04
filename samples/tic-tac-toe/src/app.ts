@@ -222,6 +222,34 @@ export default class TicTacToe {
 
                                     this.text.text.contents = "Next Piece: " + GamePiece[this.currentPlayerGamePiece];
 
+                                    let winner;
+                                    const last = boardSize - 1;
+                                    for (let a = 0; a < boardSize; a++) {
+                                        for (let b = 0; b < boardSize; b++) {
+                                            winner = this.checkLine(winner, a, b, 0, a, b, last);
+                                            winner = this.checkLine(winner, a, 0, b, a, last, b);
+                                            winner = this.checkLine(winner, 0, a, b, last, a, b);
+                                        }
+                                    }
+
+                                    for (let a = 0; a < boardSize; a++) {
+                                        winner = this.checkLine(winner, a, 0, 0, a, last, last);
+                                        winner = this.checkLine(winner, a, 0, last, a, last, 0);
+                                        winner = this.checkLine(winner, 0, a, 0, last, a, last);
+                                        winner = this.checkLine(winner, 0, a, last, last, a, 0);
+                                        winner = this.checkLine(winner, 0, 0, a, last, last, a);
+                                        winner = this.checkLine(winner, 0, last, a, last, 0, a);
+                                    }
+
+                                    winner = this.checkLine(winner, 0, 0, 0, last, last, last);
+                                    winner = this.checkLine(winner, 0, 0, last, last, last, 0);
+                                    winner = this.checkLine(winner, 0, last, 0, last, 0, last);
+                                    winner = this.checkLine(winner, 0, last, last, last, 0, 0);
+
+                                    if (winner !== undefined) {
+                                        this.beginGameStateCelebration(winner);
+                                    }
+
                                     let hasEmptySpace = false;
                                     for (let i = 0; i < boardSize * boardSize * boardSize; i++) {
                                         if (this.boardState[i] === undefined) {
@@ -250,6 +278,24 @@ export default class TicTacToe {
 
     private getBoardIndex(x: number, y: number, z: number): number {
         return x * boardSize * boardSize + y * boardSize + z;
+    }
+
+    private checkLine(winner: GamePiece, x1: number, y1: number, z1: number, x2: number, y2: number, z2: number):
+        GamePiece {
+        if (winner !== undefined) {
+            return winner;
+        }
+        const indexStart = this.getBoardIndex(x1, y1, z1);
+        const indexEnd = this.getBoardIndex(x2, y2, z2);
+        const indexStep = (indexEnd - indexStart) / (boardSize - 1);
+        let currentIndex = indexStart;
+        for (let step = 0; step < boardSize - 1; step++) {
+            currentIndex += indexStep;
+            if (this.boardState[indexStart] !== this.boardState[currentIndex]) {
+                return undefined;
+            }
+        }
+        return this.boardState[indexStart];
     }
 
     private beginGameStateCelebration(winner: GamePiece) {
