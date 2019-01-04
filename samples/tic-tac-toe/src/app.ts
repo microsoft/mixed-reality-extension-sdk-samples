@@ -59,7 +59,7 @@ export default class TicTacToe {
             actor: {
                 name: 'TextAnchor',
                 transform: {
-                    position: { x: 0, y: 1.2, z: 0 }
+                    position: { x: 0, y: boardSize / 2, z: 0 }
                 },
             }
         });
@@ -70,7 +70,7 @@ export default class TicTacToe {
                 parentId: this.textAnchor.id,
                 name: 'Text',
                 transform: {
-                    position: { x: 0, y: 0.0, z: -1.5 }
+                    position: { x: 0, y: 0, z: -boardSize * 0.75 }
                 },
                 text: {
                     contents: "Tic-Tac-Toe!",
@@ -117,8 +117,12 @@ export default class TicTacToe {
                         actor: {
                             name: 'Altspace Cube',
                             transform: {
-                                position: { x: (tileIndexX) - 1.0, y: tileIndexY + 0.5, z: (tileIndexZ) - 1.0 },
-                                scale: { x: 0.4, y: 0.4, z: 0.4 }
+                                position: {
+                                    x: (tileIndexX) - (boardSize - 1) / 2,
+                                    y: (tileIndexY) + 0.5,
+                                    z: (tileIndexZ) - (boardSize - 1) / 2
+                                },
+                                scale: { x: 0.15, y: 0.15, z: 0.15 }
                             }
                         }
                     });
@@ -311,17 +315,17 @@ export default class TicTacToe {
 
     private growAnimationData: AnimationKeyframe[] = [{
         time: 0,
-        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
+        value: { transform: { scale: { x: 0.15, y: 0.15, z: 0.15 } } }
     }, {
         time: 0.3,
-        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
+        value: { transform: { scale: { x: 0.30, y: 0.30, z: 0.30 } } }
     }];
 
     private shrinkAnimationData: AnimationKeyframe[] = [{
         time: 0,
-        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
+        value: { transform: { scale: { x: 0.30, y: 0.30, z: 0.30 } } }
     }, {
         time: 0.3,
-        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
+        value: { transform: { scale: { x: 0.15, y: 0.15, z: 0.15 } } }
     }];
 }
