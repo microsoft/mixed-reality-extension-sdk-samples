@@ -181,14 +181,13 @@ export default class TicTacToe {
                                         " on: (" + tileIndexX + "," + tileIndexY + "," + tileIndexZ + ")");
                                     const gamePiecePosition: Vector3 = new Vector3(
                                         cube.transform.position.x,
-                                        cube.transform.position.y + 0.55,
+                                        cube.transform.position.y,
                                         cube.transform.position.z);
                                     if (this.currentPlayerGamePiece === GamePiece.O) {
                                         this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
                                             definition: {
-                                                shape: PrimitiveShape.Cylinder,
-                                                dimensions: { x: 0, y: 0.2, z: 0 },
-                                                radius: 0.4,
+                                                shape: PrimitiveShape.Sphere,
+                                                radius: 0.45,
                                                 uSegments: 16,
                                             },
                                             actor: {
@@ -202,7 +201,7 @@ export default class TicTacToe {
                                         this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
                                             definition: {
                                                 shape: PrimitiveShape.Box,
-                                                dimensions: { x: 0.70, y: 0.2, z: 0.70 }
+                                                dimensions: { x: 0.65, y: 0.65, z: 0.65 }
                                             },
                                             actor: {
                                                 name: 'X',
@@ -269,7 +268,7 @@ export default class TicTacToe {
     private beginGameStateIntro() {
         console.log("BeginGameState Intro");
         this.gameState = GameState.Intro;
-        this.text.text.contents = "Tic-Tac-Toe\nClick To Play";
+        this.text.text.contents = "Ultra Tic-Tac-Toe\nClick To Play Now";
 
         this.currentPlayerGamePiece = GamePiece.X;
         this.nextPlayerGamePiece = GamePiece.O;
