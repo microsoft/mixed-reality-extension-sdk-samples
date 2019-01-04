@@ -43,17 +43,6 @@ export default class TicTacToe {
 
     private gamePieceActors: Array<ForwardPromise<Actor>>;
 
-    private victoryChecks = [
-        [0 * 3 + 0, 0 * 3 + 1, 0 * 3 + 2],
-        [1 * 3 + 0, 1 * 3 + 1, 1 * 3 + 2],
-        [2 * 3 + 0, 2 * 3 + 1, 2 * 3 + 2],
-        [0 * 3 + 0, 1 * 3 + 0, 2 * 3 + 0],
-        [0 * 3 + 1, 1 * 3 + 1, 2 * 3 + 1],
-        [0 * 3 + 2, 1 * 3 + 2, 2 * 3 + 2],
-        [0 * 3 + 0, 1 * 3 + 1, 2 * 3 + 2],
-        [2 * 3 + 0, 1 * 3 + 1, 0 * 3 + 2]
-    ];
-
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
     }
@@ -224,15 +213,6 @@ export default class TicTacToe {
                                 this.nextPlayerGamePiece = tempGamePiece;
 
                                 this.text.text.contents = "Next Piece: " + GamePiece[this.currentPlayerGamePiece];
-
-                                for (const victoryCheck of this.victoryChecks) {
-                                    if (this.boardState[victoryCheck[0]] !== undefined &&
-                                        this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[1]] &&
-                                        this.boardState[victoryCheck[0]] === this.boardState[victoryCheck[2]]) {
-                                        this.beginGameStateCelebration(tempGamePiece);
-                                        break;
-                                    }
-                                }
 
                                 let hasEmptySpace = false;
                                 for (let i = 0; i < 3 * 3; i++) {
