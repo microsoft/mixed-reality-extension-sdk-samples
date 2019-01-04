@@ -32,6 +32,7 @@ enum GamePiece {
  */
 export default class TicTacToe {
     private text: Actor = null;
+    private textAnchor: Actor = null;
 
     private gameState: GameState;
 
@@ -63,11 +64,22 @@ export default class TicTacToe {
     private async started() {
         // Create a new actor with no mesh, but some text. This operation is asynchronous, so
         // it returns a "forward" promise (a special promise, as we'll see later).
+        const textAnchorPromise = Actor.CreateEmpty(this.context, {
+            actor: {
+                name: 'TextAnchor',
+                transform: {
+                    position: { x: 0, y: 1.2, z: 0 }
+                },
+            }
+        });
+        this.textAnchor = textAnchorPromise.value;
+
         const textPromise = Actor.CreateEmpty(this.context, {
             actor: {
+                parentId: this.textAnchor.id,
                 name: 'Text',
                 transform: {
-                    position: { x: 0, y: 1.5, z: 0 }
+                    position: { x: 0, y: 0.0, z: -1.5 }
                 },
                 text: {
                     contents: "Tic-Tac-Toe!",
@@ -84,7 +96,7 @@ export default class TicTacToe {
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
-        const textAnimationPromise = this.text.createAnimation({
+        const textAnimationPromise = this.textAnchor.createAnimation({
             // The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
             animationName: "Spin",
             // Keyframes define the timeline for the animation: where the actor should be, and when.
@@ -242,7 +254,7 @@ export default class TicTacToe {
         }
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
-        this.text.startAnimation('Spin');
+        this.textAnchor.startAnimation('Spin');
         this.beginGameStateIntro();
     }
 
