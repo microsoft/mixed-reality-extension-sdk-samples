@@ -1,0 +1,39 @@
+{
+  "name": "chess-game",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "main": "built/server.js",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "keywords": [
+    "mixed reality",
+    "virtual reality",
+    "vr",
+    "altspacevr",
+    "sample",
+    "node",
+    "chess"
+  ],
+  "engines": {
+    "node": ">=8.12.0",
+    "npm": ">=6.4.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "tsc --build --clean",
+    "build": "tsc --build",
+    "lint": "tslint -p ./tsconfig.json src/**/*.ts",
+    "start": "node .",
+    "debug": "node --nolazy --inspect-brk=9229 ."
+  },
+  "devDependencies": {
+    "@types/node": "^10.3.1",
+    "tslint": "5.11.0",
+    "typescript": "3.0.3"
+  },
+  "dependencies": {
+    "@microsoft/mixed-reality-extension-sdk": "^0.2.3",
+    "chess": "^0.3.3"
+  }
+}

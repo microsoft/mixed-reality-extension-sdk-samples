@@ -31,11 +31,18 @@
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/hello-world",
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
+<<<<<<< HEAD
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
       "outputCapture": "std"
     },
+=======
+      "outputCapture": "std"
+},
+>>>>>>> chess wip
     {
       "type": "node",
       "request": "launch",
@@ -47,11 +54,17 @@
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/solar-system",
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
       "internalConsoleOptions": "openOnSessionStart",
+<<<<<<< HEAD
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
       "outputCapture": "std"
-    },
+    }
+=======
+      "outputCapture": "std"
+},
     {
       "type": "node",
       "request": "launch",
@@ -63,26 +76,11 @@
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/chess-game",
-      "internalConsoleOptions": "openOnSessionStart",
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
-      "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch wear-a-hat project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/wear-a-hat",
       "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
       "outputCapture": "std"
-    }
+},
+>>>>>>> chess wip
   ]
 }
