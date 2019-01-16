@@ -294,12 +294,12 @@ export default class SolarSystem {
             });
 
             // Create the animation on the actor
-            return celestialBody.model.createAnimation({
-                animationName: `${bodyName}:axial`,
-                keyframes,
-                events: [],
-                wrapMode: MRESDK.AnimationWrapMode.Loop
-            });
+            return celestialBody.model.createAnimation(
+                `${bodyName}:axial`, {
+                    keyframes,
+                    events: [],
+                    wrapMode: MRESDK.AnimationWrapMode.Loop
+                });
         }
     }
 
@@ -343,12 +343,12 @@ export default class SolarSystem {
             });
 
             // Create the animation on the actor
-            return celestialBody.position.createAnimation({
-                animationName: `${bodyName}:orbital`,
-                keyframes,
-                events: [],
-                wrapMode: MRESDK.AnimationWrapMode.Loop
-            });
+            return celestialBody.position.createAnimation(
+                `${bodyName}:orbital`, {
+                    keyframes,
+                    events: [],
+                    wrapMode: MRESDK.AnimationWrapMode.Loop
+                });
         }
     }
 }
