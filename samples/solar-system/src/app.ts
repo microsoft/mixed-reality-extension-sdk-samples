@@ -142,15 +142,14 @@ export default class SolarSystem {
         const positionValue = { x: distanceMultiplier, y: 0, z: 0 };
         const scaleValue = { x: scaleMultiplier / 2, y: scaleMultiplier / 2, z: scaleMultiplier / 2 };
         const obliquityValue = MRESDK.Quaternion.RotationAxis(
-            MRESDK.Vector3.Forward(), facts.obliquity * MRESDK.DegreesToRadians
-        ).toJSON();
+            MRESDK.Vector3.Forward(), facts.obliquity * MRESDK.DegreesToRadians);
         const inclinationValue = MRESDK.Quaternion.RotationAxis(
-            MRESDK.Vector3.Forward(), facts.inclination * MRESDK.DegreesToRadians
-        ).toJSON();
+            MRESDK.Vector3.Forward(), facts.inclination * MRESDK.DegreesToRadians);
 
         // Object layout for celestial body is:
         //  inclination                 -- orbital plane. centered on sol and tilted
         //      position                -- position of center of celestial body (orbits sol)
+        //          label               -- centered above position. location of label.
         //          obliquity0          -- centered on position. hidden node to account
         //                                 for the fact that obliquity is a world-relative axis
         //              obliquity1      -- centered on position. tilt of obliquity axis
@@ -170,6 +169,15 @@ export default class SolarSystem {
                     parentId: inclination.value.id,
                     transform: {
                         position: positionValue
+                    }
+                }
+            });
+            const label = MRESDK.Actor.CreateEmpty(this.context, {
+                actor: {
+                    name: `${bodyName}-label`,
+                    parentId: position.value.id,
+                    transform: {
+                        position: { y: 0.1 + Math.pow(scaleMultiplier, 1 / 2.5) }
                     }
                 }
             });
@@ -200,15 +208,17 @@ export default class SolarSystem {
                 }
             });
 
-            position.value.enableText({
+            label.value.enableText({
                 contents: bodyName,
                 height: 0.5,
                 pixelsPerLine: 50,
-                color: MRESDK.Color3.Yellow()
+                color: MRESDK.Color3.Yellow(),
+                anchor: MRESDK.TextAnchorLocation.TopCenter,
+                justify: MRESDK.TextJustify.Center,
             });
 
             setTimeout(() => {
-                position.value.text.color = MRESDK.Color3.White();
+                label.value.text.color = MRESDK.Color3.White();
             }, 5000);
 
             this.celestialBodies[bodyName] = {
@@ -260,7 +270,7 @@ export default class SolarSystem {
             for (let i = 0; i < this.axialKeyframeCount; ++i) {
                 const rotDelta = MRESDK.Quaternion.RotationAxis(
                     MRESDK.Vector3.Up(), (-angleStep * i * spin) * MRESDK.DegreesToRadians);
-                const rotation = initial.multiply(rotDelta).toJSON();
+                const rotation = initial.multiply(rotDelta);
                 value = {
                     transform: {
                         rotation
@@ -275,7 +285,7 @@ export default class SolarSystem {
             // Final frame
             value = {
                 transform: {
-                    rotation: celestialBody.model.transform.rotation.toJSON()
+                    rotation: celestialBody.model.transform.rotation
                 }
             };
             keyframes.push({
@@ -309,7 +319,7 @@ export default class SolarSystem {
             for (let i = 0; i < this.orbitalKeyframeCount; ++i) {
                 const rotDelta = MRESDK.Quaternion.RotationAxis(
                     MRESDK.Vector3.Up(), (-angleStep * i) * MRESDK.DegreesToRadians);
-                const position = initial.rotateByQuaternionToRef(rotDelta, new MRESDK.Vector3()).toJSON();
+                const position = initial.rotateByQuaternionToRef(rotDelta, new MRESDK.Vector3());
                 value = {
                     transform: {
                         position
@@ -324,7 +334,7 @@ export default class SolarSystem {
             // Final frame
             value = {
                 transform: {
-                    position: celestialBody.position.transform.position.toJSON()
+                    position: celestialBody.position.transform.position
                 }
             };
             keyframes.push({
