@@ -5,6 +5,7 @@
 
 import {
     Actor,
+    AnimationEaseCurves,
     AnimationKeyframe,
     AnimationWrapMode,
     ButtonBehavior,
@@ -52,19 +53,20 @@ export default class HelloWorld {
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
-        this.text.createAnimation({
+        this.text.createAnimation(
             // The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
-            animationName: "Spin",
-            // Keyframes define the timeline for the animation: where the actor should be, and when.
-            // We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-            keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
-            // Events are points of interest during the animation. The animating actor will emit a given
-            // named event at the given timestamp with a given string value as an argument.
-            events: [],
+            "Spin", {
+                // Keyframes define the timeline for the animation: where the actor should be, and when.
+                // We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
+                keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
+                // Events are points of interest during the animation. The animating actor will emit a given
+                // named event at the given timestamp with a given string value as an argument.
+                events: [],
 
-            // Optionally, we also repeat the animation infinitely.
-            wrapMode: AnimationWrapMode.Loop
-        }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
+                // Optionally, we also repeat the animation infinitely. PingPong alternately runs the animation
+                // foward then backward.
+                wrapMode: AnimationWrapMode.PingPong
+            }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
 
         // Load a glTF model
         const cubePromise = Actor.CreateFromGLTF(this.context, {
@@ -88,27 +90,15 @@ export default class HelloWorld {
         this.cube = cubePromise.value;
 
         // Create some animations on the cube.
-        this.cube.createAnimation({
-            animationName: 'GrowIn',
-            keyframes: this.growAnimationData,
-            events: []
-        }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
-
-        this.cube.createAnimation({
-            animationName: 'ShrinkOut',
-            keyframes: this.shrinkAnimationData,
-            events: []
-        }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
-
-        this.cube.createAnimation({
-            animationName: 'DoAFlip',
-            keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
-            events: []
-        }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
+        this.cube.createAnimation(
+            'DoAFlip', {
+                keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+                events: []
+            }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
 
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
-        this.text.startAnimation('Spin');
+        this.text.enableAnimation('Spin');
 
         // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
         // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
@@ -116,15 +106,17 @@ export default class HelloWorld {
 
         // Trigger the grow/shrink animations on hover.
         buttonBehavior.onHover('enter', (userId: string) => {
-            this.cube.startAnimation('GrowIn');
+            this.cube.animateTo(
+                { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }, 0.3, AnimationEaseCurves.EaseOutSine);
         });
         buttonBehavior.onHover('exit', (userId: string) => {
-            this.cube.startAnimation('ShrinkOut');
+            this.cube.animateTo(
+                { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }, 0.3, AnimationEaseCurves.EaseOutSine);
         });
 
         // When clicked, do a 360 sideways.
         buttonBehavior.onClick('pressed', (userId: string) => {
-            this.cube.startAnimation('DoAFlip');
+            this.cube.enableAnimation('DoAFlip');
         });
     }
 
@@ -149,25 +141,6 @@ export default class HelloWorld {
         }, {
             time: 1 * duration,
             value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
-        }, {
-            time: 2 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
         }];
     }
-
-    private growAnimationData: AnimationKeyframe[] = [{
-        time: 0,
-        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
-    }, {
-        time: 0.3,
-        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
-    }];
-
-    private shrinkAnimationData: AnimationKeyframe[] = [{
-        time: 0,
-        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
-    }, {
-        time: 0.3,
-        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
-    }];
 }
