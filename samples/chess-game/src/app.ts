@@ -162,23 +162,23 @@ export default class ChessGame {
         // Preload all models.
         const assetGroups: { [id: string]: AssetGroup } = {};
         const preloads: Array<Promise<AssetGroup>> = [];
-        preloads.push(this.context.assets.loadGltf("white_bishop", `${this.baseUrl}/white_bishop.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_king", `${this.baseUrl}/white_king.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_knight", `${this.baseUrl}/white_knight.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_pawn", `${this.baseUrl}/white_pawn.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_queen", `${this.baseUrl}/white_queen.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_rook", `${this.baseUrl}/white_rook.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_square", `${this.baseUrl}/white_square.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_bishop", `${this.baseUrl}/black_bishop.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_king", `${this.baseUrl}/black_king.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_knight", `${this.baseUrl}/black_knight.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_pawn", `${this.baseUrl}/black_pawn.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_queen", `${this.baseUrl}/black_queen.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_rook", `${this.baseUrl}/black_rook.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_square", `${this.baseUrl}/black_square.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("move_marker", `${this.baseUrl}/move_marker.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("check_marker", `${this.baseUrl}/check_marker.gltf`).then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("selected_marker", `${this.baseUrl}/selected_marker.gltf`).then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_bishop", `${this.baseUrl}/white_bishop.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_king", `${this.baseUrl}/white_king.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_knight", `${this.baseUrl}/white_knight.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_pawn", `${this.baseUrl}/white_pawn.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_queen", `${this.baseUrl}/white_queen.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_rook", `${this.baseUrl}/white_rook.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("white_square", `${this.baseUrl}/white_square.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_bishop", `${this.baseUrl}/black_bishop.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_king", `${this.baseUrl}/black_king.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_knight", `${this.baseUrl}/black_knight.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_pawn", `${this.baseUrl}/black_pawn.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_queen", `${this.baseUrl}/black_queen.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_rook", `${this.baseUrl}/black_rook.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("black_square", `${this.baseUrl}/black_square.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("move_marker", `${this.baseUrl}/move_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("check_marker", `${this.baseUrl}/check_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
+        preloads.push(this.context.assets.loadGltf("selected_marker", `${this.baseUrl}/selected_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
         // Wait for all preloads to complete.
         await Promise.all(preloads);
 
@@ -201,7 +201,7 @@ export default class ChessGame {
                 const prefab = assetGroups[`${side}_square`].prefabs.byIndex(0);
                 const loadActor = Actor.CreateFromPrefab(this.context, {
                     prefabId: prefab.id,
-                    colliderType: 'box',
+                    enableColliders: true,
                     actor: {
                         name: `square-${file}${rank}`,
                         parentId: this.sceneRoot.id,
@@ -237,7 +237,7 @@ export default class ChessGame {
                 const prefab = assetGroups[`${square.piece.side.name}_${square.piece.type}`].prefabs.byIndex(0);
                 const loadActor = Actor.CreateFromPrefab(this.context, {
                     prefabId: prefab.id,
-                    colliderType: 'box',
+                    enableColliders: true,
                     actor: {
                         name: `${square.piece.side.name}-${square.piece.type}`,
                         parentId: this.sceneRoot.id,
@@ -592,6 +592,7 @@ export default class ChessGame {
         const toCoord = new Vector3();
         toCoord.copy(this.coordinate(dest));
         toCoord.y = actor.transform.position.y;
+        // actor.animateTo({ transform: { rotation: Quaternion.RotationAxis(actor.transform.right, -Math.PI / 8) } }, 0.5, AnimationEaseCurves.EaseInOutBack);
         actor.animateTo({ transform: { position: toCoord } }, 1.0, AnimationEaseCurves.EaseInOutSine);
     }
 
