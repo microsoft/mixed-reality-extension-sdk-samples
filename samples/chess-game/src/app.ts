@@ -8,12 +8,9 @@
 // tslint:disable:no-string-literal
 // tslint:disable:max-classes-per-file
 
-/**
- * 1. I don't understand the need so Asset group name in AssetManager.loadGltf.
- *    Why can't I load additional gltfs into a group?
- * 2. Can I add a collider to a prefab?
- * 3. Prefabs API is too complex.
- */
+/*
+    - I should be able to call CreateFromPrefab before the prefab is finished loading (it should wait on prefab.created())
+*/
 
 import {
     Actor,
@@ -24,13 +21,22 @@ import {
     Context,
     DegreesToRadians,
     ForwardPromise,
+    PrimitiveShape,
     Quaternion,
+    QuaternionLike,
     Vector3,
     Vector3Like,
 } from '@microsoft/mixed-reality-extension-sdk';
 
 // tslint:disable:no-var-requires
 const chess = require('chess');
+
+type Game = {
+    move: (src: Coordinate, dst: Coordinate, promo?: string) => MoveResult;
+    on: (even: 'check', handler: (attack: Attack) => any) => any;
+    getStatus: () => Status;
+    getCurrentSide: () => string;
+};
 
 type Side = {
     name: 'black' | 'white';
@@ -42,7 +48,6 @@ type Piece = {
     side: Side;
     type: string;
     actor: Actor;
-    api: PieceAPI;
 };
 
 type Status = {
@@ -63,16 +68,15 @@ type Board = {
     squares: Square[];
 };
 
-type AlgebraicCoord = {
+type Coordinate = {
     file: string;
     rank: number;
 };
 
-type Square = AlgebraicCoord & {
+type Square = Coordinate & {
     actor: SquareActor;
     piece: Piece;
     marker: Actor;
-    api: SquareAPI;
 };
 
 type Move = {
@@ -95,56 +99,48 @@ type MoveResult = {
 };
 
 type ModelConfig = {
-    rotation: number;
+    rotation: Quaternion;
 };
 
-type SquareActor = Actor & AlgebraicCoord;
-
-class PieceAPI {
-    constructor(private app: ChessGame, private piece: Piece) {
-    }
-
-    public selected() { }
-}
-
-class SquareAPI {
-    constructor(private app: ChessGame, private square: Square) {
-    }
-}
+type SquareActor = Actor & Coordinate;
 
 // Chess piece configuraton (rotation, etc.)
 const modelConfigs: { [id: string]: { [id: string]: ModelConfig } } = {
     black: {
-        rook: { rotation: 0 },
-        knight: { rotation: -90 * DegreesToRadians },
-        bishop: { rotation: -90 * DegreesToRadians },
-        queen: { rotation: 0 },
-        king: { rotation: 0 },
-        pawn: { rotation: 0 },
+        rook: { rotation: Quaternion.FromEulerAngles(0, Math.PI, 0) },
+        knight: { rotation: Quaternion.FromEulerAngles(0, -Math.PI / 2, 0) },
+        bishop: { rotation: Quaternion.FromEulerAngles(0, -Math.PI / 2, 0) },
+        queen: { rotation: Quaternion.FromEulerAngles(0, Math.PI, 0) },
+        king: { rotation: Quaternion.FromEulerAngles(0, Math.PI, 0) },
+        pawn: { rotation: Quaternion.FromEulerAngles(0, Math.PI, 0) },
     },
     white: {
-        rook: { rotation: 0 },
-        knight: { rotation: 90 * DegreesToRadians },
-        bishop: { rotation: 90 * DegreesToRadians },
-        queen: { rotation: 0 },
-        king: { rotation: 0 },
-        pawn: { rotation: 0 },
+        rook: { rotation: Quaternion.Identity() },
+        knight: { rotation: Quaternion.FromEulerAngles(0, Math.PI / 2, 0) },
+        bishop: { rotation: Quaternion.FromEulerAngles(0, Math.PI / 2, 0) },
+        queen: { rotation: Quaternion.Identity() },
+        king: { rotation: Quaternion.Identity() },
+        pawn: { rotation: Quaternion.Identity() },
     }
 };
 
 const boardStep = 1.5;
 const pieceScale = 0.08;
-const baseHeight = 0.5;
+const baseHeight = 0;
+const appScale = 0.4;
+const markerScale = 1.05;
+const hoverScale = 1.1;
 
 /**
  * The main class of this app. All the logic goes here.
  */
 export default class ChessGame {
-    public game: any;
-    public sceneRoot: Actor;
-    public checkMarker: Actor;
-    public selectedMarker: Actor;
-    public selectedActor: Actor;
+    private game: Game;
+    private sceneRoot: Actor;
+    private checkMarker: Actor;
+    private selectedMarker: Actor;
+    private selectedActor: Actor;
+    private assetGroups: { [id: string]: AssetGroup } = {};
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -156,41 +152,70 @@ export default class ChessGame {
     private async started() {
         // Create the chess game.
         this.game = chess.createSimple();
+        // Hook the 'check' event.
         this.game.on('check', (attack: Attack) => this.onCheck(attack));
-        const status = this.game.getStatus() as Status;
 
-        // Preload all models.
-        const assetGroups: { [id: string]: AssetGroup } = {};
+        // Load all model prefabs.
+        await this.preloadAllModels();
+
+        // Create all the actors.
+        await Promise.all([
+            this.createRootObject(),
+            this.createChessBoard(),
+            this.createChessPieces(),
+            this.createMoveMarkers(),
+            this.createCheckMarker(),
+            this.createSelectedMarker(),
+            // this.makeTestObject(),
+        ]);
+
+        // Hook up event handlers. We do this after all actors are loaded because the event handlers
+        // themselves reference other actors in the scene. It simplifies handler code if we can
+        // assume that the actors are done getting created.
+        this.addEventHandlers();
+    }
+
+    private async preloadAllModels() {
         const preloads: Array<Promise<AssetGroup>> = [];
-        preloads.push(this.context.assets.loadGltf("white_bishop", `${this.baseUrl}/white_bishop.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_king", `${this.baseUrl}/white_king.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_knight", `${this.baseUrl}/white_knight.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_pawn", `${this.baseUrl}/white_pawn.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_queen", `${this.baseUrl}/white_queen.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_rook", `${this.baseUrl}/white_rook.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("white_square", `${this.baseUrl}/white_square.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_bishop", `${this.baseUrl}/black_bishop.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_king", `${this.baseUrl}/black_king.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_knight", `${this.baseUrl}/black_knight.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_pawn", `${this.baseUrl}/black_pawn.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_queen", `${this.baseUrl}/black_queen.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_rook", `${this.baseUrl}/black_rook.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("black_square", `${this.baseUrl}/black_square.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("move_marker", `${this.baseUrl}/move_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("check_marker", `${this.baseUrl}/check_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        preloads.push(this.context.assets.loadGltf("selected_marker", `${this.baseUrl}/selected_marker.gltf`, 'box').then(value => assetGroups[value.name] = value));
-        // Wait for all preloads to complete.
+        preloads.push(this.context.assetManager.loadGltf("white_bishop", `${this.baseUrl}/white_bishop.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_king", `${this.baseUrl}/white_king.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_knight", `${this.baseUrl}/white_knight.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_pawn", `${this.baseUrl}/white_pawn.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_queen", `${this.baseUrl}/white_queen.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_rook", `${this.baseUrl}/white_rook.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("white_square", `${this.baseUrl}/white_square.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_bishop", `${this.baseUrl}/black_bishop.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_king", `${this.baseUrl}/black_king.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_knight", `${this.baseUrl}/black_knight.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_pawn", `${this.baseUrl}/black_pawn.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_queen", `${this.baseUrl}/black_queen.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_rook", `${this.baseUrl}/black_rook.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("black_square", `${this.baseUrl}/black_square.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("move_marker", `${this.baseUrl}/move_marker.gltf`).then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("check_marker", `${this.baseUrl}/check_marker.gltf`).then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf("selected_marker", `${this.baseUrl}/selected_marker.gltf`).then(value => this.assetGroups[value.name] = value));
         await Promise.all(preloads);
+    }
 
-        // Keep a list of all the things we're loading.
-        const loads: Array<ForwardPromise<Actor>> = [];
-
-        // Create a root actor everything gets parented to.
-        const sceneRootLoad = Actor.CreateEmpty(this.context);
-        loads.push(sceneRootLoad);
+    private createRootObject() {
+        // Create a root actor everything gets parented to. Offset from origin so the chess board
+        // is centered on it.
+        const sceneRootLoad = Actor.CreateEmpty(
+            this.context, {
+                actor: {
+                    transform: {
+                        position: { x: appScale * -boardStep * 3.5, z: appScale * -boardStep * 3.5 },
+                        scale: { x: appScale, y: appScale, z: appScale }
+                    }
+                }
+            });
         this.sceneRoot = sceneRootLoad.value;
+        return sceneRootLoad;
+    }
 
-        // Create the chess board.
+    private createChessBoard() {
+        const loads: Array<ForwardPromise<Actor>> = [];
+        const status = this.game.getStatus() as Status;
         let i = 0;
         let p = 0;
         for (const file of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
@@ -198,10 +223,9 @@ export default class ChessGame {
                 const position = this.coordinate({ file, rank });
                 position.y = baseHeight;
                 const side = ((i % 2) === 0) ? 'white' : 'black';
-                const prefab = assetGroups[`${side}_square`].prefabs.byIndex(0);
+                const prefab = this.assetGroups[`${side}_square`].prefabs.byIndex(0);
                 const loadActor = Actor.CreateFromPrefab(this.context, {
                     prefabId: prefab.id,
-                    enableColliders: true,
                     actor: {
                         name: `square-${file}${rank}`,
                         parentId: this.sceneRoot.id,
@@ -222,11 +246,14 @@ export default class ChessGame {
 
                 const square = status.board.squares.filter(item => item.file === file && item.rank === rank).shift();
                 square.actor = squareActor;
-                square.api = new SquareAPI(this, square);
             }
         }
+        return loads;
+    }
 
-        // Create the chess pieces.
+    private createChessPieces() {
+        const loads: Array<ForwardPromise<Actor>> = [];
+        const status = this.game.getStatus() as Status;
         for (const square of status.board.squares) {
             if (square.piece) {
                 const position = new Vector3();
@@ -234,23 +261,21 @@ export default class ChessGame {
                 position.y = baseHeight + 0.1;
                 const side = modelConfigs[square.piece.side.name];
                 const info = side[square.piece.type];
-                const prefab = assetGroups[`${square.piece.side.name}_${square.piece.type}`].prefabs.byIndex(0);
+                const prefab = this.assetGroups[`${square.piece.side.name}_${square.piece.type}`].prefabs.byIndex(0);
                 const loadActor = Actor.CreateFromPrefab(this.context, {
                     prefabId: prefab.id,
-                    enableColliders: true,
                     actor: {
                         name: `${square.piece.side.name}-${square.piece.type}`,
                         parentId: this.sceneRoot.id,
                         transform: {
                             position,
-                            rotation: Quaternion.FromEulerAngles(0, info.rotation, 0),
+                            rotation: info.rotation,
                             scale: { x: pieceScale, y: pieceScale, z: pieceScale }
                         }
                     },
                     subscriptions: ['transform']
                 });
                 square.piece.actor = loadActor.value;
-                square.piece.api = new PieceAPI(this, square.piece);
                 loads.push(loadActor);
 
                 square.piece.actor.createAnimation('hover', {
@@ -258,12 +283,10 @@ export default class ChessGame {
                         {
                             time: 0,
                             value: { transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }
-                        },
-                        {
+                        }, {
                             time: 0.25,
-                            value: { transform: { scale: { x: pieceScale * 1.2, y: pieceScale * 1.2, z: pieceScale * 1.2 } } }
-                        },
-                        {
+                            value: { transform: { scale: { x: pieceScale * hoverScale, y: pieceScale * hoverScale, z: pieceScale * hoverScale } } }
+                        }, {
                             time: 0.5,
                             value: { transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }
                         },
@@ -272,64 +295,106 @@ export default class ChessGame {
                 });
             }
         }
+        return loads;
+    }
 
-        // Create the move markers.
+    private createMoveMarkers() {
+        const loads: Array<ForwardPromise<Actor>> = [];
+        const status = this.game.getStatus() as Status;
         for (const square of status.board.squares) {
             const position = new Vector3();
             position.copy(this.coordinate(square));
             position.y = 1000;
-            const prefab = assetGroups['move_marker'].prefabs.byIndex(0);
+            const prefab = this.assetGroups['move_marker'].prefabs.byIndex(0);
             const loadActor = Actor.CreateFromPrefab(this.context, {
                 prefabId: prefab.id,
                 actor: {
                     name: 'move-marker',
                     parentId: this.sceneRoot.id,
                     transform: {
-                        position
+                        position,
+                        scale: { x: markerScale, y: 1, z: markerScale }
                     }
                 }
             });
             loads.push(loadActor);
             square.marker = loadActor.value;
         }
+        return loads;
+    }
 
-        // Create the check marker.
-        {
-            const prefab = assetGroups['check_marker'].prefabs.byIndex(0);
-            const loadActor = Actor.CreateFromPrefab(this.context, {
-                prefabId: prefab.id,
-                actor: {
-                    name: 'check-marker',
-                    parentId: this.sceneRoot.id,
-                    transform: {
-                        position: { x: 1, y: 999, z: 1 }
+    private createCheckMarker() {
+        const prefab = this.assetGroups['check_marker'].prefabs.byIndex(0);
+        const loadActor = Actor.CreateFromPrefab(this.context, {
+            prefabId: prefab.id,
+            actor: {
+                name: 'check-marker',
+                parentId: this.sceneRoot.id,
+                transform: {
+                    position: { x: 1, y: 999, z: 1 },
+                    scale: { x: markerScale, y: 1, z: markerScale }
+                }
+            }
+        });
+        this.checkMarker = loadActor.value;
+        return loadActor;
+    }
+
+    private createSelectedMarker() {
+        const prefab = this.assetGroups['selected_marker'].prefabs.byIndex(0);
+        const loadActor = Actor.CreateFromPrefab(this.context, {
+            prefabId: prefab.id,
+            actor: {
+                name: 'selected-marker',
+                parentId: this.sceneRoot.id,
+                transform: {
+                    position: { x: 0, y: 999, z: 0 },
+                    scale: { x: markerScale, y: 1, z: markerScale }
+                }
+            }
+        });
+        this.selectedMarker = loadActor.value;
+        return loadActor;
+    }
+
+    private makeTestObject() {
+        const testObjLoad = Actor.CreatePrimitive(this.context, {
+            definition: {
+                shape: PrimitiveShape.Box
+            },
+            actor: {
+                parentId: this.sceneRoot.id,
+                transform: {
+                    position: {
+                        x: boardStep * 3.5,
+                        y: 4,
+                        z: boardStep * 3.5
                     }
                 }
-            });
-            loads.push(loadActor);
-            this.checkMarker = loadActor.value;
-        }
+            }
+        });
 
-        // Create the selected marker.
-        {
-            const prefab = assetGroups['selected_marker'].prefabs.byIndex(0);
-            const loadActor = Actor.CreateFromPrefab(this.context, {
-                prefabId: prefab.id,
-                actor: {
-                    name: 'selected-marker',
-                    parentId: this.sceneRoot.id,
-                    transform: {
-                        position: { x: 0, y: 999, z: 0 }
-                    }
-                }
-            });
-            loads.push(loadActor);
-            this.selectedMarker = loadActor.value;
-        }
+        setInterval(() => {
+            // Random point on unit sphere.
+            const θ = Math.random() * 2 * Math.PI;
+            const z = Math.cos(θ);
+            const x = Math.sqrt(1 - z * z) * Math.cos(θ);
+            const y = Math.sqrt(1 - z * z) * Math.sin(θ);
+            const axis = new Vector3(x, y, z);
+            // Random rotation around picked axis.
+            const rotation = Quaternion.RotationAxis(axis, Math.random() * 2 * Math.PI);
+            // Random ease curve.
+            const easeCurveKeys = Object.keys(AnimationEaseCurves);
+            const easeIndex = Math.floor(Math.random() * easeCurveKeys.length);
+            const easeCurveKey = easeCurveKeys[easeIndex];
+            // Animation test object's rotation.
+            testObjLoad.value.animateTo({ transform: { rotation } }, 1.0, (AnimationEaseCurves as any)[easeCurveKey]);
+        }, 1300);
+        return testObjLoad;
+    }
 
-        // Wait for all actors to finish getting created.
-        await Promise.all(loads);
-
+    private addEventHandlers() {
+        const status = this.game.getStatus() as Status;
         // Add event handlers to actors.
         for (const square of status.board.squares) {
             // Add event handlers to square.
@@ -349,7 +414,7 @@ export default class ChessGame {
     }
 
     private onCheck(attack: Attack) {
-        console.log("check", attack);
+        this.showCheckMarker(attack.kingSquare);
     }
 
     private clickOnSquare(userId: string, actor: SquareActor) {
@@ -362,15 +427,17 @@ export default class ChessGame {
                     item.file === actor.file &&
                     item.rank === actor.rank).shift();
                 if (destSquare) {
+                    this.hideMoveMarkers();
+                    this.hideCheckMarker();
                     const prevBoard = this.readOccupiedBoard(status);
-                    const result = this.game.move(move.src, destSquare) as MoveResult;
+                    const result = this.game.move(move.src, destSquare);
                     const newStatus = this.game.getStatus() as Status;
                     const newBoard = this.readOccupiedBoard(newStatus);
                     this.animateActorMovements(prevBoard, newBoard);
                     this.hideSelectedMarker();
                     this.selectedActor = null;
                     if (newStatus.isCheckmate) {
-                        //
+                        console.log("checkmate");
                     } else if (newStatus.isCheck) {
                         //
                     } else if (newStatus.isRepetition) {
@@ -378,52 +445,61 @@ export default class ChessGame {
                     } else if (newStatus.isStalemate) {
                         //
                     }
+                } else {
+                    this.deselectPiece();
                 }
+            } else {
+                this.deselectPiece();
             }
         }
     }
 
     private hideSelectedMarker() {
-        if (this.selectedMarker) {
-            this.selectedMarker.transform.position.y = 999;
-        }
+        this.selectedMarker.transform.position.y = 999;
     }
 
     private startHoverPiece(userId: string, actor: Actor) {
-        console.log(`start hover. ${actor.name}`);
         if (this.selectedActor !== actor) {
             actor.setAnimationState('hover', { time: 0, speed: 1, enabled: true });
+            actor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
         }
         this.showMoveMarkers(actor);
     }
 
     private stopHoverPiece(userId: string, actor: Actor) {
-        console.log(`stop hover. ${actor.name}`);
         if (this.selectedActor !== actor) {
             actor.setAnimationState('hover', { time: 0, enabled: false });
+            actor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
         }
         this.showMoveMarkers(null);
     }
 
     private clickOnPiece(userId: string, actor: Actor) {
-        // Select the piece.
         if (this.selectedActor === actor) {
+            // Toggle selected state.
             return this.deselectPiece();
         }
         if (this.isValidTarget(this.selectedActor, actor)) {
-            return;
+            // If this piece is a valid target, pipe to the `clickOnSquare` handler.
+            const square = this.squareForActor(actor);
+            return this.clickOnSquare(userId, square.actor);
         }
         if (this.selectedActor) {
+            // Stop all hover animations on the selected actor.
             this.selectedActor.setAnimationState('hover', { time: 0, enabled: false });
+            this.selectedActor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
         }
+        // Set the new selected actor.
         this.selectedActor = actor;
         actor.setAnimationState('hover', { time: 0, enabled: false });
+        actor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
         this.showSelectedMarker();
         this.showMoveMarkers(actor);
     }
 
     private deselectPiece() {
         this.selectedActor.setAnimationState('hover', { time: 0, enabled: false });
+        this.selectedActor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
         this.hideSelectedMarker();
         this.hideMoveMarkers();
         this.selectedActor = null;
@@ -433,11 +509,9 @@ export default class ChessGame {
         this.hideSelectedMarker();
         if (this.selectedActor) {
             const square = this.squareForActor(this.selectedActor);
-            if (square) {
-                const coord = this.coordinate(square);
-                coord.y = baseHeight + 0.1;
-                this.selectedMarker.transform.position = coord;
-            }
+            const coord = this.coordinate(square);
+            coord.y = baseHeight + 0.1;
+            this.selectedMarker.transform.position.copy(coord);
         }
     }
 
@@ -446,9 +520,7 @@ export default class ChessGame {
             if (moveSet) {
                 for (const square of moveSet.squares) {
                     const marker = square.marker;
-                    if (marker) {
-                        marker.transform.position.y = baseHeight + 0.1;
-                    }
+                    marker.transform.position.y = baseHeight + 0.1;
                 }
             }
         }
@@ -457,13 +529,11 @@ export default class ChessGame {
     private isValidTarget(sourceActor: Actor, targetActor: Actor) {
         if (sourceActor && targetActor) {
             const targetSquare = this.squareForActor(targetActor);
-            if (targetSquare) {
-                const validMove = this.validMovesForActor(this.selectedActor);
-                if (validMove) {
-                    for (const square of validMove.squares) {
-                        if (square.file === targetSquare.file && square.rank === targetSquare.rank) {
-                            return true;
-                        }
+            const validMove = this.validMovesForActor(this.selectedActor);
+            if (validMove) {
+                for (const square of validMove.squares) {
+                    if (square.file === targetSquare.file && square.rank === targetSquare.rank) {
+                        return true;
                     }
                 }
             }
@@ -481,9 +551,7 @@ export default class ChessGame {
     private validMovesForActor(actor: Actor) {
         if (actor) {
             const status = this.game.getStatus() as Status;
-            return status.validMoves.filter(item =>
-                (actor && item.src.piece.actor.id === actor.id) ||
-                (this.selectedActor && item.src.piece.actor.id === this.selectedActor.id)).shift();
+            return status.validMoves.filter(item => item.src.piece.actor.id === actor.id).shift();
         }
     }
 
@@ -491,13 +559,20 @@ export default class ChessGame {
         const status = this.game.getStatus() as Status;
         for (const square of status.board.squares) {
             const marker = square.marker;
-            if (marker) {
-                marker.transform.position.y = 1000;
-            }
+            marker.transform.position.y = 1000;
         }
     }
 
-    private coordinate(coord: AlgebraicCoord): Partial<Vector3Like> {
+    private hideCheckMarker() {
+        this.checkMarker.transform.position.y = 999;
+    }
+
+    private showCheckMarker(square: Square) {
+        this.checkMarker.transform.position = square.marker.transform.position;
+        this.checkMarker.transform.position.y = baseHeight + 0.1;
+    }
+
+    private coordinate(coord: Coordinate): Partial<Vector3Like> {
         // Given a file and rank, return the coordinates of the center of the corresponding square.
         const fileIndices: { [id: string]: number } = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7 };
         const file = fileIndices[coord.file];
@@ -507,9 +582,9 @@ export default class ChessGame {
         return { x, z };
     }
 
-    private squareForActor(actor: Actor): AlgebraicCoord {
+    private squareForActor(actor: Actor): Square {
         const status = this.game.getStatus() as Status;
-        return status.board.squares.filter(item => item.piece && item.piece.actor.id === this.selectedActor.id).shift();
+        return status.board.squares.filter(item => item.piece && item.piece.actor.id === actor.id).shift();
     }
 
     // Returns a sparse board, only occupied squares.
@@ -525,7 +600,6 @@ export default class ChessGame {
                     piece: square.piece,
                     actor: square.actor,
                     marker: square.marker,
-                    api: square.api
                 });
             }
         });
@@ -541,8 +615,8 @@ export default class ChessGame {
 
         type Change = {
             actor: Actor;
-            oldCoord: AlgebraicCoord;
-            newCoord: AlgebraicCoord;
+            oldSquare: Square;
+            newSquare: Square;
         };
 
         const movements: Change[] = [];
@@ -557,47 +631,49 @@ export default class ChessGame {
                     // Piece moved.
                     movements.push({
                         actor,
-                        oldCoord: {
-                            file: oldSquare.file,
-                            rank: oldSquare.rank
-                        },
-                        newCoord: {
-                            file: newSquare.file,
-                            rank: newSquare.rank
-                        }
+                        oldSquare,
+                        newSquare
                     });
                 }
             } else {
                 // Piece was captured.
                 captures.push({
                     actor,
-                    oldCoord: {
-                        file: oldSquare.file,
-                        rank: oldSquare.rank
-                    },
-                    newCoord: null
+                    oldSquare,
+                    newSquare: null
                 });
             }
         }
 
         for (const movement of movements) {
-            this.animateMovement(movement.actor, movement.newCoord);
+            this.animateMovement(movement.actor, movement.newSquare);
         }
         for (const capture of captures) {
             this.animateCapture(capture.actor);
         }
     }
 
-    private async animateMovement(actor: Actor, dest: AlgebraicCoord) {
-        const toCoord = new Vector3();
-        toCoord.copy(this.coordinate(dest));
-        toCoord.y = actor.transform.position.y;
-        // actor.animateTo({ transform: { rotation: Quaternion.RotationAxis(actor.transform.right, -Math.PI / 8) } }, 0.5, AnimationEaseCurves.EaseInOutBack);
-        actor.animateTo({ transform: { position: toCoord } }, 1.0, AnimationEaseCurves.EaseInOutSine);
+    private async animateMovement(actor: Actor, dst: Square) {
+        const moveSpeed = 0.3;
+        const position = new Vector3();
+        position.copy(this.coordinate(dst));
+        position.y = actor.transform.position.y;
+        const diff = position.subtract(actor.transform.position);
+        const length = diff.length();
+        actor.animateTo({ transform: { position } }, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
+        actor.animateTo({ transform: { scale: { x: pieceScale, y: pieceScale, z: pieceScale } } }, 0.1, AnimationEaseCurves.Linear);
+        // Animate a slight tilt in the direction of movement.
+        // const square = this.squareForActor(actor);
+        // const config = modelConfigs[square.piece.side.name][square.piece.type];
+        // const direction = toCoord.subtract(actor.transform.position);
+        // const left = Vector3.Cross(direction, Vector3.Up());
+        // const rotation = Quaternion.RotationAxis(left, -Math.PI / 8).multiply(config.rotation);
+        // actor.animateTo({ transform: { rotation } }, 0.25, AnimationEaseCurves.EaseOutSine)
+        //     .then(() => { actor.animateTo({ transform: { rotation: config.rotation } }, 0.25, AnimationEaseCurves.EaseInSine); });
     }
 
     private async animateCapture(actor: Actor) {
-        actor.animateTo({ transform: { scale: { x: pieceScale, y: 0, z: pieceScale } } }, 1.0, AnimationEaseCurves.EaseInSine)
+        actor.animateTo({ transform: { scale: { y: 0 } } }, 1.0, AnimationEaseCurves.EaseInSine)
             .then(() => actor.destroy());
     }
 }

@@ -72,7 +72,7 @@
         {
             "name" : "Material.002",
             "pbrMetallicRoughness" : {
-                "baseColorFactor": [ 0.01, 0.01, 0.01, 1.0 ],
+                "baseColorFactor": [ 0.176, 0.137, 0.129, 1.0 ],
                 "metallicFactor": 0.01,
                 "roughnessFactor": 0.25
 			}
@@ -99,15 +99,15 @@
             "mesh" : 0,
             "name" : "Cube",
             "rotation" : [
-                0.7071068286895752,
                 0,
                 0,
-                0.7071067094802856
+                0,
+                1
             ],
             "scale" : [
-                0.7250000238418579,
-                0.7250000238418579,
-                0.05000000447034836
+                0.75,
+                0.05,
+                0.75
             ]
         }
     ],
