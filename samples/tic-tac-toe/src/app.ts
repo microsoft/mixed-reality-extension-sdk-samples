@@ -96,19 +96,19 @@ export default class TicTacToe {
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
-        const textAnimationPromise = this.textAnchor.createAnimation({
+        const textAnimationPromise = this.textAnchor.createAnimation(
             // The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
-            animationName: "Spin",
-            // Keyframes define the timeline for the animation: where the actor should be, and when.
-            // We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-            keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
-            // Events are points of interest during the animation. The animating actor will emit a given
-            // named event at the given timestamp with a given string value as an argument.
-            events: [],
+            "Spin", {
+                // Keyframes define the timeline for the animation: where the actor should be, and when.
+                // We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
+                keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
+                // Events are points of interest during the animation. The animating actor will emit a given
+                // named event at the given timestamp with a given string value as an argument.
+                events: [],
 
-            // Optionally, we also repeat the animation infinitely.
-            wrapMode: AnimationWrapMode.Loop
-        }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
+                // Optionally, we also repeat the animation infinitely.
+                wrapMode: AnimationWrapMode.Loop
+            }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
 
         // TODO: This shouldn't be necessary as playanimation should be awaiting the textanimation first.
         await textAnimationPromise;
@@ -135,23 +135,23 @@ export default class TicTacToe {
                 const cube = cubePromise.value;
 
                 // Create some animations on the cube.
-                cube.createAnimation({
-                    animationName: 'GrowIn',
-                    keyframes: this.growAnimationData,
-                    events: []
-                }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
+                cube.createAnimation(
+                    'GrowIn', {
+                        keyframes: this.growAnimationData,
+                        events: []
+                    }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
 
-                cube.createAnimation({
-                    animationName: 'ShrinkOut',
-                    keyframes: this.shrinkAnimationData,
-                    events: []
-                }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
+                cube.createAnimation(
+                    'ShrinkOut', {
+                        keyframes: this.shrinkAnimationData,
+                        events: []
+                    }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
 
-                cube.createAnimation({
-                    animationName: 'DoAFlip',
-                    keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
-                    events: []
-                }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
+                cube.createAnimation(
+                    'DoAFlip', {
+                        keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+                        events: []
+                    }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
 
                 // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
                 // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
@@ -161,13 +161,13 @@ export default class TicTacToe {
                 buttonBehavior.onHover('enter', (userId: string) => {
                     if (this.gameState === GameState.Play &&
                         this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                        cube.startAnimation('GrowIn');
+                        cube.enableAnimation('GrowIn');
                     }
                 });
                 buttonBehavior.onHover('exit', (userId: string) => {
                     if (this.gameState === GameState.Play &&
                         this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-                        cube.startAnimation('ShrinkOut');
+                        cube.enableAnimation('ShrinkOut');
                     }
                 });
 
@@ -175,7 +175,7 @@ export default class TicTacToe {
                     switch (this.gameState) {
                         case GameState.Intro:
                             this.beginGameStatePlay();
-                            cube.startAnimation('GrowIn');
+                            cube.enableAnimation('GrowIn');
                             break;
                         case GameState.Play:
                             // When clicked, put down a tile, and do a victory check
@@ -216,8 +216,8 @@ export default class TicTacToe {
                                     }));
                                 }
                                 this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
-                                cube.stopAnimation('GrowIn');
-                                cube.startAnimation('ShrinkOut');
+                                cube.disableAnimation('GrowIn');
+                                cube.enableAnimation('ShrinkOut');
 
                                 const tempGamePiece = this.currentPlayerGamePiece;
                                 this.currentPlayerGamePiece = this.nextPlayerGamePiece;
@@ -255,7 +255,7 @@ export default class TicTacToe {
         }
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
-        this.textAnchor.startAnimation('Spin');
+        this.textAnchor.enableAnimation('Spin');
         this.beginGameStateIntro();
     }
 
