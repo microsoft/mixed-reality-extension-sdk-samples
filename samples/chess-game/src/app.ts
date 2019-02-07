@@ -8,9 +8,10 @@
 // tslint:disable:no-string-literal
 // tslint:disable:max-classes-per-file
 
-/*
-    - I should be able to call CreateFromPrefab before the prefab is finished loading (it should wait on prefab.created())
-*/
+/**
+ *  *** Notes ***
+ *  - I should be able to call CreateFromPrefab before the prefab is finished loading (it should wait on prefab.created())
+ */
 
 import {
     Actor,
@@ -137,6 +138,7 @@ const hoverScale = 1.1;
 export default class ChessGame {
     private game: Game;
     private sceneRoot: Actor;
+    private table: Actor;
     private checkMarker: Actor;
     private selectedMarker: Actor;
     private selectedActor: Actor;
@@ -161,17 +163,18 @@ export default class ChessGame {
         // Create all the actors.
         await Promise.all([
             this.createRootObject(),
+            this.createTable(),
             this.createChessBoard(),
             this.createChessPieces(),
             this.createMoveMarkers(),
             this.createCheckMarker(),
             this.createSelectedMarker(),
-            // this.makeTestObject(),
+            this.createJoinButtons(),
         ]);
 
-        // Hook up event handlers. We do this after all actors are loaded because the event handlers
+        // Hook up event handlers. Do this after all actors are loaded because the event handlers
         // themselves reference other actors in the scene. It simplifies handler code if we can
-        // assume that the actors are done getting created.
+        // assume that the actors are loaded.
         this.addEventHandlers();
     }
 
@@ -211,6 +214,28 @@ export default class ChessGame {
             });
         this.sceneRoot = sceneRootLoad.value;
         return sceneRootLoad;
+    }
+
+    private createTable() {
+        const tableLoad = Actor.CreatePrimitive(
+            this.context, {
+            definition: {
+                shape: PrimitiveShape.Box,
+                dimensions: {
+                    x: boardStep * 12,
+                    y: boardStep,
+                    z: boardStep * 12
+                }
+            },
+            actor: {
+                parentId: this.sceneRoot.id,
+                transform: {
+                    position: {}
+                }
+            }
+        });
+        this.table = tableLoad.value;
+        return tableLoad;
     }
 
     private createChessBoard() {
@@ -357,40 +382,8 @@ export default class ChessGame {
         return loadActor;
     }
 
-    private makeTestObject() {
-        const testObjLoad = Actor.CreatePrimitive(this.context, {
-            definition: {
-                shape: PrimitiveShape.Box
-            },
-            actor: {
-                parentId: this.sceneRoot.id,
-                transform: {
-                    position: {
-                        x: boardStep * 3.5,
-                        y: 4,
-                        z: boardStep * 3.5
-                    }
-                }
-            }
-        });
+    private createJoinButtons() {
 
-        setInterval(() => {
-            // Random point on unit sphere.
-            const θ = Math.random() * 2 * Math.PI;
-            const z = Math.cos(θ);
-            const x = Math.sqrt(1 - z * z) * Math.cos(θ);
-            const y = Math.sqrt(1 - z * z) * Math.sin(θ);
-            const axis = new Vector3(x, y, z);
-            // Random rotation around picked axis.
-            const rotation = Quaternion.RotationAxis(axis, Math.random() * 2 * Math.PI);
-            // Random ease curve.
-            const easeCurveKeys = Object.keys(AnimationEaseCurves);
-            const easeIndex = Math.floor(Math.random() * easeCurveKeys.length);
-            const easeCurveKey = easeCurveKeys[easeIndex];
-            // Animation test object's rotation.
-            testObjLoad.value.animateTo({ transform: { rotation } }, 1.0, (AnimationEaseCurves as any)[easeCurveKey]);
-        }, 1300);
-        return testObjLoad;
     }
 
     private addEventHandlers() {

@@ -8,7 +8,7 @@ import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
 import { resolve as resolvePath } from 'path';
 import ChessGame from './app';
 
-// log.enable('network');
+log.enable('app', 'network');
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
