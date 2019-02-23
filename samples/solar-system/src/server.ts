@@ -3,16 +3,19 @@
  * Licensed under the MIT License.
  */
 
-import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
+import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 import SolarSystem from './app';
+
+log.enable('app');
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
 
 // Start listening for connections, and serve static files
 const server = new WebHost({
-    baseDir: resolvePath(__dirname, '../public')
+    baseDir: resolvePath(__dirname, '../public'),
+    // baseUrl: 'http://<ngrok-id>.ngrok.io'
 });
 
 // Handle new application sessions

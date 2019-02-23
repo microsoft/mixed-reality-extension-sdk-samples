@@ -51,6 +51,22 @@
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
       "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch wear-a-hat project",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "debug"
+      ],
+      "port": 9229,
+      "cwd": "${workspaceFolder}/samples/wear-a-hat",
+      "internalConsoleOptions": "openOnSessionStart",
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
+      "outputCapture": "std"
     }
   ]
 }

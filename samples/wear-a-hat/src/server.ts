@@ -5,7 +5,7 @@
 
 import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
-import HelloWorld from './app';
+import WearAHat from './app';
 
 log.enable('app');
 
@@ -19,4 +19,4 @@ const server = new WebHost({
 });
 
 // Handle new application sessions
-server.adapter.onConnection(context => new HelloWorld(context, server.baseUrl));
+server.adapter.onConnection(context => new WearAHat(context, server.baseUrl));
