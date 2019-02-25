@@ -134,7 +134,7 @@ export default class WearAHat {
                 parentId: menu.id,
                 name: 'label',
                 text: {
-                    contents: "Wear a Hat".padStart(8, ' '),
+                    contents: ''.padStart(8, ' ') + "Wear a Hat",
                     height: 0.8,
                     anchor: MRESDK.TextAnchorLocation.MiddleCenter,
                     color: MRESDK.Color3.Yellow()
