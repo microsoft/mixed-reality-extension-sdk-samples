@@ -20,6 +20,12 @@
       "script": "build",
       "path": "samples/solar-system/",
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "samples/wear-a-hat/",
+      "problemMatcher": []
     }
   ]
 }
