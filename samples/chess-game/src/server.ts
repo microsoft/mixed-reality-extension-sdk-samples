@@ -3,20 +3,19 @@
  * Licensed under the MIT License.
  */
 
-import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
-import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
+import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 import ChessGame from './app';
 
-log.enable('app', 'network');
+log.enable('app');
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
 
 // Start listening for connections, and serve static files
 const server = new WebHost({
-    baseDir: resolvePath(__dirname, '../public'),
-    // baseUrl: 'http://ad61713c.ngrok.io'
+    baseUrl: 'http://6e8dda91.ngrok.io',
+    baseDir: resolvePath(__dirname, '../public')
 });
 
 // Handle new application sessions
