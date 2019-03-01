@@ -15,29 +15,25 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "ChessPieces_Rook_White",
-            "rotation" : [
-                0.7071080803871155,
-                0,
-                0,
-                0.7071055769920349
-            ]
+            "name" : "ChessPieces_Rook_White"
         }
     ],
     "materials" : [
         {
-            "name" : "Material.002",
+            "name" : "ChessPiecesWhite_MAT",
             "pbrMetallicRoughness" : {
-                "baseColorTexture": {
+                "baseColorTexture" : {
                     "index" : 0,
                     "texCoord" : 0
-                }
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
             }
         }
     ],
     "meshes" : [
         {
-            "name" : "Cylinder.052",
+            "name" : "Cylinder.021",
             "primitives" : [
                 {
                     "attributes" : {
@@ -59,7 +55,7 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "ChessPiecesWhite_Basecol.tga",
+            "name" : "ChessPiecesWhite_Basecol.png",
             "uri" : "ChessPiecesWhite_Basecol.png"
         }
     ],
@@ -67,29 +63,29 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 937,
+            "count" : 1215,
             "max" : [
                 0.013831238262355328,
-                0.013831213116645813,
-                4.862316416165413e-08
+                0.05022624880075455,
+                0.013831238262355328
             ],
             "min" : [
                 -0.013831238262355328,
-                -0.013831263408064842,
-                -0.05022628605365753
+                0,
+                -0.013831238262355328
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 937,
+            "count" : 1215,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 937,
+            "count" : 1215,
             "type" : "VEC2"
         },
         {
@@ -102,28 +98,28 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 11244,
+            "byteLength" : 14580,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 11244,
-            "byteOffset" : 11244
+            "byteLength" : 14580,
+            "byteOffset" : 14580
         },
         {
             "buffer" : 0,
-            "byteLength" : 7496,
-            "byteOffset" : 22488
+            "byteLength" : 9720,
+            "byteOffset" : 29160
         },
         {
             "buffer" : 0,
             "byteLength" : 6936,
-            "byteOffset" : 29984
+            "byteOffset" : 38880
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 36920,
+            "byteLength" : 45816,
             "uri" : "ChessPieces_Rook_White.bin"
         }
     ]

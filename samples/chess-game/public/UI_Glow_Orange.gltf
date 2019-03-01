@@ -15,37 +15,34 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "UI_Glow_Orange",
-            "rotation" : [
-                0.7071080803871155,
-                0,
-                0,
-                0.7071055769920349
-            ]
+            "name" : "UI_Glow_Orange"
         }
     ],
     "materials" : [
         {
-            "emissiveFactor" : [
-                0.30498743057250977,
-                0.03310471773147583,
-                0.006048841401934624
-            ],
             "name" : "EmissiveOrange",
-            "pbrMetallicRoughness" : {}
+            "pbrMetallicRoughness" : {
+                "baseColorFactor" : [
+                    0.8000000715255737,
+                    0.21904045343399048,
+                    0.040851183235645294,
+                    1
+                ],
+                "metallicFactor" : 0,
+                "roughnessFactor" : 1
+            }
         }
     ],
     "meshes" : [
         {
-            "name" : "Cylinder",
+            "name" : "Cylinder.021",
             "primitives" : [
                 {
                     "attributes" : {
                         "POSITION" : 0,
-                        "NORMAL" : 1,
-                        "TEXCOORD_0" : 2
+                        "NORMAL" : 1
                     },
-                    "indices" : 3,
+                    "indices" : 2,
                     "material" : 0
                 }
             ]
@@ -55,63 +52,52 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 198,
+            "count" : 512,
             "max" : [
-                0.02997044287621975,
-                0.02997044287621975,
-                1.1337551342194274e-07
+                0.018389873206615448,
+                0.0022716522216796875,
+                0.01838988997042179
             ],
             "min" : [
-                -0.02997044287621975,
-                -0.02997044287621975,
-                -0.0353553332388401
+                -0.01838989183306694,
+                0,
+                -0.018389875069260597
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 198,
+            "count" : 512,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
-            "componentType" : 5126,
-            "count" : 198,
-            "type" : "VEC2"
-        },
-        {
-            "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 576,
+            "count" : 1536,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 2376,
+            "byteLength" : 6144,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 2376,
-            "byteOffset" : 2376
+            "byteLength" : 6144,
+            "byteOffset" : 6144
         },
         {
             "buffer" : 0,
-            "byteLength" : 1584,
-            "byteOffset" : 4752
-        },
-        {
-            "buffer" : 0,
-            "byteLength" : 1152,
-            "byteOffset" : 6336
+            "byteLength" : 3072,
+            "byteOffset" : 12288
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 7488,
+            "byteLength" : 15360,
             "uri" : "UI_Glow_Orange.bin"
         }
     ]

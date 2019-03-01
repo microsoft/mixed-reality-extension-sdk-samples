@@ -15,29 +15,25 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "ChessPieces_Bishop_White",
-            "rotation" : [
-                0.7071080803871155,
-                0,
-                0,
-                0.7071055769920349
-            ]
+            "name" : "ChessPieces_Bishop_White"
         }
     ],
     "materials" : [
         {
-            "name" : "Material.002",
+            "name" : "ChessPiecesWhite_MAT",
             "pbrMetallicRoughness" : {
-                "baseColorTexture": {
+                "baseColorTexture" : {
                     "index" : 0,
                     "texCoord" : 0
-                }
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
             }
         }
     ],
     "meshes" : [
         {
-            "name" : "Cylinder.043",
+            "name" : "Cylinder.021",
             "primitives" : [
                 {
                     "attributes" : {
@@ -59,7 +55,7 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "ChessPiecesWhite_Basecol.tga",
+            "name" : "ChessPiecesWhite_Basecol.png",
             "uri" : "ChessPiecesWhite_Basecol.png"
         }
     ],
@@ -67,29 +63,29 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 646,
+            "count" : 825,
             "max" : [
                 0.013831238262355328,
-                0.013831213116645813,
-                4.862316416165413e-08
+                0.06578803807497025,
+                0.013831238262355328
             ],
             "min" : [
                 -0.013831238262355328,
-                -0.013831263408064842,
-                -0.06578804552555084
+                0,
+                -0.013831238262355328
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 646,
+            "count" : 825,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 646,
+            "count" : 825,
             "type" : "VEC2"
         },
         {
@@ -102,28 +98,28 @@
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 7752,
+            "byteLength" : 9900,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 7752,
-            "byteOffset" : 7752
+            "byteLength" : 9900,
+            "byteOffset" : 9900
         },
         {
             "buffer" : 0,
-            "byteLength" : 5168,
-            "byteOffset" : 15504
+            "byteLength" : 6600,
+            "byteOffset" : 19800
         },
         {
             "buffer" : 0,
             "byteLength" : 6408,
-            "byteOffset" : 20672
+            "byteOffset" : 26400
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 27080,
+            "byteLength" : 32808,
             "uri" : "ChessPieces_Bishop_White.bin"
         }
     ]

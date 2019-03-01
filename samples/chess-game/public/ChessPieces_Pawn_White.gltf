@@ -15,29 +15,25 @@
     "nodes" : [
         {
             "mesh" : 0,
-            "name" : "ChessPieces_Pawn_White",
-            "rotation" : [
-                0.7071080803871155,
-                0,
-                0,
-                0.7071055769920349
-            ]
+            "name" : "ChessPieces_Pawn_White"
         }
     ],
     "materials" : [
         {
-            "name" : "Material.002",
+            "name" : "ChessPiecesWhite_MAT",
             "pbrMetallicRoughness" : {
-                "baseColorTexture": {
+                "baseColorTexture" : {
                     "index" : 0,
                     "texCoord" : 0
-                }
+                },
+                "metallicFactor" : 0,
+                "roughnessFactor" : 0.5
             }
         }
     ],
     "meshes" : [
         {
-            "name" : "Cylinder.040",
+            "name" : "Cylinder.021",
             "primitives" : [
                 {
                     "attributes" : {
@@ -59,7 +55,7 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "ChessPiecesWhite_Basecol.tga",
+            "name" : "ChessPiecesWhite_Basecol.png",
             "uri" : "ChessPiecesWhite_Basecol.png"
         }
     ],
@@ -67,63 +63,63 @@
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 613,
+            "count" : 630,
             "max" : [
-                0.011064990423619747,
-                0.01106497086584568,
-                3.889853061878057e-08
+                0.013831238262355328,
+                0.057829391211271286,
+                0.013831238262355328
             ],
             "min" : [
-                -0.011064990423619747,
-                -0.011065010912716389,
-                -0.04626351594924927
+                -0.013831238262355328,
+                0,
+                -0.013831238262355328
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 613,
+            "count" : 630,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 613,
+            "count" : 630,
             "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 2652,
+            "count" : 2556,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 7356,
+            "byteLength" : 7560,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 7356,
-            "byteOffset" : 7356
+            "byteLength" : 7560,
+            "byteOffset" : 7560
         },
         {
             "buffer" : 0,
-            "byteLength" : 4904,
-            "byteOffset" : 14712
+            "byteLength" : 5040,
+            "byteOffset" : 15120
         },
         {
             "buffer" : 0,
-            "byteLength" : 5304,
-            "byteOffset" : 19616
+            "byteLength" : 5112,
+            "byteOffset" : 20160
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 24920,
+            "byteLength" : 25272,
             "uri" : "ChessPieces_Pawn_White.bin"
         }
     ]

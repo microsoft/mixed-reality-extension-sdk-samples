@@ -180,7 +180,7 @@ export default class ChessGame {
 
     private async preloadAllModels() {
         const preloads: Array<Promise<AssetGroup>> = [];
-        preloads.push(this.context.assetManager.loadGltf('chessboard', `${this.baseUrl}/Chessboard.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
+        preloads.push(this.context.assetManager.loadGltf('chessboard', `${this.baseUrl}/Chessboard_Main.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
         preloads.push(this.context.assetManager.loadGltf('white_bishop', `${this.baseUrl}/ChessPieces_Bishop_White.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
         preloads.push(this.context.assetManager.loadGltf('white_king', `${this.baseUrl}/ChessPieces_King_White.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
         preloads.push(this.context.assetManager.loadGltf('white_knight', `${this.baseUrl}/ChessPieces_Knight_White.gltf`, 'mesh').then(value => this.assetGroups[value.name] = value));
