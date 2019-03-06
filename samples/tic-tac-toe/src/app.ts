@@ -96,7 +96,7 @@ export default class TicTacToe {
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
-        const textAnimationPromise = this.textAnchor.createAnimation(
+        this.textAnchor.createAnimation(
             // The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
             "Spin", {
                 // Keyframes define the timeline for the animation: where the actor should be, and when.
@@ -108,10 +108,7 @@ export default class TicTacToe {
 
                 // Optionally, we also repeat the animation infinitely.
                 wrapMode: AnimationWrapMode.Loop
-            }).catch(reason => console.log(`Failed to create spin animation: ${reason}`));
-
-        // TODO: This shouldn't be necessary as playanimation should be awaiting the textanimation first.
-        await textAnimationPromise;
+            });
 
         for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
             for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
@@ -139,19 +136,19 @@ export default class TicTacToe {
                     'GrowIn', {
                         keyframes: this.growAnimationData,
                         events: []
-                    }).catch(reason => console.log(`Failed to create grow animation: ${reason}`));
+                    });
 
                 cube.createAnimation(
                     'ShrinkOut', {
                         keyframes: this.shrinkAnimationData,
                         events: []
-                    }).catch(reason => console.log(`Failed to create shrink animation: ${reason}`));
+                    });
 
                 cube.createAnimation(
                     'DoAFlip', {
                         keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
                         events: []
-                    }).catch(reason => console.log(`Failed to create flip animation: ${reason}`));
+                    });
 
                 // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
                 // Button behaviors have two pairs of events: hover start/stop, and click start/stop.

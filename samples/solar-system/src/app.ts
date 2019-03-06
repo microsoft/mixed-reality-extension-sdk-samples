@@ -55,10 +55,10 @@ export default class SolarSystem {
         this.context.onStopped(() => this.stopped());
     }
 
-    private started = async () => {
+    private started = () => {
         console.log(`session started ${this.context.sessionId}`);
 
-        await this.createSolarSystem();
+        this.createSolarSystem();
 
         const sunEntity = this.celestialBodies.sol;
         if (sunEntity && sunEntity.model) {
@@ -104,13 +104,11 @@ export default class SolarSystem {
         console.log(`user-left: ${user.name}`);
     }
 
-    private createSolarSystem(): Promise<any> {
-        const promises = [];
+    private createSolarSystem() {
         const keys = Object.keys(database);
         for (const bodyName of keys) {
-            promises.push(this.createBody(bodyName));
+            this.createBody(bodyName);
         }
-        return Promise.all(promises);
     }
 
     private resumeAnimations() {
@@ -131,7 +129,7 @@ export default class SolarSystem {
         }
     }
 
-    private createBody(bodyName: string): Promise<any> {
+    private createBody(bodyName: string) {
         console.log(`Loading ${bodyName}`);
 
         const facts = database[bodyName];
@@ -229,31 +227,22 @@ export default class SolarSystem {
                 model: model.value
             } as CelestialBody;
 
-            return Promise.all([
-                inclination,
-                position,
-                obliquity0,
-                obliquity1,
-                model,
-                this.createAnimations(bodyName)
-            ]);
+            this.createAnimations(bodyName);
         } catch (e) {
             console.log("createBody failed", bodyName, e);
         }
     }
 
-    private createAnimations(bodyName: string): Promise<any> {
-        const promises: Array<Promise<any>> = [];
-        promises.push(this.createAxialAnimation(bodyName));
-        promises.push(this.createOrbitalAnimation(bodyName));
-        return Promise.all(promises);
+    private createAnimations(bodyName: string) {
+        this.createAxialAnimation(bodyName);
+        this.createOrbitalAnimation(bodyName);
     }
 
     public readonly timeFactor = 40;
     public readonly axialKeyframeCount = 90;
     public readonly orbitalKeyframeCount = 90;
 
-    private createAxialAnimation(bodyName: string): Promise<any> {
+    private createAxialAnimation(bodyName: string) {
         const facts = database[bodyName];
         const celestialBody = this.celestialBodies[bodyName];
 
@@ -294,7 +283,7 @@ export default class SolarSystem {
             });
 
             // Create the animation on the actor
-            return celestialBody.model.createAnimation(
+            celestialBody.model.createAnimation(
                 `${bodyName}:axial`, {
                     keyframes,
                     events: [],
@@ -303,7 +292,7 @@ export default class SolarSystem {
         }
     }
 
-    private createOrbitalAnimation(bodyName: string): Promise<any> {
+    private createOrbitalAnimation(bodyName: string) {
         const facts = database[bodyName];
         const celestialBody = this.celestialBodies[bodyName];
 
@@ -343,7 +332,7 @@ export default class SolarSystem {
             });
 
             // Create the animation on the actor
-            return celestialBody.position.createAnimation(
+            celestialBody.position.createAnimation(
                 `${bodyName}:orbital`, {
                     keyframes,
                     events: [],

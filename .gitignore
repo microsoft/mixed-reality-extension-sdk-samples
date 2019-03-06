@@ -67,3 +67,4 @@ built/
 app.zip
 
 .openode
+Dockerfile
