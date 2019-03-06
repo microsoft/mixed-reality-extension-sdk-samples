@@ -9,6 +9,7 @@ import {
     AnimationWrapMode,
     ButtonBehavior,
     Context,
+    DegreesToRadians,
     ForwardPromise,
     PrimitiveShape,
     Quaternion,
@@ -33,7 +34,7 @@ enum GamePiece {
 export default class TicTacToe {
     private text: Actor = null;
     private textAnchor: Actor = null;
-
+    private light: Actor = null;
     private gameState: GameState;
 
     private currentPlayerGamePiece: GamePiece;
@@ -86,13 +87,32 @@ export default class TicTacToe {
                     anchor: TextAnchorLocation.MiddleCenter,
                     color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
                     height: 0.3
-                }
+                },
+            }
+        });
+        const lightPromise = Actor.CreateEmpty(this.context, {
+            actor: {
+                parentId: textPromise.value.id,
+                name: 'Light',
+                transform: {
+                    position: { x: 0, y: 1.0, z: -0.5 },
+                    rotation: Quaternion.RotationAxis(Vector3.Left(), -45.0 * DegreesToRadians),
+                },
+                light: {
+                    color: { r: 1, g: 0.6, b: 0.3 },
+                    type: 'spot',
+                    intensity: 20,
+                    range: 6,
+                    spotAngle: 45 * DegreesToRadians
+                },
+
             }
         });
 
         // Even though the actor is not yet created in Altspace (because we didn't wait for the promise),
         // we can still get a reference to it by grabbing the `value` field from the forward promise.
         this.text = textPromise.value;
+        this.light = lightPromise.value;
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
@@ -262,6 +282,7 @@ export default class TicTacToe {
     private beginGameStateCelebration(winner: GamePiece) {
         console.log("BeginGameState Celebration");
         this.gameState = GameState.Celebration;
+        this.light.light.color = { r: 0.3, g: 1.0, b: 0.3 };
 
         if (winner === undefined) {
             console.log("Tie");
@@ -280,6 +301,7 @@ export default class TicTacToe {
         this.currentPlayerGamePiece = GamePiece.X;
         this.nextPlayerGamePiece = GamePiece.O;
         this.boardState = [];
+        this.light.light.color = { r: 1, g: 0.6, b: 0.3 };
 
         if (this.gamePieceActors !== undefined) {
             for (const actor of this.gamePieceActors) {
