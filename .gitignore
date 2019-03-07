@@ -68,3 +68,4 @@ app.zip
 
 .openode
 Dockerfile
+docker-compose.yml
