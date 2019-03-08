@@ -69,3 +69,6 @@ app.zip
 .openode
 Dockerfile
 docker-compose.yml
+
+# git .orig files
+.orig
