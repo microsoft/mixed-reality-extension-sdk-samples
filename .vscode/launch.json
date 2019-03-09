@@ -55,6 +55,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch AltspaceVR movieplayer project",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "debug"
+      ],
+      "port": 9229,
+      "cwd": "${workspaceFolder}/samples/altspacevr-movie-player",
+      "internalConsoleOptions": "openOnSessionStart",
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch wear-a-hat project",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
