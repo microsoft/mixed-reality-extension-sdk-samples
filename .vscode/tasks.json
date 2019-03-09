@@ -24,6 +24,12 @@
     {
       "type": "npm",
       "script": "build",
+      "path": "samples/altspacevr-movie-player/",
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build",
       "path": "samples/wear-a-hat/",
       "problemMatcher": []
     }
