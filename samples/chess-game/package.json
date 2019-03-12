@@ -28,12 +28,14 @@
     "debug": "node --nolazy --inspect-brk=9229 ."
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.0",
     "tslint": "5.11.0",
     "typescript": "3.0.3"
   },
   "dependencies": {
-    "@microsoft/mixed-reality-extension-sdk": "^0.7.0",
+    "@microsoft/mixed-reality-extension-sdk": "^0.8.0",
     "@types/node": "^10.3.1",
-    "chess": "^0.3.3"
+    "chess": "^0.3.3",
+    "dotenv": "^6.2.0"
   }
 }

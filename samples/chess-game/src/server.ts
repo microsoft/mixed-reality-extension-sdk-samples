@@ -4,13 +4,17 @@
  */
 
 import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
+import dotenv from 'dotenv';
 import { resolve as resolvePath } from 'path';
-import ChessGame from './app';
+import App from './app';
 
-log.enable('app');
+// Read .env if file exists
+dotenv.config();
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
+
+log.enable('app');
 
 // Start listening for connections, and serve static files
 const server = new WebHost({
@@ -19,4 +23,4 @@ const server = new WebHost({
 });
 
 // Handle new application sessions
-server.adapter.onConnection(context => new ChessGame(context, server.baseUrl));
+server.adapter.onConnection(context => new App(context, server.baseUrl));

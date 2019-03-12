@@ -639,7 +639,14 @@ export default class ChessGame {
     }
 
     private async animateCapture(actor: Actor) {
-        actor.animateTo({ transform: { scale: { y: 0 } } }, 1.0, AnimationEaseCurves.EaseInSine)
-            .then(() => actor.destroy());
+        actor.animateTo({ transform: { scale: { y: 0 } } }, 1.0, AnimationEaseCurves.EaseInSine);
+        await delay(1000);
+        actor.destroy();
     }
+}
+
+function delay(milliseconds: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), milliseconds);
+    });
 }
