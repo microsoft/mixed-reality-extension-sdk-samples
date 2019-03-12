@@ -3,13 +3,13 @@
  * Licensed under the MIT License.
  */
 
-import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
+// Read .env if file exists
 import dotenv from 'dotenv';
+dotenv.config();
+
+import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 import App from './app';
-
-// Read .env if file exists
-dotenv.config();
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
