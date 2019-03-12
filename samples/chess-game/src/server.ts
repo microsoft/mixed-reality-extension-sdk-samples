@@ -7,18 +7,21 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { log, WebHost } from '@microsoft/mixed-reality-extension-sdk';
+/* Sample .env file:
+ *  PORT=80
+ *  BASE_URL=http://<application>.openode.io
+ *  MRELOG=app:error,network,network-content
+ */
+
+import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
 import { resolve as resolvePath } from 'path';
 import App from './app';
 
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
 
-log.enable('app');
-
 // Start listening for connections, and serve static files
 const server = new WebHost({
-    // baseUrl: 'http://<ngrok-id>.ngrok.io',
     baseDir: resolvePath(__dirname, '../public')
 });
 
