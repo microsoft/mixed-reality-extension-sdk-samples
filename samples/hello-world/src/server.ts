@@ -16,6 +16,9 @@ process.on('unhandledRejection', reason => console.log('unhandledRejection', rea
 
 log.enable('app');
 
+// log.enable('network');
+// log.enable('network-content');
+
 // Start listening for connections, and serve static files
 const server = new WebHost({
     // baseUrl: 'http://<ngrok-id>.ngrok.io',

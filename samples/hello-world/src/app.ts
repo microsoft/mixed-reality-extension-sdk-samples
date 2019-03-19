@@ -117,6 +117,19 @@ export default class HelloWorld {
         // When clicked, do a 360 sideways.
         buttonBehavior.onClick('pressed', (userId: string) => {
             this.cube.enableAnimation('DoAFlip');
+            this.cube.grabbable = !this.cube.grabbable;
+        });
+
+        // Make the cube grabbable.
+        this.cube.grabbable = true;
+
+        // Add grab event handlers
+        this.cube.onGrab('begin', (userId) => {
+            console.log("Grab has begun.");
+        });
+
+        this.cube.onGrab('end', (userId) => {
+            console.log("Grab has ended.");
         });
     }
 
