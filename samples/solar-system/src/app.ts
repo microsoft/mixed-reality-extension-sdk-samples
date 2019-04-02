@@ -66,6 +66,11 @@ export default class SolarSystem {
             const sunPrimitives = sun.findChildrenByName('Primitive', true);
 
             sunPrimitives.forEach((prim) => {
+                // Add a collider so that the behavior system will work properly on Unity host apps.
+                const center = { x: 0, y: 0, z: 0} as MRESDK.Vector3Like;
+                const radius = 3;
+                prim.setCollider('sphere', false, center, radius);
+
                 const buttonBehavior = prim.setBehavior(MRESDK.ButtonBehavior);
 
                 buttonBehavior.onClick('pressed', (userId: string) => {
@@ -157,7 +162,7 @@ export default class SolarSystem {
                 actor: {
                     name: `${bodyName}-inclination`,
                     transform: {
-                        rotation: inclinationValue
+                        app: { rotation: inclinationValue }
                     }
                 }
             });
@@ -166,7 +171,7 @@ export default class SolarSystem {
                     name: `${bodyName}-position`,
                     parentId: inclination.value.id,
                     transform: {
-                        position: positionValue
+                        local: { position: positionValue }
                     }
                 }
             });
@@ -175,7 +180,7 @@ export default class SolarSystem {
                     name: `${bodyName}-label`,
                     parentId: position.value.id,
                     transform: {
-                        position: { y: 0.1 + Math.pow(scaleMultiplier, 1 / 2.5) }
+                        local: { position: { y: 0.1 + Math.pow(scaleMultiplier, 1 / 2.5) } }
                     }
                 }
             });
@@ -190,7 +195,7 @@ export default class SolarSystem {
                     name: `${bodyName}-obliquity1`,
                     parentId: obliquity0.value.id,
                     transform: {
-                        rotation: obliquityValue
+                        local: { rotation: obliquityValue }
                     }
                 }
             });
@@ -201,9 +206,10 @@ export default class SolarSystem {
                     name: `${bodyName}-body`,
                     parentId: obliquity1.value.id,
                     transform: {
-                        scale: scaleValue
+                        local: { scale: scaleValue }
                     }
                 }
+
             });
 
             label.value.enableText({
@@ -253,7 +259,7 @@ export default class SolarSystem {
             const timeStep = axisTimeInSeconds / this.axialKeyframeCount;
             const keyframes: MRESDK.AnimationKeyframe[] = [];
             const angleStep = 360 / this.axialKeyframeCount;
-            const initial = celestialBody.model.transform.rotation.clone();
+            const initial = celestialBody.model.transform.local.rotation.clone();
             let value: Partial<MRESDK.ActorLike>;
 
             for (let i = 0; i < this.axialKeyframeCount; ++i) {
@@ -262,7 +268,7 @@ export default class SolarSystem {
                 const rotation = initial.multiply(rotDelta);
                 value = {
                     transform: {
-                        rotation
+                        local: { rotation }
                     }
                 };
                 keyframes.push({
@@ -274,7 +280,7 @@ export default class SolarSystem {
             // Final frame
             value = {
                 transform: {
-                    rotation: celestialBody.model.transform.rotation
+                    local: { rotation: celestialBody.model.transform.local.rotation }
                 }
             };
             keyframes.push({
@@ -302,7 +308,7 @@ export default class SolarSystem {
             const timeStep = orbitTimeInSeconds / this.orbitalKeyframeCount;
             const angleStep = 360 / this.orbitalKeyframeCount;
             const keyframes: MRESDK.AnimationKeyframe[] = [];
-            const initial = celestialBody.position.transform.position.clone();
+            const initial = celestialBody.position.transform.local.position.clone();
             let value: Partial<MRESDK.ActorLike>;
 
             for (let i = 0; i < this.orbitalKeyframeCount; ++i) {
@@ -311,7 +317,7 @@ export default class SolarSystem {
                 const position = initial.rotateByQuaternionToRef(rotDelta, new MRESDK.Vector3());
                 value = {
                     transform: {
-                        position
+                        local: { position }
                     }
                 };
                 keyframes.push({
@@ -323,7 +329,7 @@ export default class SolarSystem {
             // Final frame
             value = {
                 transform: {
-                    position: celestialBody.position.transform.position
+                    local: { position: celestialBody.position.transform.local.position }
                 }
             };
             keyframes.push({
