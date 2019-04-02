@@ -36,7 +36,7 @@ export default class HelloWorld {
             actor: {
                 name: 'Text',
                 transform: {
-                    position: { x: 0, y: 0.5, z: 0 }
+                    app: { position: { x: 0, y: 0.5, z: 0 } }
                 },
                 text: {
                     contents: "Hello World!",
@@ -80,8 +80,10 @@ export default class HelloWorld {
                 // Parent the glTF model to the text actor.
                 parentId: this.text.id,
                 transform: {
-                    position: { x: 0, y: -1, z: 0 },
-                    scale: { x: 0.4, y: 0.4, z: 0.4 }
+                    local: {
+                        position: { x: 0, y: -1, z: 0 },
+                        scale: { x: 0.4, y: 0.4, z: 0.4 }
+                    }
                 }
             }
         });
@@ -107,11 +109,11 @@ export default class HelloWorld {
         // Trigger the grow/shrink animations on hover.
         buttonBehavior.onHover('enter', (userId: string) => {
             this.cube.animateTo(
-                { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+                { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
         });
         buttonBehavior.onHover('exit', (userId: string) => {
             this.cube.animateTo(
-                { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+                { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
         });
 
         // When clicked, do a 360 sideways.
@@ -128,19 +130,19 @@ export default class HelloWorld {
     private generateSpinKeyframes(duration: number, axis: Vector3): AnimationKeyframe[] {
         return [{
             time: 0 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, 0) } }
+            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 0) } } }
         }, {
             time: 0.25 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } }
+            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } } }
         }, {
             time: 0.5 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, Math.PI) } }
+            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI) } } }
         }, {
             time: 0.75 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } }
+            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
         }, {
             time: 1 * duration,
-            value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
+            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
         }];
     }
 }
