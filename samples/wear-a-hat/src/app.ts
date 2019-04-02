@@ -101,7 +101,7 @@ export default class WearAHat {
                     parentId: menu.id,
                     name: hatId,
                     transform: {
-                        local: { position: { x: 0, y, z: 0 } }
+                        position: { x: 0, y, z: 0 }
                     }
                 }
             });
@@ -121,7 +121,7 @@ export default class WearAHat {
                         anchor: MRESDK.TextAnchorLocation.MiddleLeft
                     },
                     transform: {
-                        local: { position: { x: 0.5, y, z: 0 } }
+                        position: { x: 0.5, y, z: 0 }
                     }
                 }
             });
@@ -140,7 +140,7 @@ export default class WearAHat {
                     color: MRESDK.Color3.Yellow()
                 },
                 transform: {
-                    local: { position: { x: 0.5, y: y + 0.25, z: 0 } }
+                    position: { x: 0.5, y: y + 0.25, z: 0 }
                 }
             }
         });
@@ -190,14 +190,12 @@ export default class WearAHat {
             prefabId: this.prefabs[hatId].prefabs.byIndex(0).id,
             actor: {
                 transform: {
-                    local: {
-                        position: hatRecord.position,
-                        rotation: MRESDK.Quaternion.FromEulerAngles(
-                            hatRecord.rotation.x * MRESDK.DegreesToRadians,
-                            hatRecord.rotation.y * MRESDK.DegreesToRadians,
-                            hatRecord.rotation.z * MRESDK.DegreesToRadians),
-                        scale: hatRecord.scale,
-                    }
+                    position: hatRecord.position,
+                    rotation: MRESDK.Quaternion.FromEulerAngles(
+                        hatRecord.rotation.x * MRESDK.DegreesToRadians,
+                        hatRecord.rotation.y * MRESDK.DegreesToRadians,
+                        hatRecord.rotation.z * MRESDK.DegreesToRadians),
+                    scale: hatRecord.scale,
                 },
                 attachment: {
                     attachPoint: 'head',

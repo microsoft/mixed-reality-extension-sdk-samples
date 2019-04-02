@@ -69,7 +69,7 @@ export default class TicTacToe {
             actor: {
                 name: 'TextAnchor',
                 transform: {
-                    app: { position: { x: 0, y: 1.2, z: 0 } }
+                    position: { x: 0, y: 1.2, z: 0 }
                 },
             }
         });
@@ -80,7 +80,7 @@ export default class TicTacToe {
                 parentId: this.textAnchor.id,
                 name: 'Text',
                 transform: {
-                    local: { position: { x: 0, y: 0.0, z: -1.5 } }
+                    position: { x: 0, y: 0.0, z: -1.5 }
                 },
                 text: {
                     contents: "Tic-Tac-Toe!",
@@ -95,10 +95,8 @@ export default class TicTacToe {
                 parentId: textPromise.value.id,
                 name: 'Light',
                 transform: {
-                    local: {
-                        position: { x: 0, y: 1.0, z: -0.5 },
-                        rotation: Quaternion.RotationAxis(Vector3.Left(), -45.0 * DegreesToRadians),
-                    }
+                    position: { x: 0, y: 1.0, z: -0.5 },
+                    rotation: Quaternion.RotationAxis(Vector3.Left(), -45.0 * DegreesToRadians),
                 },
                 light: {
                     color: { r: 1, g: 0.6, b: 0.3 },
@@ -144,10 +142,8 @@ export default class TicTacToe {
                     actor: {
                         name: 'Altspace Cube',
                         transform: {
-                            app: {
-                                position: { x: (tileIndexX) - 1.0, y: 0.5, z: (tileIndexZ) - 1.0 },
-                            },
-                            local: { scale: { x: 0.4, y: 0.4, z: 0.4 } }
+                            position: { x: (tileIndexX) - 1.0, y: 0.5, z: (tileIndexZ) - 1.0 },
+                            scale: { x: 0.4, y: 0.4, z: 0.4 }
                         }
                     }
                 });
@@ -204,9 +200,9 @@ export default class TicTacToe {
                                 console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
                                     " on: (" + tileIndexX + "," + tileIndexZ + ")");
                                 const gamePiecePosition: Vector3 = new Vector3(
-                                    cube.transform.local.position.x,
-                                    cube.transform.local.position.y + 0.55,
-                                    cube.transform.local.position.z);
+                                    cube.transform.position.x,
+                                    cube.transform.position.y + 0.55,
+                                    cube.transform.position.z);
                                 if (this.currentPlayerGamePiece === GamePiece.O) {
                                     this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
                                         definition: {
@@ -218,7 +214,7 @@ export default class TicTacToe {
                                         actor: {
                                             name: 'O',
                                             transform: {
-                                                local: { position: gamePiecePosition }
+                                                position: gamePiecePosition
                                             }
                                         }
                                     }));
@@ -231,7 +227,7 @@ export default class TicTacToe {
                                         actor: {
                                             name: 'X',
                                             transform: {
-                                                local: { position: gamePiecePosition }
+                                                position: gamePiecePosition
                                             }
                                         }
                                     }));
@@ -326,35 +322,35 @@ export default class TicTacToe {
     private generateSpinKeyframes(duration: number, axis: Vector3): AnimationKeyframe[] {
         return [{
             time: 0 * duration,
-            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 0) } } }
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, 0) } }
         }, {
             time: 0.25 * duration,
-            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } } }
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } }
         }, {
             time: 0.5 * duration,
-            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI) } } }
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, Math.PI) } }
         }, {
             time: 0.75 * duration,
-            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } }
         }, {
             time: 1 * duration,
-            value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
+            value: { transform: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } }
         }];
     }
 
     private growAnimationData: AnimationKeyframe[] = [{
         time: 0,
-        value: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }
+        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
     }, {
         time: 0.3,
-        value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
+        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
     }];
 
     private shrinkAnimationData: AnimationKeyframe[] = [{
         time: 0,
-        value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
+        value: { transform: { scale: { x: 0.5, y: 0.5, z: 0.5 } } }
     }, {
         time: 0.3,
-        value: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }
+        value: { transform: { scale: { x: 0.4, y: 0.4, z: 0.4 } } }
     }];
 }
