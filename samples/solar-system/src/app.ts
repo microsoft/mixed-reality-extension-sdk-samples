@@ -4,7 +4,6 @@
  */
 
 import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
-import { Vector3Like } from '@microsoft/mixed-reality-extension-sdk';
 
 /**
  * Solar system database
@@ -68,7 +67,7 @@ export default class SolarSystem {
 
             sunPrimitives.forEach((prim) => {
                 // Add a collider so that the behavior system will work properly on Unity host apps.
-                const center = { x: 0, y: 0, z: 0} as Vector3Like;
+                const center = { x: 0, y: 0, z: 0} as MRESDK.Vector3Like;
                 const radius = 3;
                 prim.setCollider('sphere', false, center, radius);
 
