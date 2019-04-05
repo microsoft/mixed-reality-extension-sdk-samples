@@ -67,13 +67,13 @@ export default class SolarSystem {
 
             sunPrimitives.forEach((prim) => {
                 // Add a collider so that the behavior system will work properly on Unity host apps.
-                const center = { x: 0, y: 0, z: 0} as MRESDK.Vector3Like;
+                const center = { x: 0, y: 0, z: 0 } as MRESDK.Vector3Like;
                 const radius = 3;
                 prim.setCollider('sphere', false, center, radius);
 
                 const buttonBehavior = prim.setBehavior(MRESDK.ButtonBehavior);
 
-                buttonBehavior.onClick('pressed', (userId: string) => {
+                buttonBehavior.onClick('pressed', () => {
                     if (this.animationsRunning) {
                         this.pauseAnimations();
                         this.animationsRunning = false;
@@ -83,11 +83,11 @@ export default class SolarSystem {
                     }
                 });
 
-                buttonBehavior.onHover('enter', (userId: string) => {
+                buttonBehavior.onHover('enter', () => {
                     console.log(`Hover entered on ${sunEntity.model.name}.`);
                 });
 
-                buttonBehavior.onHover('exit', (userId: string) => {
+                buttonBehavior.onHover('exit', () => {
                     console.log(`Hover exited on ${sunEntity.model.name}.`);
                 });
             });

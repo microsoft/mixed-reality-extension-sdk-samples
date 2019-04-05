@@ -108,7 +108,7 @@ export default class WearAHat {
 
             // Set a click handler on the button.
             button.value.setBehavior(MRESDK.ButtonBehavior)
-                .onClick('released', (userId: string) => this.wearHat(hatId, userId));
+                .onClick('released', user => this.wearHat(hatId, user.id));
 
             // Create a label for the menu entry.
             MRESDK.Actor.CreateEmpty(this.context, {
