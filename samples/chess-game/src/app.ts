@@ -10,7 +10,6 @@
 
 /**
  *  *** Notes ***
- *  - I should be able to call CreateFromPrefab before the prefab is finished loading (it should wait on prefab.created())
  */
 
 import {
@@ -206,7 +205,9 @@ export default class ChessGame {
             this.context, {
                 actor: {
                     transform: {
-                        scale: appScale
+                        local: {
+                            scale: appScale
+                        }
                     }
                 }
             });
@@ -231,7 +232,9 @@ export default class ChessGame {
                 name: "board-offset",
                 parentId: this.sceneRoot.id,
                 transform: {
-                    position: { x: 0.135, z: 0.135 }
+                    local: {
+                        position: { x: 0.135, z: 0.135 }
+                    }
                 }
             }
         });
@@ -246,9 +249,7 @@ export default class ChessGame {
                     actor: {
                         name: `square-${file}${rank}`,
                         parentId: this.boardOffset.id,
-                        transform: {
-                            position
-                        }
+                        transform: { local: { position } }
                     }
                 });
                 loads.push(loadActor);
@@ -278,9 +279,7 @@ export default class ChessGame {
                     actor: {
                         name,
                         parentId: this.boardOffset.id,
-                        transform: {
-                            position
-                        }
+                        transform: { local: { position } }
                     }
                 });
                 loads.push(baseLoad);
@@ -291,9 +290,7 @@ export default class ChessGame {
                     actor: {
                         name: `${name}-model`,
                         parentId: baseLoad.value.id,
-                        transform: {
-                            rotation: info.rotation
-                        }
+                        transform: { local: { rotation: info.rotation } }
                     },
                     subscriptions: ['transform']
                 });
@@ -317,9 +314,7 @@ export default class ChessGame {
                 actor: {
                     name: 'move-marker',
                     parentId: this.boardOffset.id,
-                    transform: {
-                        position
-                    }
+                    transform: { local: { position } }
                 }
             });
             loads.push(loadActor);
@@ -335,9 +330,7 @@ export default class ChessGame {
             actor: {
                 name: 'check-marker',
                 parentId: this.boardOffset.id,
-                transform: {
-                    position: { x: 1, y: 999, z: 1 }
-                }
+                transform: { local: { position: { x: 1, y: 999, z: 1 } } }
             }
         });
         this.checkMarker = loadActor.value;
@@ -351,9 +344,7 @@ export default class ChessGame {
             actor: {
                 name: 'selected-marker',
                 parentId: this.boardOffset.id,
-                transform: {
-                    position: { x: 0, y: 999, z: 0 }
-                }
+                transform: { local: { position: { x: 0, y: 999, z: 0 } } }
             }
         });
         this.selectedMarker = loadActor.value;
@@ -371,15 +362,15 @@ export default class ChessGame {
             // Add event handlers to square.
             {
                 const behavior = square.marker.setBehavior(ButtonBehavior);
-                behavior.onClick('pressed', (userId: string) => this.clickOnSquare(userId, square.actor));
+                behavior.onClick('pressed', (user) => this.clickOnSquare(user.id, square.actor));
             }
             // Add event handlers to piece.
             if (square.piece) {
                 const actor = square.piece.actor;
                 const behavior = actor.setBehavior(ButtonBehavior);
-                behavior.onHover('enter', (userId: string) => this.startHoverPiece(userId, actor));
-                behavior.onHover('exit', (userId: string) => this.stopHoverPiece(userId, actor));
-                behavior.onClick('pressed', (userId: string) => this.clickOnPiece(userId, actor));
+                behavior.onHover('enter', (user) => this.startHoverPiece(user.id, actor));
+                behavior.onHover('exit', (user) => this.stopHoverPiece(user.id, actor));
+                behavior.onClick('pressed', (user) => this.clickOnPiece(user.id, actor));
             }
         }
     }
@@ -426,19 +417,19 @@ export default class ChessGame {
     }
 
     private hideSelectedMarker() {
-        this.selectedMarker.transform.position.y = 999;
+        this.selectedMarker.transform.local.position.y = 999;
     }
 
     private startHoverPiece(userId: string, actor: Actor) {
         if (this.selectedActor !== actor) {
-            actor.animateTo({ transform: { scale: hoverScale } }, 0.1, hoverCurve);
+            actor.animateTo({ transform: { local: { scale: hoverScale } } }, 0.1, hoverCurve);
         }
         this.showMoveMarkers(actor);
     }
 
     private stopHoverPiece(userId: string, actor: Actor) {
         if (this.selectedActor !== actor) {
-            actor.animateTo({ transform: { scale: unitScale } }, 0.1, hoverCurve);
+            actor.animateTo({ transform: { local: { scale: unitScale } } }, 0.1, hoverCurve);
         }
         this.showMoveMarkers(null);
     }
@@ -455,18 +446,18 @@ export default class ChessGame {
         }
         if (this.selectedActor) {
             // Stop all hover animations on the selected actor.
-            this.selectedActor.animateTo({ transform: { scale: unitScale } }, 0.1, hoverCurve);
+            this.selectedActor.animateTo({ transform: { local: { scale: unitScale } } }, 0.1, hoverCurve);
         }
         // Set the new selected actor.
         this.selectedActor = actor;
-        actor.animateTo({ transform: { scale: hoverScale } }, 0.1, hoverCurve);
+        actor.animateTo({ transform: { local: { scale: hoverScale } } }, 0.1, hoverCurve);
         this.showSelectedMarker();
         this.showMoveMarkers(actor);
     }
 
     private deselectPiece() {
         this.selectedActor.setAnimationState('hover', { time: 0, enabled: false });
-        this.selectedActor.animateTo({ transform: { scale: unitScale } }, 0.1, hoverCurve);
+        this.selectedActor.animateTo({ transform: { local: { scale: unitScale } } }, 0.1, hoverCurve);
         this.hideSelectedMarker();
         this.hideMoveMarkers();
         this.selectedActor = null;
@@ -477,7 +468,7 @@ export default class ChessGame {
         if (this.selectedActor) {
             const square = this.squareForActor(this.selectedActor);
             const coord = this.coordinate(square);
-            this.selectedMarker.transform.position.copy(coord);
+            this.selectedMarker.transform.local.position.copy(coord);
         }
     }
 
@@ -486,7 +477,7 @@ export default class ChessGame {
             if (moveSet) {
                 for (const square of moveSet.squares) {
                     const marker = square.marker;
-                    marker.transform.position.y = baseHeight;
+                    marker.transform.local.position.y = baseHeight;
                 }
             }
         }
@@ -525,17 +516,17 @@ export default class ChessGame {
         const status = this.game.getStatus() as Status;
         for (const square of status.board.squares) {
             const marker = square.marker;
-            marker.transform.position.y = 1000;
+            marker.transform.local.position.y = 1000;
         }
     }
 
     private hideCheckMarker() {
-        this.checkMarker.transform.position.y = 999;
+        this.checkMarker.transform.local.position.y = 999;
     }
 
     private showCheckMarker(square: Square) {
-        this.checkMarker.transform.position = square.marker.transform.position;
-        this.checkMarker.transform.position.y = baseHeight + 0.1;
+        this.checkMarker.transform.local.position = square.marker.transform.local.position;
+        this.checkMarker.transform.local.position.y = baseHeight + 0.1;
     }
 
     private coordinate(coord: Coordinate): Vector3Like {
@@ -623,11 +614,11 @@ export default class ChessGame {
         const moveSpeed = 3;
         const position = new Vector3();
         position.copy(this.coordinate(dst));
-        position.y = actor.transform.position.y;
-        const diff = position.subtract(actor.transform.position);
+        position.y = actor.transform.local.position.y;
+        const diff = position.subtract(actor.transform.local.position);
         const length = diff.length();
-        actor.animateTo({ transform: { position } }, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
-        actor.animateTo({ transform: { scale: unitScale } }, 0.1, hoverCurve);
+        actor.animateTo({ transform: { local: { position } } }, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
+        actor.animateTo({ transform: { local: { scale: unitScale } } }, 0.1, hoverCurve);
         // Animate a slight tilt in the direction of movement.
         // const square = this.squareForActor(actor);
         // const config = modelConfigs[square.piece.side.name][square.piece.type];
@@ -639,7 +630,7 @@ export default class ChessGame {
     }
 
     private async animateCapture(actor: Actor) {
-        actor.animateTo({ transform: { scale: { y: 0 } } }, 1.0, AnimationEaseCurves.EaseInSine);
+        actor.animateTo({ transform: { local: { scale: { y: 0 } } } }, 1.0, AnimationEaseCurves.EaseInSine);
         await delay(1000);
         actor.destroy();
     }
