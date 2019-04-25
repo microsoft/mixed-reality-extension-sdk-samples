@@ -179,20 +179,20 @@ export default class TicTacToe {
                 const buttonBehavior = cube.setBehavior(ButtonBehavior);
 
                 // Trigger the grow/shrink animations on hover.
-                buttonBehavior.onHover('enter', (userId: string) => {
+                buttonBehavior.onHover('enter', () => {
                     if (this.gameState === GameState.Play &&
                         this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
                         cube.enableAnimation('GrowIn');
                     }
                 });
-                buttonBehavior.onHover('exit', (userId: string) => {
+                buttonBehavior.onHover('exit', () => {
                     if (this.gameState === GameState.Play &&
                         this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
                         cube.enableAnimation('ShrinkOut');
                     }
                 });
 
-                buttonBehavior.onClick('pressed', (userId: string) => {
+                buttonBehavior.onClick('pressed', () => {
                     switch (this.gameState) {
                         case GameState.Intro:
                             this.beginGameStatePlay();
