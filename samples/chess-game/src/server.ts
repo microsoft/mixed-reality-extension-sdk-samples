@@ -9,8 +9,8 @@ dotenv.config();
 
 /* Sample .env file:
  *  PORT=80
- *  BASE_URL=http://<application>.openode.io
- *  MRELOG=app:error,network,network-content
+ *  BASE_URL=http://<ngrok-id>.ngrok.io
+ *  MRE_LOGGING=app:error,network,network-content
  */
 
 import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
