@@ -532,15 +532,17 @@ export default class ChessGame {
         position.y = actor.transform.local.position.y;
         const diff = position.subtract(actor.transform.local.position);
         const length = diff.length();
-        actor.animateTo({ transform: { local: { position, rotation: Quaternion.Identity() } } }, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
-        // Animate a slight tilt in the direction of movement.
-        // const square = this.squareForActor(actor);
-        // const config = modelConfigs[square.piece.side.name][square.piece.type];
-        // const direction = toCoord.subtract(actor.transform.position);
-        // const left = Vector3.Cross(direction, Vector3.Up());
-        // const rotation = Quaternion.RotationAxis(left, -Math.PI / 8).multiply(config.rotation);
-        // actor.animateTo({ transform: { rotation } }, 0.25, hoverCurve)
-        //     .then(() => { actor.animateTo({ transform: { rotation: config.rotation } }, 0.25, AnimationEaseCurves.EaseInSine); });
+        const [side, type] = actor.name.split('-');
+        const sideConfig = modelConfigs[side];
+        const modelConfig = sideConfig[type];
+        actor.animateTo({
+            transform: {
+                local: {
+                    position,
+                    rotation: modelConfig.rotation
+                }
+            }
+        }, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
     }
 
     private async animateCapture(actor: Actor) {
