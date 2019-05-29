@@ -73,7 +73,7 @@ export default class SolarSystem {
 
                 const buttonBehavior = prim.setBehavior(MRESDK.ButtonBehavior);
 
-                buttonBehavior.onClick('pressed', () => {
+                buttonBehavior.onClick(_ => {
                     if (this.animationsRunning) {
                         this.pauseAnimations();
                         this.animationsRunning = false;
