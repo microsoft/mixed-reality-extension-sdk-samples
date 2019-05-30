@@ -192,7 +192,7 @@ export default class TicTacToe {
                     }
                 });
 
-                buttonBehavior.onClick('pressed', () => {
+                buttonBehavior.onClick(_ => {
                     switch (this.gameState) {
                         case GameState.Intro:
                             this.beginGameStatePlay();
