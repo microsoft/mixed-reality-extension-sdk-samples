@@ -1,0 +1,244 @@
+{
+  "program": {
+    "fileInfos": {
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es5.d.ts": {
+        "version": "1f753cee573dea40df8a9dc873fef5566957b19ad513874f6643d8dfb14842d0",
+        "signature": "1f753cee573dea40df8a9dc873fef5566957b19ad513874f6643d8dfb14842d0"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.d.ts": {
+        "version": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96",
+        "signature": "7994d44005046d1413ea31d046577cdda33b8b2470f30281fd9c8b3c99fe2d96"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2016.d.ts": {
+        "version": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1",
+        "signature": "5f217838d25704474d9ef93774f04164889169ca31475fe423a9de6758f058d1"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.d.ts": {
+        "version": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743",
+        "signature": "459097c7bdd88fc5731367e56591e4f465f2c9de81a35427a7bd473165c34743"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.core.d.ts": {
+        "version": "2a0390a665763bcc90f0670e43c587928d8fefe2a94a11209c1e22cba7b09f52",
+        "signature": "2a0390a665763bcc90f0670e43c587928d8fefe2a94a11209c1e22cba7b09f52"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.collection.d.ts": {
+        "version": "dd94d8ef48c562389eb58af8df3a3a34d11367f7c818192aa5f16470d469e3f0",
+        "signature": "dd94d8ef48c562389eb58af8df3a3a34d11367f7c818192aa5f16470d469e3f0"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.generator.d.ts": {
+        "version": "828413486bdcaa342558e8e4570b1b287b776cb61b4b70b0214bd10c5d9a94c3",
+        "signature": "828413486bdcaa342558e8e4570b1b287b776cb61b4b70b0214bd10c5d9a94c3"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.iterable.d.ts": {
+        "version": "6c9f73334f8bf47aea685ca5b46a8f7e992a223e96fbceb030f26a4d2324ba21",
+        "signature": "6c9f73334f8bf47aea685ca5b46a8f7e992a223e96fbceb030f26a4d2324ba21"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.promise.d.ts": {
+        "version": "e6b8ff2798f8ebd7a1c7afd8671f2cb67ee1901c422f5964d74b0b34c6574ea2",
+        "signature": "e6b8ff2798f8ebd7a1c7afd8671f2cb67ee1901c422f5964d74b0b34c6574ea2"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.proxy.d.ts": {
+        "version": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe",
+        "signature": "5e72f949a89717db444e3bd9433468890068bb21a5638d8ab15a1359e05e54fe"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.reflect.d.ts": {
+        "version": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976",
+        "signature": "f5b242136ae9bfb1cc99a5971cccc44e99947ae6b5ef6fd8aa54b5ade553b976"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.symbol.d.ts": {
+        "version": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230",
+        "signature": "9ae2860252d6b5f16e2026d8a2c2069db7b2a3295e98b6031d01337b96437230"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts": {
+        "version": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303",
+        "signature": "3e0a459888f32b42138d5a39f706ff2d55d500ab1031e0988b5568b0f67c2303"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2016.array.include.d.ts": {
+        "version": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0",
+        "signature": "3f96f1e570aedbd97bf818c246727151e873125d0512e4ae904330286c721bc0"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.object.d.ts": {
+        "version": "ff8ad203e83338289b0f5defc1a5b5c253fb7d251b464db497383f915a0df3f4",
+        "signature": "ff8ad203e83338289b0f5defc1a5b5c253fb7d251b464db497383f915a0df3f4"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts": {
+        "version": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f",
+        "signature": "b8667586a618c5cf64523d4e500ae39e781428abfb28f3de441fc66b56144b6f"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.string.d.ts": {
+        "version": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c",
+        "signature": "21df2e0059f14dcb4c3a0e125859f6b6ff01332ee24b0065a741d121250bc71c"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.intl.d.ts": {
+        "version": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6",
+        "signature": "c1759cb171c7619af0d2234f2f8fb2a871ee88e956e2ed91bb61778e41f272c6"
+      },
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts": {
+        "version": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46",
+        "signature": "28569d59e07d4378cb3d54979c4c60f9f06305c9bb6999ffe6cab758957adc46"
+      },
+      "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/app.ts": {
+        "version": "584a84ade9e3158d4ce1888810208a8d8523e57b403397a2bd8c09081dde12b8",
+        "signature": "89e9cbd299852acb7529e7e0910ce89de7578154c76ee33f24b93f346691f692"
+      },
+      "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts": {
+        "version": "dea680b80905366118fe82d27a01f73a996739f78a092171e60c68b648c73f59",
+        "signature": "d55d1c604b3cd5e88d3dd7ba23d5d598c3c617280834752c8ebf7a612cac5802"
+      }
+    },
+    "options": {
+      "outDir": "d:/MRE/mixed-reality-extension-sdk-samples/samples/acb-prototype/built",
+      "rootDir": "d:/MRE/mixed-reality-extension-sdk-samples/samples/acb-prototype/src",
+      "skipLibCheck": true,
+      "target": 4,
+      "module": 1,
+      "lib": [
+        "lib.es2017.d.ts"
+      ],
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "composite": true,
+      "strict": true,
+      "strictNullChecks": false,
+      "moduleResolution": 2,
+      "esModuleInterop": true,
+      "project": "d:\\MRE\\mixed-reality-extension-sdk-samples\\samples\\acb-prototype\\tsconfig.json",
+      "configFilePath": "d:/MRE/mixed-reality-extension-sdk-samples/samples/acb-prototype/tsconfig.json"
+    },
+    "referencedMap": {
+      "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts": [
+        "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/app.ts"
+      ]
+    },
+    "exportedModulesMap": {},
+    "semanticDiagnosticsPerFile": [
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es5.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2016.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.core.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.collection.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.generator.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.iterable.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.promise.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.proxy.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.reflect.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.symbol.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2015.symbol.wellknown.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2016.array.include.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.object.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.sharedmemory.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.string.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.intl.d.ts",
+      "c:/users/adbalano/appdata/roaming/npm/node_modules/typescript/lib/lib.es2017.typedarrays.d.ts",
+      [
+        "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/app.ts",
+        [
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/app.ts",
+            "start": 303,
+            "length": 40,
+            "messageText": "Cannot find module '@microsoft/mixed-reality-extension-sdk'.",
+            "category": 1,
+            "code": 2307
+          }
+        ]
+      ],
+      [
+        "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+        [
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 139,
+            "length": 40,
+            "messageText": "Cannot find module '@microsoft/mixed-reality-extension-sdk'.",
+            "category": 1,
+            "code": 2307
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 201,
+            "length": 8,
+            "messageText": "Cannot find module 'dotenv'.",
+            "category": 1,
+            "code": 2307
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 251,
+            "length": 6,
+            "messageText": "Cannot find module 'path'.",
+            "category": 1,
+            "code": 2307
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 337,
+            "length": 7,
+            "messageText": "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i @types/node`.",
+            "category": 1,
+            "code": 2580
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 369,
+            "length": 3,
+            "messageText": "Parameter 'err' implicitly has an 'any' type.",
+            "category": 1,
+            "code": 7006
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 376,
+            "length": 7,
+            "messageText": "Cannot find name 'console'. Do you need to change your target library? Try changing the `lib` compiler option to include 'dom'.",
+            "category": 1,
+            "code": 2584
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 417,
+            "length": 7,
+            "messageText": "Cannot find name 'process'. Do you need to install type definitions for node? Try `npm i @types/node`.",
+            "category": 1,
+            "code": 2580
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 450,
+            "length": 6,
+            "messageText": "Parameter 'reason' implicitly has an 'any' type.",
+            "category": 1,
+            "code": 7006
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 460,
+            "length": 7,
+            "messageText": "Cannot find name 'console'. Do you need to change your target library? Try changing the `lib` compiler option to include 'dom'.",
+            "category": 1,
+            "code": 2584
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 691,
+            "length": 9,
+            "messageText": "Cannot find name '__dirname'.",
+            "category": 1,
+            "code": 2304
+          },
+          {
+            "file": "d:/mre/mixed-reality-extension-sdk-samples/samples/acb-prototype/src/server.ts",
+            "start": 787,
+            "length": 7,
+            "messageText": "Parameter 'context' implicitly has an 'any' type.",
+            "category": 1,
+            "code": 7006
+          }
+        ]
+      ]
+    ]
+  },
+  "version": "3.5.1"
+}

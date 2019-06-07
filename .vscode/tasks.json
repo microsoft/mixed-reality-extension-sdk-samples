@@ -26,6 +26,24 @@
       "script": "build",
       "path": "samples/wear-a-hat/",
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "samples/acb-prototype/",
+      "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "samples/acb-prototype/",
+      "problemMatcher": []
+    },    
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "samples/hello-world/",
+      "problemMatcher": []
     }
   ]
 }
