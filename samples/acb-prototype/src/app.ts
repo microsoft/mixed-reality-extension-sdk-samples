@@ -5,6 +5,7 @@
 
 import {
     Actor,
+    AssetManager,
     AnimationEaseCurves,
     AnimationKeyframe,
     AnimationWrapMode,
@@ -21,6 +22,7 @@ import {
 export default class HelloWorld {
     private text: Actor = null;
     private cube: Actor = null;
+    private buttonState = false;
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -39,7 +41,7 @@ export default class HelloWorld {
                     app: { position: { x: 0, y: 0.5, z: 0 } }
                 },
                 text: {
-                    contents: "Hello World from ACB Proto 2!",
+                    contents: "Horror Radio Test",
                     anchor: TextAnchorLocation.MiddleCenter,
                     color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
                     height: 0.3
@@ -50,7 +52,7 @@ export default class HelloWorld {
         // Even though the actor is not yet created in Altspace (because we didn't wait for the promise),
         // we can still get a reference to it by grabbing the `value` field from the forward promise.
         this.text = textPromise.value;
-
+/*
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
         this.text.createAnimation(
@@ -67,7 +69,7 @@ export default class HelloWorld {
                 // foward then backward.
                 wrapMode: AnimationWrapMode.PingPong
             });
-
+*/
         // Load a glTF model
         const cubePromise = Actor.CreateFromGLTF(this.context, {
             // at the given URL
@@ -79,6 +81,7 @@ export default class HelloWorld {
                 name: 'Altspace Cube',
                 // Parent the glTF model to the text actor.
                 parentId: this.text.id,
+                grabbable: true,
                 transform: {
                     local: {
                         position: { x: 0, y: -1, z: 0 },
@@ -88,6 +91,16 @@ export default class HelloWorld {
             }
         });
 
+        const trackAssetPromise = this.context.assetManager.createSound( 
+            'group1', 
+            { uri: `${this.baseUrl}/500317_Escape_Three_Skeleton_Key.ogg` }
+        );
+
+        const trackSoundInstance = cubePromise.value.startSound(trackAssetPromise.value.id, 
+            {volume: 1, looping: true, doppler: 0, spread: 0.7, }, 0.0 );
+
+        
+        trackSoundInstance.value.pause();
         // Grab that early reference again.
         this.cube = cubePromise.value;
 
@@ -96,7 +109,15 @@ export default class HelloWorld {
             'DoAFlip', {
                 keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
                 events: []
-            });
+            },
+        );
+
+        this.cube.createAnimation(
+            'ButtonPress', { 
+                keyframes: this.generatePressKeyFrames( 1.0, Vector3.Up()),
+                events: []
+            }
+        );
 
         // Now that the text and its animation are all being set up, we can start playing
         // the animation.
@@ -116,9 +137,23 @@ export default class HelloWorld {
                 { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
         });
 
+
         // When clicked, do a 360 sideways.
         buttonBehavior.onClick('pressed', () => {
-            this.cube.enableAnimation('DoAFlip');
+            //this.cube.enableAnimation('DoAFlip');
+            this.cube.enableAnimation('ButtonPress');
+            if(this.buttonState === false )
+            {
+                trackSoundInstance.value.resume();
+                this.buttonState = true;
+            }
+            else if( this.buttonState === true )
+            {
+                trackSoundInstance.value.pause();
+                this.buttonState = false;
+            }
+            //console.log("tried to play sound 2");
+            
         });
     }
 
@@ -145,4 +180,19 @@ export default class HelloWorld {
             value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
         }];
     }
+
+    
+    private generatePressKeyFrames(duration: number, axis: Vector3): AnimationKeyframe[] {
+        return [{
+            time: 0 * duration,
+            value: { transform: { local: {position: {x: 0, y: -1, z: 0} } } }
+        }, {
+            time: 0.3 * duration,
+            value: { transform: { local: {position: {x: 0, y: -1, z: 0.3} } } }
+        }, {
+            time: 0.5 * duration,
+            value: { transform: { local: {position: {x: 0, y: -1, z: 0} } } }
+        }];
+    }
+    
 }
