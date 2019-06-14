@@ -14,7 +14,9 @@ import {
     Context,
     Quaternion,
     TextAnchorLocation,
-    Vector3
+    Vector3,
+    Vector3Like,
+    ForwardPromise
 } from '@microsoft/mixed-reality-extension-sdk';
 
 /**
@@ -24,10 +26,9 @@ export default class HelloWorld {
     private text: Actor = null;
     private cubePlay: Actor = null;
     private cubeNext: Actor = null;
-    private buttons: Actor[] = [ this.cubePlay, this.cubeNext ];
+    private cubeLast: Actor = null;
+    private buttonScale = { x: 0.09, y: 0.09, z: 0.09 };
     private buttonState = false;
-    private trackList: string[] = [ "500317_Escape_Three_Skeleton_Key.ogg", "48-08-09 Fourble.ogg",
-     "46-12-05 Cypress Canyon.ogg" ];
     private trackIndex = 0;
 
     constructor(private context: Context, private baseUrl: string) {
@@ -40,7 +41,7 @@ export default class HelloWorld {
     private started() {
 
         // Load a glTF model
-        const buttonPromise = Actor.CreateFromGLTF(this.context, {
+        const buttonPromisePlay = Actor.CreateFromGLTF(this.context, {
             // at the given URL
             resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
             // and spawn box colliders around the meshes.
@@ -52,87 +53,155 @@ export default class HelloWorld {
                 transform: {
                     local: {
                         position: { x: 0, y: -1, z: 0 },
-                        scale: { x: 0.4, y: 0.4, z: 0.4 }
+                        scale: this.buttonScale
                     }
                 }
             }
         });
-/*
-        for ( let i = 0; i < this.buttons.length; i++) {
-            this.buttons[i] = buttonPromise.value;
 
-            if (i === 1) {
-                this.buttons[i] = ActorTransform()
-                // transform.local.position({ x: 0, y: -1, z: 0 });
+        const buttonPromiseNext = Actor.CreateFromGLTF(this.context, {
+            // at the given URL
+            resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
+            // and spawn box colliders around the meshes.
+            colliderType: 'box',
+            // Also apply the following generic actor properties.
+            actor: {
+                name: 'Altspace Cube',
+                // Parent the glTF model to the text actor.
+                transform: {
+                    local: {
+                        position: { x: 0.2, y: -1, z: 0 }, 
+                        scale: this.buttonScale
+                    }
+                }
             }
-        }
-*/
+        });
+
+        const buttonPromiseLast = Actor.CreateFromGLTF(this.context, {
+            // at the given URL
+            resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
+            // and spawn box colliders around the meshes.
+            colliderType: 'box',
+            // Also apply the following generic actor properties.
+            actor: {
+                name: 'Altspace Cube',
+                // Parent the glTF model to the text actor.
+                transform: {
+                    local: {
+                        position: { x: -0.2, y: -1, z: 0 },
+                        scale: this.buttonScale
+                    }
+                }
+            }
+        });
+
         // Grab that early reference.
-        this.cubePlay = buttonPromise.value;
+        this.cubePlay = buttonPromisePlay.value;
+        this.cubeNext = buttonPromiseNext.value;
+        this.cubeLast = buttonPromiseLast.value;
 
-        // Create some animations on the cube.
-        this.cubePlay.createAnimation(
-            'ButtonPress', {
-                keyframes: this.generatePressKeyFrames( 1.0, Vector3.Up() ),
-                events: []
-            }
-        );
+        let buttons: Actor[] = [this.cubePlay, this.cubeNext, this.cubeLast];
 
-        // create audio
-        const trackAssetPromise = this.context.assetManager.createSound(
-            'group1',
-            { uri: `${this.baseUrl}/500317_Escape_Three_Skeleton_Key.ogg` }
-        );
+        for( let i = 0; i < buttons.length; i++)
+        {
+           buttons[i].createAnimation(
+                'ButtonPress', {
+                    keyframes: this.generatePressKeyFrames( 1.0, buttons[i] ),
+                    events: []
+                }
+            )
+        };
 
-        const trackSoundInstance = buttonPromise.value.startSound(trackAssetPromise.value.id,
+        const buttonBehaviorPlay = this.cubePlay.setBehavior(ButtonBehavior);
+        const buttonBehaviorNext = this.cubeNext.setBehavior(ButtonBehavior);
+        const buttonBehaviorLast = this.cubeLast.setBehavior(ButtonBehavior);
+
+        let buttonLogic: ButtonBehavior[] = [ buttonBehaviorPlay, buttonBehaviorNext, buttonBehaviorLast];
+
+        for( let i = 0; i < buttonLogic.length; i++)
+        {
+            buttonLogic[i].onHover('enter', () => {
+                buttons[i].animateTo(
+                    { transform: { local: { scale: { x: 0.11, y: 0.11, z: 0.11 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+                    //LEARN: Need to ask if I can do expresions inside a property like scale.
+            });
+                    
+            buttonLogic[i].onHover('exit', () => {
+                buttons[i].animateTo(
+                    { transform: { local: { scale: this.buttonScale } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+            });
+        };
+
+        
+/*        
+        const trackSoundInstance = buttonPromisePlay.value.startSound(trackAssetPromise.value.id,
             {volume: 1, looping: true, doppler: 0, spread: 0.7, }, 0.0 );
 
         trackSoundInstance.value.pause();
-
-        // Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
-        // Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-        const buttonBehavior = this.cubePlay.setBehavior(ButtonBehavior);
-
-        // Trigger the grow/shrink animations on hover.
-        buttonBehavior.onHover('enter', () => {
-            this.cubePlay.animateTo(
-                { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
-        });
-        buttonBehavior.onHover('exit', () => {
-            this.cubePlay.animateTo(
-                { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+*/
+        buttonBehaviorNext.onClick('pressed', () => {
+            this.cubeNext.enableAnimation('ButtonPress');
+        
         });
 
+        buttonBehaviorLast.onClick('pressed', () => {
+            this.cubeLast.enableAnimation('ButtonPress');
+        
+        });
+        
         // When clicked, push back.
-        buttonBehavior.onClick('pressed', () => {
+        buttonBehaviorPlay.onClick('pressed', () => {
             this.cubePlay.enableAnimation('ButtonPress');
             if (this.buttonState === false ) {
-                trackSoundInstance.value.resume();
+                //trackSoundInstance.value.resume();
                 this.buttonState = true;
             } else if ( this.buttonState === true ) {
-                trackSoundInstance.value.pause();
+                //trackSoundInstance.value.pause();
                 this.buttonState = false;
             }
             // console.log("tried to play sound 2");
 
         });
+        
+
     }
 
-    /**
-     * Generate keyframe data for a simple press animation.
-     * @param duration The length of time in seconds it takes to complete a full revolution.
-     * @param axis The axis of rotation in local space.
-     */
-    private generatePressKeyFrames(duration: number, axis: Vector3): AnimationKeyframe[] {
+    private CreateTracks()
+    {
+        // create audio
+        const trackAssetPromise0 = this.context.assetManager.createSound(
+            'Track1',
+            { uri: `${this.baseUrl}/500317_Escape_Three_Skeleton_Key.ogg` }
+        );
+
+        const trackAssetPromise1 = this.context.assetManager.createSound(
+            'Track2',
+            { uri: `${this.baseUrl}/46-12-05 Cypress Canyon.ogg` }
+        );
+        
+        const trackAssetPromise2 = this.context.assetManager.createSound(
+            'Track3',
+            { uri: `${this.baseUrl}/48-08-09 Fourble.ogg` }
+        );
+        
+        let tracklist = [ trackAssetPromise0, trackAssetPromise1, trackAssetPromise2 ];
+
+        return(tracklist);
+
+    }
+
+    private generatePressKeyFrames(duration: number, button: Actor): AnimationKeyframe[] 
+    {
+        let buttonPos = <Vector3Like>button.transform.local.position;
         return [{
             time: 0 * duration,
-            value: { transform: { local: {position: {x: 0, y: -1, z: 0} } } }
+            value: { transform: { local: { position: buttonPos } } }
         }, {
             time: 0.3 * duration,
-            value: { transform: { local: {position: {x: 0, y: -1, z: 0.3} } } }
+            value: { transform: { local: { position: { ...buttonPos, z: buttonPos.z + 0.3 } } } }
         }, {
             time: 0.5 * duration,
-            value: { transform: { local: {position: {x: 0, y: -1, z: 0} } } }
+            value: { transform: { local: { position: buttonPos } } }
         }];
     }
 
