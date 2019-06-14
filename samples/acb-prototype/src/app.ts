@@ -16,7 +16,8 @@ import {
     TextAnchorLocation,
     Vector3,
     Vector3Like,
-    ForwardPromise
+    ForwardPromise,
+    Sound
 } from '@microsoft/mixed-reality-extension-sdk';
 
 /**
@@ -138,14 +139,28 @@ export default class HelloWorld {
             {volume: 1, looping: true, doppler: 0, spread: 0.7, }, 0.0 );
 
         trackSoundInstance.value.pause();
-*/
+*/  
+        let tracks = this.CreateTracks();
+
         buttonBehaviorNext.onClick('pressed', () => {
             this.cubeNext.enableAnimation('ButtonPress');
+            this.trackIndex++;
+            if (this.trackIndex > tracks.length )
+            {
+                this.trackIndex = 0; //restart index
+            }    
+            console.log(this.trackIndex);
         
         });
 
         buttonBehaviorLast.onClick('pressed', () => {
             this.cubeLast.enableAnimation('ButtonPress');
+            this.trackIndex--;
+            if ( this.trackIndex < 0 )
+            {
+                this.trackIndex = tracks.length;
+            }
+            console.log(this.trackIndex);
         
         });
         
@@ -184,8 +199,9 @@ export default class HelloWorld {
             { uri: `${this.baseUrl}/48-08-09 Fourble.ogg` }
         );
         
-        let tracklist = [ trackAssetPromise0, trackAssetPromise1, trackAssetPromise2 ];
+        let tracklist: ForwardPromise<Sound> [] = [ trackAssetPromise0, trackAssetPromise1, trackAssetPromise2 ];
 
+        console.log("tracklist size" + tracklist.length);
         return(tracklist);
 
     }
