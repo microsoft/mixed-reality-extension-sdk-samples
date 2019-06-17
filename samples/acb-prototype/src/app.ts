@@ -5,30 +5,23 @@
 
 import {
     Actor,
-    ActorTransform,
     AnimationEaseCurves,
     AnimationKeyframe,
-    AnimationWrapMode,
-    AssetManager,
     ButtonBehavior,
     Context,
     ForwardPromise,
-    Quaternion,
     Sound,
     SoundInstance,
-    TextAnchorLocation,
-    Vector3,
     Vector3Like
 } from '@microsoft/mixed-reality-extension-sdk';
 
-import { deflateSync } from 'zlib';
 import delay from './utils/delay';
+import { TrackingClock } from '@microsoft/mixed-reality-extension-sdk/built/utils/trackingClock';
 
 /**
  * The main class of this app. All the logic goes here.
  */
-export default class HelloWorld {
-    private text: Actor = null;
+export default class HorrorRadio {
     private cubePlay: Actor = null;
     private cubeNext: Actor = null;
     private cubeLast: Actor = null;
@@ -36,8 +29,7 @@ export default class HelloWorld {
     private buttonPlayState = false;
     private trackIndex = 0;
     private trackSoundInstance: ForwardPromise<SoundInstance> = null;
-    private songDurationTracker: Promise<void> = null;
-    private tracks: Array<ForwardPromise<Sound>> = [];
+    private tracks: ForwardPromise<Sound>[] = [];
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -48,7 +40,7 @@ export default class HelloWorld {
      */
     private started() {
 
-        // Load a glTF model
+        // Load a glTF model to create a Play button for the radio
         const buttonPromisePlay = Actor.CreateFromGLTF(this.context, {
             // at the given URL
             resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
@@ -66,16 +58,12 @@ export default class HelloWorld {
                 }
             }
         });
-
+        // Make a button for Next track
         const buttonPromiseNext = Actor.CreateFromGLTF(this.context, {
-            // at the given URL
             resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
-            // and spawn box colliders around the meshes.
             colliderType: 'box',
-            // Also apply the following generic actor properties.
             actor: {
                 name: 'Altspace Cube',
-                // Parent the glTF model to the text actor.
                 transform: {
                     local: {
                         position: { x: 0.2, y: -1, z: 0 },
@@ -84,16 +72,12 @@ export default class HelloWorld {
                 }
             }
         });
-
+        // Make a button for Last track
         const buttonPromiseLast = Actor.CreateFromGLTF(this.context, {
-            // at the given URL
             resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
-            // and spawn box colliders around the meshes.
             colliderType: 'box',
-            // Also apply the following generic actor properties.
             actor: {
                 name: 'Altspace Cube',
-                // Parent the glTF model to the text actor.
                 transform: {
                     local: {
                         position: { x: -0.2, y: -1, z: 0 },
@@ -103,11 +87,12 @@ export default class HelloWorld {
             }
         });
 
-        // Grab that early reference.
+        // Grab reference to our buttons.
         this.cubePlay = buttonPromisePlay.value;
         this.cubeNext = buttonPromiseNext.value;
         this.cubeLast = buttonPromiseLast.value;
 
+        // place buttons in array to assign animaiton.
         const buttons: Actor[] = [this.cubePlay, this.cubeNext, this.cubeLast];
 
         for ( let i = 0; i < buttons.length; i++) {
@@ -119,19 +104,21 @@ export default class HelloWorld {
             );
         }
 
+        // Set buttons to be buttons.
         const buttonBehaviorPlay = this.cubePlay.setBehavior(ButtonBehavior);
         const buttonBehaviorNext = this.cubeNext.setBehavior(ButtonBehavior);
         const buttonBehaviorLast = this.cubeLast.setBehavior(ButtonBehavior);
 
+        // Put buttons in a list.
         const buttonLogic: ButtonBehavior[] = [ buttonBehaviorPlay, buttonBehaviorNext, buttonBehaviorLast];
 
+        // Give each button animation for hover events. 
         for ( let i = 0; i < buttonLogic.length; i++) {
             buttonLogic[i].onHover('enter', () => {
                 buttons[i].animateTo(
                     { transform: {
                         local: {
                             scale: { x: 0.11, y: 0.11, z: 0.11 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
-                    // LEARN: Need to ask if I can do expresions inside a property like scale.
             });
 
             buttonLogic[i].onHover('exit', () => {
@@ -140,8 +127,9 @@ export default class HelloWorld {
             });
         }
 
-        // Get reference for our track array
+        // Create an array of our media and save it to a list.
         this.tracks = this.createTracksArray();
+        // Check to see if this is the first time the radio has been turned on
         let firstPlay = true;
 
         // When clicked, push back.
@@ -149,8 +137,7 @@ export default class HelloWorld {
             this.cubePlay.enableAnimation('ButtonPress');
 
             if (this.buttonPlayState === false && firstPlay ) {
-                // trackSoundInstance.value.resume();
-                this.playTrack( this.tracks[this.trackIndex]);
+                this.playTrack( this.tracks[this.trackIndex] );
                 this.buttonPlayState = true;
                 firstPlay = false;
             } else if ( this.buttonPlayState === false ) {
@@ -171,8 +158,7 @@ export default class HelloWorld {
                 this.trackIndex = 0; // restart index
             }
             console.log(this.trackIndex);
-
-            this.trackSoundInstance.value.stop();
+     
             this.playTrack( this.tracks[this.trackIndex]);
         });
 
@@ -184,47 +170,55 @@ export default class HelloWorld {
             }
             console.log(this.trackIndex);
 
-            this.trackSoundInstance.value.stop();
-            this.playTrack( this.tracks[this.trackIndex]);
+            this.playTrack( this.tracks[this.trackIndex] );
         });
 
     }
 
     private playTrack( currenTrack: ForwardPromise<Sound>) {
-        if (this.songDurationTracker != null ) {
-            this.songDurationTracker = null;
-        }
-
         if ( this.trackSoundInstance != null ) {
             this.trackSoundInstance.value.stop();
             this.trackSoundInstance = null;
         }
 
+        this.buttonPlayState = true;
+
+        // Play our track
         this.trackSoundInstance = this.cubePlay.startSound(currenTrack.value.id,
             {volume: 1, looping: true, doppler: 0, spread: 0.7, }, 0.0 );
-
-        this.songDurationTracker = this.monitorPlayingTrack( this.tracks[this.trackIndex], this.tracks );
+        
+        // Start a duration tracker for the current track
+        this.monitorPlayingTrack( this.tracks[this.trackIndex], this.tracks);
     }
 
     private async monitorPlayingTrack( track: ForwardPromise<Sound>, trackList: Array<ForwardPromise<Sound>> ) {
         const trackDuration = track.value.duration;
+        const currentTrackIndex = this.trackIndex;
+        console.log( currentTrackIndex );
         console.log(trackDuration);
         await delay( trackDuration * 1000 );
         console.log("completed timer");
 
-        // song completed iterate to next one
-        this.trackIndex++;
+        // Check if we are still the same track then iterate. If not, end this promise.
+        if ( currentTrackIndex == this.trackIndex )
+        {
+            // song completed iterate to next one
+            this.trackIndex++;
 
-        // Make sure autoplay restarts list
-        if (this.trackIndex >= this.tracks.length ) {
-            this.trackIndex = 0; // restart index
+            // Make sure autoplay restarts list
+            if (this.trackIndex >= this.tracks.length ) {
+                this.trackIndex = 0; // restart index
+            }
+            
+            this.playTrack( trackList[this.trackIndex] );
         }
-
-        this.playTrack( trackList[this.trackIndex]);
+        else {
+            console.log( "end promise monitorPlayingTrack" + currentTrackIndex  );
+        }      
     }
 
+    // Async function to load our assets
     private createTracksArray() {
-        // create audio
         const trackAssetPromise0 = this.context.assetManager.createSound(
             'Track1',
             { uri: `${this.baseUrl}/Dundun.ogg` }
