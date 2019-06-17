@@ -30,6 +30,7 @@ export default class HorrorRadio {
     private trackIndex = 0;
     private trackSoundInstance: ForwardPromise<SoundInstance> = null;
     private tracks: ForwardPromise<Sound>[] = [];
+    private pause: boolean = false;
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -196,6 +197,7 @@ export default class HorrorRadio {
         const currentTrackIndex = this.trackIndex;
         console.log( currentTrackIndex );
         console.log(trackDuration);
+
         await delay( trackDuration * 1000 );
         console.log("completed timer");
 
@@ -216,7 +218,17 @@ export default class HorrorRadio {
             console.log( "end promise monitorPlayingTrack" + currentTrackIndex  );
         }      
     }
+/*
+    private timer()
+    {   
+        const starttime = TrackingClock;
+        while(!this.pause)
+        {
+            delay(300);
+        }
 
+    }
+*/
     // Async function to load our assets
     private createTracksArray() {
         const trackAssetPromise0 = this.context.assetManager.createSound(
