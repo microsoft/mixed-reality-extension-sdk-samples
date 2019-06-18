@@ -15,8 +15,8 @@ import {
     Vector3Like
 } from '@microsoft/mixed-reality-extension-sdk';
 
-import delay from './utils/delay';
 import { TrackingClock } from '@microsoft/mixed-reality-extension-sdk/built/utils/trackingClock';
+import delay from './utils/delay';
 
 /**
  * The main class of this app. All the logic goes here.
@@ -29,8 +29,9 @@ export default class HorrorRadio {
     private buttonPlayState = false;
     private trackIndex = 0;
     private trackSoundInstance: ForwardPromise<SoundInstance> = null;
-    private tracks: ForwardPromise<Sound>[] = [];
-    private pause: boolean = false;
+    private tracks: Array<ForwardPromise<Sound>> = [];
+    private pause = false;
+    private songDurationTracker: Promise<void> = null;
 
     constructor(private context: Context, private baseUrl: string) {
         this.context.onStarted(() => this.started());
@@ -113,7 +114,7 @@ export default class HorrorRadio {
         // Put buttons in a list.
         const buttonLogic: ButtonBehavior[] = [ buttonBehaviorPlay, buttonBehaviorNext, buttonBehaviorLast];
 
-        // Give each button animation for hover events. 
+        // Give each button animation for hover events.
         for ( let i = 0; i < buttonLogic.length; i++) {
             buttonLogic[i].onHover('enter', () => {
                 buttons[i].animateTo(
@@ -159,7 +160,7 @@ export default class HorrorRadio {
                 this.trackIndex = 0; // restart index
             }
             console.log(this.trackIndex);
-     
+
             this.playTrack( this.tracks[this.trackIndex]);
         });
 
@@ -187,9 +188,9 @@ export default class HorrorRadio {
         // Play our track
         this.trackSoundInstance = this.cubePlay.startSound(currenTrack.value.id,
             {volume: 1, looping: true, doppler: 0, spread: 0.7, }, 0.0 );
-        
+
         // Start a duration tracker for the current track
-        this.monitorPlayingTrack( this.tracks[this.trackIndex], this.tracks);
+        this.songDurationTracker = this.monitorPlayingTrack( this.tracks[this.trackIndex], this.tracks);
     }
 
     private async monitorPlayingTrack( track: ForwardPromise<Sound>, trackList: Array<ForwardPromise<Sound>> ) {
@@ -202,8 +203,7 @@ export default class HorrorRadio {
         console.log("completed timer");
 
         // Check if we are still the same track then iterate. If not, end this promise.
-        if ( currentTrackIndex == this.trackIndex )
-        {
+        if ( currentTrackIndex === this.trackIndex ) {
             // song completed iterate to next one
             this.trackIndex++;
 
@@ -211,24 +211,13 @@ export default class HorrorRadio {
             if (this.trackIndex >= this.tracks.length ) {
                 this.trackIndex = 0; // restart index
             }
-            
-            this.playTrack( trackList[this.trackIndex] );
-        }
-        else {
-            console.log( "end promise monitorPlayingTrack" + currentTrackIndex  );
-        }      
-    }
-/*
-    private timer()
-    {   
-        const starttime = TrackingClock;
-        while(!this.pause)
-        {
-            delay(300);
-        }
 
+            this.playTrack( trackList[this.trackIndex] );
+        } else {
+            console.log( "end promise monitorPlayingTrack" + currentTrackIndex  );
+        }
     }
-*/
+
     // Async function to load our assets
     private createTracksArray() {
         const trackAssetPromise0 = this.context.assetManager.createSound(
