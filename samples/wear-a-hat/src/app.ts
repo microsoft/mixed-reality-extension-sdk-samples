@@ -85,7 +85,7 @@ export default class WearAHat {
      */
     private showHatMenu() {
         // Create a parent object for all the menu items.
-        const menu = MRESDK.Actor.CreateEmpty(this.context).value;
+        const menu = MRESDK.Actor.CreateEmpty(this.context);
         let y = 0.3;
 
         // Loop over the hat database, creating a menu item for each entry.
@@ -107,7 +107,7 @@ export default class WearAHat {
             });
 
             // Set a click handler on the button.
-            button.value.setBehavior(MRESDK.ButtonBehavior)
+            button.setBehavior(MRESDK.ButtonBehavior)
                 .onClick(user => this.wearHat(hatId, user.id));
 
             // Create a label for the menu entry.
@@ -204,6 +204,6 @@ export default class WearAHat {
                     userId
                 }
             }
-        }).value;
+        });
     }
 }

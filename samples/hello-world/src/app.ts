@@ -32,7 +32,7 @@ export default class HelloWorld {
     private started() {
         // Create a new actor with no mesh, but some text. This operation is asynchronous, so
         // it returns a "forward" promise (a special promise, as we'll see later).
-        const textPromise = Actor.CreateEmpty(this.context, {
+        this.text = Actor.CreateEmpty(this.context, {
             actor: {
                 name: 'Text',
                 transform: {
@@ -46,10 +46,6 @@ export default class HelloWorld {
                 }
             }
         });
-
-        // Even though the actor is not yet created in Altspace (because we didn't wait for the promise),
-        // we can still get a reference to it by grabbing the `value` field from the forward promise.
-        this.text = textPromise.value;
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
@@ -69,7 +65,7 @@ export default class HelloWorld {
             });
 
         // Load a glTF model
-        const cubePromise = Actor.CreateFromGLTF(this.context, {
+        this.cube = Actor.CreateFromGLTF(this.context, {
             // at the given URL
             resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
             // and spawn box colliders around the meshes.
@@ -87,9 +83,6 @@ export default class HelloWorld {
                 }
             }
         });
-
-        // Grab that early reference again.
-        this.cube = cubePromise.value;
 
         // Create some animations on the cube.
         this.cube.createAnimation(
