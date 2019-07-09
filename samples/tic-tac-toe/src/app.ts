@@ -10,7 +10,6 @@ import {
     ButtonBehavior,
     Context,
     DegreesToRadians,
-    ForwardPromise,
     PrimitiveShape,
     Quaternion,
     TextAnchorLocation,

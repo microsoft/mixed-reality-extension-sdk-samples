@@ -30,8 +30,7 @@ export default class HelloWorld {
      * Once the context is "started", initialize the app.
      */
     private started() {
-        // Create a new actor with no mesh, but some text. This operation is asynchronous, so
-        // it returns a "forward" promise (a special promise, as we'll see later).
+        // Create a new actor with no mesh, but some text.
         this.text = Actor.CreateEmpty(this.context, {
             actor: {
                 name: 'Text',
