@@ -26,6 +26,12 @@
       "script": "build",
       "path": "samples/wear-a-hat/",
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build-all",
+      "path": "scripts/",
+      "problemMatcher": []
     }
   ]
 }
