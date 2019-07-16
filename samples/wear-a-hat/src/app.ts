@@ -163,7 +163,7 @@ export default class WearAHat {
                     return this.assets.loadGltf(
                         `${this.baseUrl}/${hatRecord.resourceName}`)
                         .then(assets => {
-							this.prefabs[hatId] = assets.find(a => a.prefab) as MRESDK.Prefab;
+							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRESDK.Prefab;
 						})
                         .catch(e => console.error(e));
                 } else {
