@@ -43,11 +43,11 @@ const HatDatabase: HatDatabase = require('../public/hats.json');
  * WearAHat Application - Showcasing avatar attachments.
  */
 export default class WearAHat {
-	// Container for preloaded hat prefabs.
-	private assets: MRESDK.AssetContainer;
+    // Container for preloaded hat prefabs.
+    private assets: MRESDK.AssetContainer;
     private prefabs: { [key: string]: MRESDK.Prefab } = {};
     // Container for instantiated hats.
-	private attachedHats: { [key: string]: MRESDK.Actor } = {};
+    private attachedHats: { [key: string]: MRESDK.Actor } = {};
 
     /**
      * Constructs a new instance of this class.
@@ -55,7 +55,7 @@ export default class WearAHat {
      * @param baseUrl The baseUrl to this project's `./public` folder.
      */
     constructor(private context: MRESDK.Context, private baseUrl: string) {
-		this.assets = new MRESDK.AssetContainer(context);
+        this.assets = new MRESDK.AssetContainer(context);
         // Hook the context events we're interested in.
         this.context.onStarted(() => this.started());
         this.context.onUserLeft(user => this.userLeft(user));
@@ -163,8 +163,8 @@ export default class WearAHat {
                     return this.assets.loadGltf(
                         `${this.baseUrl}/${hatRecord.resourceName}`)
                         .then(assets => {
-							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRESDK.Prefab;
-						})
+                            this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRESDK.Prefab;
+                        })
                         .catch(e => console.error(e));
                 } else {
                     return Promise.resolve();
