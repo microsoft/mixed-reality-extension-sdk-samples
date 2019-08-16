@@ -44,6 +44,12 @@
       "script": "start",
       "path": "samples/hello-world/",
       "problemMatcher": []
+    },
+    {
+      "type": "npm",
+      "script": "build-all",
+      "path": "scripts/",
+      "problemMatcher": []
     }
   ]
 }

@@ -7,7 +7,9 @@
   "license": "MIT",
   "scripts": {
     "use-sdk-source": "node ./change-sdk-source source",
-    "use-sdk-npm": "node ./change-sdk-source npm"
+    "use-sdk-npm": "node ./change-sdk-source npm",
+    "install-all": "node ./install-all",
+    "build-all": "node ./build-all"
   },
   "devDependencies": {
     "fs": "0.0.1-security",

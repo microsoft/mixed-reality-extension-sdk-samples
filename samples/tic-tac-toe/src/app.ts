@@ -10,7 +10,6 @@ import {
     ButtonBehavior,
     Context,
     DegreesToRadians,
-    ForwardPromise,
     PrimitiveShape,
     Quaternion,
     TextAnchorLocation,
@@ -42,7 +41,7 @@ export default class TicTacToe {
 
     private boardState: GamePiece[];
 
-    private gamePieceActors: Array<ForwardPromise<Actor>>;
+    private gamePieceActors: Actor[];
 
     private victoryChecks = [
         [0 * 3 + 0, 0 * 3 + 1, 0 * 3 + 2],
@@ -63,9 +62,8 @@ export default class TicTacToe {
      * Once the context is "started", initialize the app.
      */
     private async started() {
-        // Create a new actor with no mesh, but some text. This operation is asynchronous, so
-        // it returns a "forward" promise (a special promise, as we'll see later).
-        const textAnchorPromise = Actor.CreateEmpty(this.context, {
+        // Create a new actor with no mesh, but some text.
+        this.textAnchor = Actor.CreateEmpty(this.context, {
             actor: {
                 name: 'TextAnchor',
                 transform: {
@@ -73,9 +71,8 @@ export default class TicTacToe {
                 },
             }
         });
-        this.textAnchor = textAnchorPromise.value;
 
-        const textPromise = Actor.CreateEmpty(this.context, {
+        this.text = Actor.CreateEmpty(this.context, {
             actor: {
                 parentId: this.textAnchor.id,
                 name: 'Text',
@@ -90,9 +87,9 @@ export default class TicTacToe {
                 },
             }
         });
-        const lightPromise = Actor.CreateEmpty(this.context, {
+        this.light = Actor.CreateEmpty(this.context, {
             actor: {
-                parentId: textPromise.value.id,
+                parentId: this.text.id,
                 name: 'Light',
                 transform: {
                     local: {
@@ -110,11 +107,6 @@ export default class TicTacToe {
 
             }
         });
-
-        // Even though the actor is not yet created in Altspace (because we didn't wait for the promise),
-        // we can still get a reference to it by grabbing the `value` field from the forward promise.
-        this.text = textPromise.value;
-        this.light = lightPromise.value;
 
         // Here we create an animation on our text actor. Animations have three mandatory arguments:
         // a name, an array of keyframes, and an array of events.
@@ -135,7 +127,7 @@ export default class TicTacToe {
         for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
             for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
                 // Load a glTF model
-                const cubePromise = Actor.CreateFromGLTF(this.context, {
+                const cube = Actor.CreateFromGLTF(this.context, {
                     // at the given URL
                     resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
                     // and spawn box colliders around the meshes.
@@ -151,9 +143,6 @@ export default class TicTacToe {
                         }
                     }
                 });
-
-                // Grab that early reference again.
-                const cube = cubePromise.value;
 
                 // Create some animations on the cube.
                 cube.createAnimation(
@@ -192,7 +181,7 @@ export default class TicTacToe {
                     }
                 });
 
-                buttonBehavior.onClick('pressed', () => {
+                buttonBehavior.onClick(_ => {
                     switch (this.gameState) {
                         case GameState.Intro:
                             this.beginGameStatePlay();
@@ -306,7 +295,7 @@ export default class TicTacToe {
 
         if (this.gamePieceActors !== undefined) {
             for (const actor of this.gamePieceActors) {
-                actor.value.destroy();
+                actor.destroy();
             }
         }
         this.gamePieceActors = [];
