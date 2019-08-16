@@ -43,10 +43,11 @@ const HatDatabase: HatDatabase = require('../public/hats.json');
  * WearAHat Application - Showcasing avatar attachments.
  */
 export default class WearAHat {
-    // Container for preloaded hat prefabs.
-    private prefabs: { [key: string]: MRESDK.AssetGroup } = {};
+	// Container for preloaded hat prefabs.
+	private assets: MRESDK.AssetContainer;
+    private prefabs: { [key: string]: MRESDK.Prefab } = {};
     // Container for instantiated hats.
-    private attachedHats: { [key: string]: MRESDK.Actor } = {};
+	private attachedHats: { [key: string]: MRESDK.Actor } = {};
 
     /**
      * Constructs a new instance of this class.
@@ -54,6 +55,7 @@ export default class WearAHat {
      * @param baseUrl The baseUrl to this project's `./public` folder.
      */
     constructor(private context: MRESDK.Context, private baseUrl: string) {
+		this.assets = new MRESDK.AssetContainer(context);
         // Hook the context events we're interested in.
         this.context.onStarted(() => this.started());
         this.context.onUserLeft(user => this.userLeft(user));
@@ -85,7 +87,7 @@ export default class WearAHat {
      */
     private showHatMenu() {
         // Create a parent object for all the menu items.
-        const menu = MRESDK.Actor.CreateEmpty(this.context).value;
+        const menu = MRESDK.Actor.CreateEmpty(this.context);
         let y = 0.3;
 
         // Loop over the hat database, creating a menu item for each entry.
@@ -107,7 +109,7 @@ export default class WearAHat {
             });
 
             // Set a click handler on the button.
-            button.value.setBehavior(MRESDK.ButtonBehavior)
+            button.setBehavior(MRESDK.ButtonBehavior)
                 .onClick(user => this.wearHat(hatId, user.id));
 
             // Create a label for the menu entry.
@@ -158,9 +160,11 @@ export default class WearAHat {
             Object.keys(HatDatabase).map(hatId => {
                 const hatRecord = HatDatabase[hatId];
                 if (hatRecord.resourceName) {
-                    return this.context.assetManager.loadGltf(
-                        hatId, `${this.baseUrl}/${hatRecord.resourceName}`)
-                        .then(assetGroup => this.prefabs[hatId] = assetGroup)
+                    return this.assets.loadGltf(
+                        `${this.baseUrl}/${hatRecord.resourceName}`)
+                        .then(assets => {
+							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRESDK.Prefab;
+						})
                         .catch(e => console.error(e));
                 } else {
                     return Promise.resolve();
@@ -187,7 +191,7 @@ export default class WearAHat {
 
         // Create the hat model and attach it to the avatar's head.
         this.attachedHats[userId] = MRESDK.Actor.CreateFromPrefab(this.context, {
-            prefabId: this.prefabs[hatId].prefabs.byIndex(0).id,
+            prefabId: this.prefabs[hatId].id,
             actor: {
                 transform: {
                     local: {
@@ -204,6 +208,6 @@ export default class WearAHat {
                     userId
                 }
             }
-        }).value;
+        });
     }
 }

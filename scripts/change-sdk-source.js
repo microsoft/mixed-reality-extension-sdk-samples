@@ -21,9 +21,11 @@ function updateSdkTarget(sampleDir, sdkPath) {
     // update environment to be linked to the local source package, or to be the npm package.
     if (args[0] === 'npm') {
         console.log(`\nUpdating SDK Target: ${sampleDir} -> npm package`);
+        console.log(`pushd ${sampleDir} && npm unlink ${sdkPath} && npm install && popd`);
         shell.exec(`pushd ${sampleDir} && npm unlink ${sdkPath} && npm install && popd`);
     } else if (args[0] === 'source') {
         console.log(`\nUpdating SDK Target: ${sampleDir} -> ${sdkPath}`);
+        console.log(`pushd ${sampleDir} && npm link ${sdkPath} && popd`);
         shell.exec(`pushd ${sampleDir} && npm link ${sdkPath} && popd`);
     } else {
         printError("Invalid command.");

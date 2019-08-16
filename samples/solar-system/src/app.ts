@@ -169,7 +169,7 @@ export default class SolarSystem {
             const position = MRESDK.Actor.CreateEmpty(this.context, {
                 actor: {
                     name: `${bodyName}-position`,
-                    parentId: inclination.value.id,
+                    parentId: inclination.id,
                     transform: {
                         local: { position: positionValue }
                     }
@@ -178,7 +178,7 @@ export default class SolarSystem {
             const label = MRESDK.Actor.CreateEmpty(this.context, {
                 actor: {
                     name: `${bodyName}-label`,
-                    parentId: position.value.id,
+                    parentId: position.id,
                     transform: {
                         local: { position: { y: 0.1 + Math.pow(scaleMultiplier, 1 / 2.5) } }
                     }
@@ -187,13 +187,13 @@ export default class SolarSystem {
             const obliquity0 = MRESDK.Actor.CreateEmpty(this.context, {
                 actor: {
                     name: `${bodyName}-obliquity0`,
-                    parentId: position.value.id
+                    parentId: position.id
                 }
             });
             const obliquity1 = MRESDK.Actor.CreateEmpty(this.context, {
                 actor: {
                     name: `${bodyName}-obliquity1`,
-                    parentId: obliquity0.value.id,
+                    parentId: obliquity0.id,
                     transform: {
                         local: { rotation: obliquityValue }
                     }
@@ -204,7 +204,7 @@ export default class SolarSystem {
                 colliderType: 'sphere',
                 actor: {
                     name: `${bodyName}-body`,
-                    parentId: obliquity1.value.id,
+                    parentId: obliquity1.id,
                     transform: {
                         local: { scale: scaleValue }
                     }
@@ -212,7 +212,7 @@ export default class SolarSystem {
 
             });
 
-            label.value.enableText({
+            label.enableText({
                 contents: bodyName,
                 height: 0.5,
                 pixelsPerLine: 50,
@@ -222,15 +222,15 @@ export default class SolarSystem {
             });
 
             setTimeout(() => {
-                label.value.text.color = MRESDK.Color3.White();
+                label.text.color = MRESDK.Color3.White();
             }, 5000);
 
             this.celestialBodies[bodyName] = {
-                inclination: inclination.value,
-                position: position.value,
-                obliquity0: obliquity0.value,
-                obliquity1: obliquity1.value,
-                model: model.value
+                inclination,
+                position,
+                obliquity0,
+                obliquity1,
+                model
             } as CelestialBody;
 
             this.createAnimations(bodyName);
