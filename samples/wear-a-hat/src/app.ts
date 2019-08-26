@@ -87,7 +87,7 @@ export default class WearAHat {
 	 */
 	private showHatMenu() {
 		// Create a parent object for all the menu items.
-		const menu = MRESDK.Actor.Create(this.context);
+		const menu = MRESDK.Actor.Create(this.context, {});
 		let y = 0.3;
 
 		// Create menu button
