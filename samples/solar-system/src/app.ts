@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
 /**
  * Solar system database
@@ -25,11 +25,11 @@ interface DatabaseRecord {
 }
 
 interface CelestialBody {
-	inclination: MRESDK.Actor;
-	position: MRESDK.Actor;
-	obliquity0: MRESDK.Actor;
-	obliquity1: MRESDK.Actor;
-	model: MRESDK.Actor;
+	inclination: MRE.Actor;
+	position: MRE.Actor;
+	obliquity0: MRE.Actor;
+	obliquity1: MRE.Actor;
+	model: MRE.Actor;
 }
 
 interface CelestialBodySet {
@@ -47,8 +47,10 @@ const database: Database = require('../public/database.json');
 export default class SolarSystem {
 	private celestialBodies: CelestialBodySet = {};
 	private animationsRunning = false;
+	private assets: MRE.AssetContainer;
 
-	constructor(private context: MRESDK.Context, private baseUrl: string) {
+	constructor(private context: MRE.Context, private baseUrl: string) {
+		this.assets = new MRE.AssetContainer(context);
 		this.context.onUserJoined(user => this.userJoined(user));
 		this.context.onUserLeft(user => this.userLeft(user));
 		this.context.onStarted(() => this.started());
@@ -67,11 +69,10 @@ export default class SolarSystem {
 
 			sunPrimitives.forEach((prim) => {
 				// Add a collider so that the behavior system will work properly on Unity host apps.
-				const center = { x: 0, y: 0, z: 0 } as MRESDK.Vector3Like;
 				const radius = 3;
-				prim.setCollider('sphere', false, center, radius);
+				prim.setCollider('sphere', false, radius);
 
-				const buttonBehavior = prim.setBehavior(MRESDK.ButtonBehavior);
+				const buttonBehavior = prim.setBehavior(MRE.ButtonBehavior);
 
 				buttonBehavior.onClick(_ => {
 					if (this.animationsRunning) {
@@ -101,11 +102,11 @@ export default class SolarSystem {
 		console.log(`session stopped ${this.context.sessionId}`);
 	}
 
-	private userJoined(user: MRESDK.User) {
+	private userJoined(user: MRE.User) {
 		console.log(`user-joined: ${user.name}, ${user.id}`);
 	}
 
-	private userLeft(user: MRESDK.User) {
+	private userLeft(user: MRE.User) {
 		console.log(`user-left: ${user.name}`);
 	}
 
@@ -144,10 +145,10 @@ export default class SolarSystem {
 
 		const positionValue = { x: distanceMultiplier, y: 0, z: 0 };
 		const scaleValue = { x: scaleMultiplier / 2, y: scaleMultiplier / 2, z: scaleMultiplier / 2 };
-		const obliquityValue = MRESDK.Quaternion.RotationAxis(
-			MRESDK.Vector3.Forward(), facts.obliquity * MRESDK.DegreesToRadians);
-		const inclinationValue = MRESDK.Quaternion.RotationAxis(
-			MRESDK.Vector3.Forward(), facts.inclination * MRESDK.DegreesToRadians);
+		const obliquityValue = MRE.Quaternion.RotationAxis(
+			MRE.Vector3.Forward(), facts.obliquity * MRE.DegreesToRadians);
+		const inclinationValue = MRE.Quaternion.RotationAxis(
+			MRE.Vector3.Forward(), facts.inclination * MRE.DegreesToRadians);
 
 		// Object layout for celestial body is:
 		//  inclination                 -- orbital plane. centered on sol and tilted
@@ -158,7 +159,7 @@ export default class SolarSystem {
 		//              obliquity1      -- centered on position. tilt of obliquity axis
 		//                  model       -- centered on position. the celestial body (rotates)
 		try {
-			const inclination = MRESDK.Actor.CreateEmpty(this.context, {
+			const inclination = MRE.Actor.Create(this.context, {
 				actor: {
 					name: `${bodyName}-inclination`,
 					transform: {
@@ -166,7 +167,7 @@ export default class SolarSystem {
 					}
 				}
 			});
-			const position = MRESDK.Actor.CreateEmpty(this.context, {
+			const position = MRE.Actor.Create(this.context, {
 				actor: {
 					name: `${bodyName}-position`,
 					parentId: inclination.id,
@@ -175,7 +176,7 @@ export default class SolarSystem {
 					}
 				}
 			});
-			const label = MRESDK.Actor.CreateEmpty(this.context, {
+			const label = MRE.Actor.Create(this.context, {
 				actor: {
 					name: `${bodyName}-label`,
 					parentId: position.id,
@@ -184,13 +185,13 @@ export default class SolarSystem {
 					}
 				}
 			});
-			const obliquity0 = MRESDK.Actor.CreateEmpty(this.context, {
+			const obliquity0 = MRE.Actor.Create(this.context, {
 				actor: {
 					name: `${bodyName}-obliquity0`,
 					parentId: position.id
 				}
 			});
-			const obliquity1 = MRESDK.Actor.CreateEmpty(this.context, {
+			const obliquity1 = MRE.Actor.Create(this.context, {
 				actor: {
 					name: `${bodyName}-obliquity1`,
 					parentId: obliquity0.id,
@@ -199,14 +200,19 @@ export default class SolarSystem {
 					}
 				}
 			});
-			const model = MRESDK.Actor.CreateFromGLTF(this.context, {
-				resourceUrl: `${this.baseUrl}/assets/${bodyName}.gltf`,
-				colliderType: 'sphere',
+			const model = MRE.Actor.CreateFromGltf(this.assets, {
+				uri: `${this.baseUrl}/assets/${bodyName}.gltf`,
 				actor: {
 					name: `${bodyName}-body`,
 					parentId: obliquity1.id,
 					transform: {
 						local: { scale: scaleValue }
+					},
+					collider: {
+						geometry: {
+							shape: 'sphere',
+							radius: 0.5
+						}
 					}
 				}
 
@@ -216,13 +222,13 @@ export default class SolarSystem {
 				contents: bodyName,
 				height: 0.5,
 				pixelsPerLine: 50,
-				color: MRESDK.Color3.Yellow(),
-				anchor: MRESDK.TextAnchorLocation.TopCenter,
-				justify: MRESDK.TextJustify.Center,
+				color: MRE.Color3.Yellow(),
+				anchor: MRE.TextAnchorLocation.TopCenter,
+				justify: MRE.TextJustify.Center,
 			});
 
 			setTimeout(() => {
-				label.text.color = MRESDK.Color3.White();
+				label.text.color = MRE.Color3.White();
 			}, 5000);
 
 			this.celestialBodies[bodyName] = {
@@ -257,14 +263,14 @@ export default class SolarSystem {
 			// days = seconds (not in agreement with orbital animation)
 			const axisTimeInSeconds = facts.day / this.timeFactor;
 			const timeStep = axisTimeInSeconds / this.axialKeyframeCount;
-			const keyframes: MRESDK.AnimationKeyframe[] = [];
+			const keyframes: MRE.AnimationKeyframe[] = [];
 			const angleStep = 360 / this.axialKeyframeCount;
 			const initial = celestialBody.model.transform.local.rotation.clone();
-			let value: Partial<MRESDK.ActorLike>;
+			let value: Partial<MRE.ActorLike>;
 
 			for (let i = 0; i < this.axialKeyframeCount; ++i) {
-				const rotDelta = MRESDK.Quaternion.RotationAxis(
-					MRESDK.Vector3.Up(), (-angleStep * i * spin) * MRESDK.DegreesToRadians);
+				const rotDelta = MRE.Quaternion.RotationAxis(
+					MRE.Vector3.Up(), (-angleStep * i * spin) * MRE.DegreesToRadians);
 				const rotation = initial.multiply(rotDelta);
 				value = {
 					transform: {
@@ -293,7 +299,7 @@ export default class SolarSystem {
 				`${bodyName}:axial`, {
 					keyframes,
 					events: [],
-					wrapMode: MRESDK.AnimationWrapMode.Loop
+					wrapMode: MRE.AnimationWrapMode.Loop
 				});
 		}
 	}
@@ -307,14 +313,14 @@ export default class SolarSystem {
 			const orbitTimeInSeconds = facts.year / this.timeFactor;
 			const timeStep = orbitTimeInSeconds / this.orbitalKeyframeCount;
 			const angleStep = 360 / this.orbitalKeyframeCount;
-			const keyframes: MRESDK.AnimationKeyframe[] = [];
+			const keyframes: MRE.AnimationKeyframe[] = [];
 			const initial = celestialBody.position.transform.local.position.clone();
-			let value: Partial<MRESDK.ActorLike>;
+			let value: Partial<MRE.ActorLike>;
 
 			for (let i = 0; i < this.orbitalKeyframeCount; ++i) {
-				const rotDelta = MRESDK.Quaternion.RotationAxis(
-					MRESDK.Vector3.Up(), (-angleStep * i) * MRESDK.DegreesToRadians);
-				const position = initial.rotateByQuaternionToRef(rotDelta, new MRESDK.Vector3());
+				const rotDelta = MRE.Quaternion.RotationAxis(
+					MRE.Vector3.Up(), (-angleStep * i) * MRE.DegreesToRadians);
+				const position = initial.rotateByQuaternionToRef(rotDelta, new MRE.Vector3());
 				value = {
 					transform: {
 						local: { position }
@@ -342,7 +348,7 @@ export default class SolarSystem {
 				`${bodyName}:orbital`, {
 					keyframes,
 					events: [],
-					wrapMode: MRESDK.AnimationWrapMode.Loop
+					wrapMode: MRE.AnimationWrapMode.Loop
 				});
 		}
 	}

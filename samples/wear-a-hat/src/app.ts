@@ -87,21 +87,21 @@ export default class WearAHat {
 	 */
 	private showHatMenu() {
 		// Create a parent object for all the menu items.
-		const menu = MRESDK.Actor.CreateEmpty(this.context);
+		const menu = MRESDK.Actor.Create(this.context);
 		let y = 0.3;
+
+		// Create menu button
+		const buttonMesh = this.assets.createBoxMesh('button', 0.3, 0.3, 0.01);
 
 		// Loop over the hat database, creating a menu item for each entry.
 		for (const hatId of Object.keys(HatDatabase)) {
 			// Create a clickable button.
-			const button = MRESDK.Actor.CreatePrimitive(this.context, {
-				definition: {
-					shape: MRESDK.PrimitiveShape.Box,
-					dimensions: { x: 0.3, y: 0.3, z: 0.01 }
-				},
-				addCollider: true,
+			const button = MRESDK.Actor.Create(this.context, {
 				actor: {
 					parentId: menu.id,
 					name: hatId,
+					appearance: { meshId: buttonMesh.id },
+					collider: { geometry: { shape: 'auto' } },
 					transform: {
 						local: { position: { x: 0, y, z: 0 } }
 					}
@@ -113,7 +113,7 @@ export default class WearAHat {
 				.onClick(user => this.wearHat(hatId, user.id));
 
 			// Create a label for the menu entry.
-			MRESDK.Actor.CreateEmpty(this.context, {
+			MRESDK.Actor.Create(this.context, {
 				actor: {
 					parentId: menu.id,
 					name: 'label',
@@ -131,7 +131,7 @@ export default class WearAHat {
 		}
 
 		// Create a label for the menu title.
-		MRESDK.Actor.CreateEmpty(this.context, {
+		MRESDK.Actor.Create(this.context, {
 			actor: {
 				parentId: menu.id,
 				name: 'label',

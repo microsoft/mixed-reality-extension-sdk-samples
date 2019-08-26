@@ -8,6 +8,7 @@ import {
 	AnimationEaseCurves,
 	AnimationKeyframe,
 	AnimationWrapMode,
+	AssetContainer,
 	ButtonBehavior,
 	Context,
 	Quaternion,
@@ -31,7 +32,7 @@ export default class HelloWorld {
 	 */
 	private started() {
 		// Create a new actor with no mesh, but some text.
-		this.text = Actor.CreateEmpty(this.context, {
+		this.text = Actor.Create(this.context, {
 			actor: {
 				name: 'Text',
 				transform: {
@@ -64,9 +65,9 @@ export default class HelloWorld {
 			});
 
 		// Load a glTF model
-		this.cube = Actor.CreateFromGLTF(this.context, {
+		this.cube = Actor.CreateFromGltf(new AssetContainer(this.context), {
 			// at the given URL
-			resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
+			uri: `${this.baseUrl}/altspace-cube.glb`,
 			// and spawn box colliders around the meshes.
 			colliderType: 'box',
 			// Also apply the following generic actor properties.

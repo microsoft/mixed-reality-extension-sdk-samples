@@ -7,6 +7,7 @@ import {
 	Actor,
 	AnimationKeyframe,
 	AnimationWrapMode,
+	AssetContainer,
 	ButtonBehavior,
 	Context,
 	DegreesToRadians,
@@ -31,6 +32,7 @@ enum GamePiece {
  * The main class of this app. All the logic goes here.
  */
 export default class TicTacToe {
+	private assets: AssetContainer;
 	private text: Actor = null;
 	private textAnchor: Actor = null;
 	private light: Actor = null;
@@ -55,6 +57,7 @@ export default class TicTacToe {
 	];
 
 	constructor(private context: Context, private baseUrl: string) {
+		this.assets = new AssetContainer(context);
 		this.context.onStarted(() => this.started());
 	}
 
@@ -63,7 +66,7 @@ export default class TicTacToe {
 	 */
 	private async started() {
 		// Create a new actor with no mesh, but some text.
-		this.textAnchor = Actor.CreateEmpty(this.context, {
+		this.textAnchor = Actor.Create(this.context, {
 			actor: {
 				name: 'TextAnchor',
 				transform: {
@@ -72,7 +75,7 @@ export default class TicTacToe {
 			}
 		});
 
-		this.text = Actor.CreateEmpty(this.context, {
+		this.text = Actor.Create(this.context, {
 			actor: {
 				parentId: this.textAnchor.id,
 				name: 'Text',
@@ -87,7 +90,7 @@ export default class TicTacToe {
 				},
 			}
 		});
-		this.light = Actor.CreateEmpty(this.context, {
+		this.light = Actor.Create(this.context, {
 			actor: {
 				parentId: this.text.id,
 				name: 'Light',
@@ -122,16 +125,22 @@ export default class TicTacToe {
 
 				// Optionally, we also repeat the animation infinitely.
 				wrapMode: AnimationWrapMode.Loop
-			});
+			}
+		);
+
+		// Load box model from glTF
+		const gltf = await this.assets.loadGltf(`${this.baseUrl}/altspace-cube.glb`, 'box');
+
+		// Also load the player choice markers now, for efficiency's sake
+		const circle = this.assets.createCylinderMesh('circle', 0.2, 0.4, 'y', 16);
+		const square = this.assets.createBoxMesh('square', 0.70, 0.2, 0.70);
 
 		for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
 			for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
-				// Load a glTF model
-				const cube = Actor.CreateFromGLTF(this.context, {
-					// at the given URL
-					resourceUrl: `${this.baseUrl}/altspace-cube.glb`,
-					// and spawn box colliders around the meshes.
-					colliderType: 'box',
+				// Create a glTF actor
+				const cube = Actor.CreateFromPrefab(this.context, {
+					// Use the preloaded glTF for each box
+					firstPrefabFrom: gltf,
 					// Also apply the following generic actor properties.
 					actor: {
 						name: 'Altspace Cube',
@@ -197,28 +206,20 @@ export default class TicTacToe {
 									cube.transform.local.position.y + 0.55,
 									cube.transform.local.position.z);
 								if (this.currentPlayerGamePiece === GamePiece.O) {
-									this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
-										definition: {
-											shape: PrimitiveShape.Cylinder,
-											dimensions: { x: 0, y: 0.2, z: 0 },
-											radius: 0.4,
-											uSegments: 16,
-										},
+									this.gamePieceActors.push(Actor.Create(this.context, {
 										actor: {
 											name: 'O',
+											appearance: { meshId: circle.id },
 											transform: {
 												local: { position: gamePiecePosition }
 											}
 										}
 									}));
 								} else {
-									this.gamePieceActors.push(Actor.CreatePrimitive(this.context, {
-										definition: {
-											shape: PrimitiveShape.Box,
-											dimensions: { x: 0.70, y: 0.2, z: 0.70 }
-										},
+									this.gamePieceActors.push(Actor.Create(this.context, {
 										actor: {
 											name: 'X',
+											appearance: { meshId: square.id },
 											transform: {
 												local: { position: gamePiecePosition }
 											}
