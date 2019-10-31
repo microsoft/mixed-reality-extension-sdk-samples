@@ -52,17 +52,17 @@ export default class HelloWorld {
 		this.text.createAnimation(
 			// The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
 			"Spin", {
-				// Keyframes define the timeline for the animation: where the actor should be, and when.
-				// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-				keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
-				// Events are points of interest during the animation. The animating actor will emit a given
-				// named event at the given timestamp with a given string value as an argument.
-				events: [],
+			// Keyframes define the timeline for the animation: where the actor should be, and when.
+			// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
+			keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
+			// Events are points of interest during the animation. The animating actor will emit a given
+			// named event at the given timestamp with a given string value as an argument.
+			events: [],
 
-				// Optionally, we also repeat the animation infinitely. PingPong alternately runs the animation
-				// foward then backward.
-				wrapMode: AnimationWrapMode.PingPong
-			});
+			// Optionally, we also repeat the animation infinitely. PingPong alternately runs the animation
+			// foward then backward.
+			wrapMode: AnimationWrapMode.PingPong
+		});
 
 		// Load a glTF model
 		this.cube = Actor.CreateFromGltf(new AssetContainer(this.context), {
@@ -87,9 +87,9 @@ export default class HelloWorld {
 		// Create some animations on the cube.
 		this.cube.createAnimation(
 			'DoAFlip', {
-				keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
-				events: []
-			});
+			keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+			events: []
+		});
 
 		// Now that the text and its animation are all being set up, we can start playing
 		// the animation.

@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import * as MRESDK from '@microsoft/mixed-reality-extension-sdk';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
 /**
  * The structure of a hat entry in the hat database.
@@ -44,18 +44,18 @@ const HatDatabase: HatDatabase = require('../public/hats.json');
  */
 export default class WearAHat {
 	// Container for preloaded hat prefabs.
-	private assets: MRESDK.AssetContainer;
-	private prefabs: { [key: string]: MRESDK.Prefab } = {};
+	private assets: MRE.AssetContainer;
+	private prefabs: { [key: string]: MRE.Prefab } = {};
 	// Container for instantiated hats.
-	private attachedHats: { [key: string]: MRESDK.Actor } = {};
+	private attachedHats: { [key: string]: MRE.Actor } = {};
 
 	/**
 	 * Constructs a new instance of this class.
 	 * @param context The MRE SDK context.
 	 * @param baseUrl The baseUrl to this project's `./public` folder.
 	 */
-	constructor(private context: MRESDK.Context, private baseUrl: string) {
-		this.assets = new MRESDK.AssetContainer(context);
+	constructor(private context: MRE.Context, private baseUrl: string) {
+		this.assets = new MRE.AssetContainer(context);
 		// Hook the context events we're interested in.
 		this.context.onStarted(() => this.started());
 		this.context.onUserLeft(user => this.userLeft(user));
@@ -75,7 +75,7 @@ export default class WearAHat {
 	 * Called when a user leaves the application (probably left the Altspace world where this app is running).
 	 * @param user The user that left the building.
 	 */
-	private userLeft(user: MRESDK.User) {
+	private userLeft(user: MRE.User) {
 		// If the user was wearing a hat, destroy it. Otherwise it would be
 		// orphaned in the world.
 		if (this.attachedHats[user.id]) this.attachedHats[user.id].destroy();
@@ -87,7 +87,7 @@ export default class WearAHat {
 	 */
 	private showHatMenu() {
 		// Create a parent object for all the menu items.
-		const menu = MRESDK.Actor.Create(this.context, {});
+		const menu = MRE.Actor.Create(this.context, {});
 		let y = 0.3;
 
 		// Create menu button
@@ -96,12 +96,12 @@ export default class WearAHat {
 		// Loop over the hat database, creating a menu item for each entry.
 		for (const hatId of Object.keys(HatDatabase)) {
 			// Create a clickable button.
-			const button = MRESDK.Actor.Create(this.context, {
+			const button = MRE.Actor.Create(this.context, {
 				actor: {
 					parentId: menu.id,
 					name: hatId,
 					appearance: { meshId: buttonMesh.id },
-					collider: { geometry: { shape: 'auto' } },
+					collider: { geometry: { shape: MRE.ColliderType.Auto } },
 					transform: {
 						local: { position: { x: 0, y, z: 0 } }
 					}
@@ -109,18 +109,18 @@ export default class WearAHat {
 			});
 
 			// Set a click handler on the button.
-			button.setBehavior(MRESDK.ButtonBehavior)
+			button.setBehavior(MRE.ButtonBehavior)
 				.onClick(user => this.wearHat(hatId, user.id));
 
 			// Create a label for the menu entry.
-			MRESDK.Actor.Create(this.context, {
+			MRE.Actor.Create(this.context, {
 				actor: {
 					parentId: menu.id,
 					name: 'label',
 					text: {
 						contents: HatDatabase[hatId].displayName,
 						height: 0.5,
-						anchor: MRESDK.TextAnchorLocation.MiddleLeft
+						anchor: MRE.TextAnchorLocation.MiddleLeft
 					},
 					transform: {
 						local: { position: { x: 0.5, y, z: 0 } }
@@ -131,15 +131,15 @@ export default class WearAHat {
 		}
 
 		// Create a label for the menu title.
-		MRESDK.Actor.Create(this.context, {
+		MRE.Actor.Create(this.context, {
 			actor: {
 				parentId: menu.id,
 				name: 'label',
 				text: {
 					contents: ''.padStart(8, ' ') + "Wear a Hat",
 					height: 0.8,
-					anchor: MRESDK.TextAnchorLocation.MiddleCenter,
-					color: MRESDK.Color3.Yellow()
+					anchor: MRE.TextAnchorLocation.MiddleCenter,
+					color: MRE.Color3.Yellow()
 				},
 				transform: {
 					local: { position: { x: 0.5, y: y + 0.25, z: 0 } }
@@ -163,7 +163,7 @@ export default class WearAHat {
 					return this.assets.loadGltf(
 						`${this.baseUrl}/${hatRecord.resourceName}`)
 						.then(assets => {
-							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRESDK.Prefab;
+							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRE.Prefab;
 						})
 						.catch(e => console.error(e));
 				} else {
@@ -190,16 +190,16 @@ export default class WearAHat {
 		}
 
 		// Create the hat model and attach it to the avatar's head.
-		this.attachedHats[userId] = MRESDK.Actor.CreateFromPrefab(this.context, {
+		this.attachedHats[userId] = MRE.Actor.CreateFromPrefab(this.context, {
 			prefabId: this.prefabs[hatId].id,
 			actor: {
 				transform: {
 					local: {
 						position: hatRecord.position,
-						rotation: MRESDK.Quaternion.FromEulerAngles(
-							hatRecord.rotation.x * MRESDK.DegreesToRadians,
-							hatRecord.rotation.y * MRESDK.DegreesToRadians,
-							hatRecord.rotation.z * MRESDK.DegreesToRadians),
+						rotation: MRE.Quaternion.FromEulerAngles(
+							hatRecord.rotation.x * MRE.DegreesToRadians,
+							hatRecord.rotation.y * MRE.DegreesToRadians,
+							hatRecord.rotation.z * MRE.DegreesToRadians),
 						scale: hatRecord.scale,
 					}
 				},

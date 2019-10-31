@@ -36,7 +36,7 @@ interface CelestialBodySet {
 	[key: string]: CelestialBody;
 }
 
-// Data source: https://nssdc.gsfc.nasa.gov/planetary/dataheet/
+// Data source: https://nssdc.gsfc.nasa.gov/planetary/dataheet/ (now defunct, it seems)
 // (some settings modified for scale and dramatic effect)
 // tslint:disable-next-line:no-var-requires
 const database: Database = require('../public/database.json');
@@ -70,7 +70,7 @@ export default class SolarSystem {
 			sunPrimitives.forEach((prim) => {
 				// Add a collider so that the behavior system will work properly on Unity host apps.
 				const radius = 3;
-				prim.setCollider('sphere', false, radius);
+				prim.setCollider(MRE.ColliderType.Sphere, false, radius);
 
 				const buttonBehavior = prim.setBehavior(MRE.ButtonBehavior);
 
@@ -210,7 +210,7 @@ export default class SolarSystem {
 					},
 					collider: {
 						geometry: {
-							shape: 'sphere',
+							shape: MRE.ColliderType.Sphere,
 							radius: 0.5
 						}
 					}
@@ -297,10 +297,10 @@ export default class SolarSystem {
 			// Create the animation on the actor
 			celestialBody.model.createAnimation(
 				`${bodyName}:axial`, {
-					keyframes,
-					events: [],
-					wrapMode: MRE.AnimationWrapMode.Loop
-				});
+				keyframes,
+				events: [],
+				wrapMode: MRE.AnimationWrapMode.Loop
+			});
 		}
 	}
 
@@ -346,10 +346,10 @@ export default class SolarSystem {
 			// Create the animation on the actor
 			celestialBody.position.createAnimation(
 				`${bodyName}:orbital`, {
-					keyframes,
-					events: [],
-					wrapMode: MRE.AnimationWrapMode.Loop
-				});
+				keyframes,
+				events: [],
+				wrapMode: MRE.AnimationWrapMode.Loop
+			});
 		}
 	}
 }
