@@ -4,6 +4,7 @@
  */
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
+import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
 
 /**
  * Solar system database
@@ -38,7 +39,7 @@ interface CelestialBodySet {
 
 // Data source: https://nssdc.gsfc.nasa.gov/planetary/dataheet/
 // (some settings modified for scale and dramatic effect)
-// tslint:disable-next-line:no-var-requires
+/* eslint-disable-next-line @typescript-eslint/no-var-requires */
 const database: Database = require('../public/database.json');
 
 /**
@@ -51,15 +52,10 @@ export default class SolarSystem {
 
 	constructor(private context: MRE.Context, private baseUrl: string) {
 		this.assets = new MRE.AssetContainer(context);
-		this.context.onUserJoined(user => this.userJoined(user));
-		this.context.onUserLeft(user => this.userLeft(user));
 		this.context.onStarted(() => this.started());
-		this.context.onStopped(() => this.stopped());
 	}
 
-	private started = () => {
-		console.log(`session started ${this.context.sessionId}`);
-
+	private started() {
 		this.createSolarSystem();
 
 		const sunEntity = this.celestialBodies.sol;
@@ -70,7 +66,7 @@ export default class SolarSystem {
 			sunPrimitives.forEach((prim) => {
 				// Add a collider so that the behavior system will work properly on Unity host apps.
 				const radius = 3;
-				prim.setCollider('sphere', false, radius);
+				prim.setCollider(MRE.ColliderType.Sphere, false, radius);
 
 				const buttonBehavior = prim.setBehavior(MRE.ButtonBehavior);
 
@@ -83,31 +79,11 @@ export default class SolarSystem {
 						this.animationsRunning = true;
 					}
 				});
-
-				buttonBehavior.onHover('enter', () => {
-					console.log(`Hover entered on ${sunEntity.model.name}.`);
-				});
-
-				buttonBehavior.onHover('exit', () => {
-					console.log(`Hover exited on ${sunEntity.model.name}.`);
-				});
 			});
 		}
 
 		this.resumeAnimations();
 		this.animationsRunning = true;
-	}
-
-	private stopped() {
-		console.log(`session stopped ${this.context.sessionId}`);
-	}
-
-	private userJoined(user: MRE.User) {
-		console.log(`user-joined: ${user.name}, ${user.id}`);
-	}
-
-	private userLeft(user: MRE.User) {
-		console.log(`user-left: ${user.name}`);
 	}
 
 	private createSolarSystem() {
@@ -136,7 +112,6 @@ export default class SolarSystem {
 	}
 
 	private createBody(bodyName: string) {
-		console.log(`Loading ${bodyName}`);
 
 		const facts = database[bodyName];
 
@@ -210,7 +185,7 @@ export default class SolarSystem {
 					},
 					collider: {
 						geometry: {
-							shape: 'sphere',
+							shape: MRE.ColliderType.Sphere,
 							radius: 0.5
 						}
 					}
@@ -241,7 +216,7 @@ export default class SolarSystem {
 
 			this.createAnimations(bodyName);
 		} catch (e) {
-			console.log("createBody failed", bodyName, e);
+			log.info('app', `createBody failed ${bodyName}, ${e}`);
 		}
 	}
 

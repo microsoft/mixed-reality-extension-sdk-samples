@@ -11,11 +11,11 @@ import {
 	ButtonBehavior,
 	Context,
 	DegreesToRadians,
-	PrimitiveShape,
 	Quaternion,
 	TextAnchorLocation,
 	Vector3
 } from '@microsoft/mixed-reality-extension-sdk';
+import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
 
 enum GameState {
 	Intro,
@@ -190,7 +190,7 @@ export default class TicTacToe {
 					}
 				});
 
-				buttonBehavior.onClick(_ => {
+				buttonBehavior.onClick(() => {
 					switch (this.gameState) {
 						case GameState.Intro:
 							this.beginGameStatePlay();
@@ -199,7 +199,7 @@ export default class TicTacToe {
 						case GameState.Play:
 							// When clicked, put down a tile, and do a victory check
 							if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-								console.log("Putting an " + GamePiece[this.currentPlayerGamePiece] +
+								log.info("app", "Putting an " + GamePiece[this.currentPlayerGamePiece] +
 									" on: (" + tileIndexX + "," + tileIndexZ + ")");
 								const gamePiecePosition: Vector3 = new Vector3(
 									cube.transform.local.position.x,
@@ -271,21 +271,21 @@ export default class TicTacToe {
 	}
 
 	private beginGameStateCelebration(winner: GamePiece) {
-		console.log("BeginGameState Celebration");
+		log.info("app", "BeginGameState Celebration");
 		this.gameState = GameState.Celebration;
 		this.light.light.color = { r: 0.3, g: 1.0, b: 0.3 };
 
 		if (winner === undefined) {
-			console.log("Tie");
+			log.info("app", "Tie");
 			this.text.text.contents = "Tie";
 		} else {
-			console.log("Winner: " + GamePiece[winner]);
+			log.info("app", "Winner: " + GamePiece[winner]);
 			this.text.text.contents = "Winner: " + GamePiece[winner];
 		}
 	}
 
 	private beginGameStateIntro() {
-		console.log("BeginGameState Intro");
+		log.info("app", "BeginGameState Intro");
 		this.gameState = GameState.Intro;
 		this.text.text.contents = "Tic-Tac-Toe\nClick To Play";
 
@@ -303,7 +303,7 @@ export default class TicTacToe {
 	}
 
 	private beginGameStatePlay() {
-		console.log("BeginGameState Play");
+		log.info("app", "BeginGameState Play");
 		this.gameState = GameState.Play;
 		this.text.text.contents = "First Piece: " + GamePiece[this.currentPlayerGamePiece];
 	}

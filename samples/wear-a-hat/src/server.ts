@@ -8,8 +8,10 @@ import dotenv from 'dotenv';
 import { resolve as resolvePath } from 'path';
 import App from './app';
 
+/* eslint-disable no-console */
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
+/* eslint-enable no-console */
 
 // Read .env if file exists
 dotenv.config();
