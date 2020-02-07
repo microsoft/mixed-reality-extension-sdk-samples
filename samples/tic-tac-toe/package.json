@@ -22,6 +22,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "tsc --build --clean",
     "build": "tsc --build && eslint --ext .ts src",
+    "build-only": "tsc --build",
     "lint": "eslint --ext .ts src",
     "start": "node .",
     "debug": "node --nolazy --inspect-brk=9229 ."
