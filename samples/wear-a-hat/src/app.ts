@@ -48,7 +48,7 @@ export default class WearAHat {
 	private assets: MRE.AssetContainer;
 	private prefabs: { [key: string]: MRE.Prefab } = {};
 	// Container for instantiated hats.
-	private attachedHats: { [key: string]: MRE.Actor } = {};
+	private attachedHats = new Map<MRE.Guid, MRE.Actor>();
 
 	/**
 	 * Constructs a new instance of this class.
@@ -79,8 +79,7 @@ export default class WearAHat {
 	private userLeft(user: MRE.User) {
 		// If the user was wearing a hat, destroy it. Otherwise it would be
 		// orphaned in the world.
-		if (this.attachedHats[user.id]) { this.attachedHats[user.id].destroy(); }
-		delete this.attachedHats[user.id];
+		this.removeHats(user);
 	}
 
 	/**
@@ -178,10 +177,9 @@ export default class WearAHat {
 	 * @param hatId The id of the hat in the hat database.
 	 * @param userId The id of the user we will attach the hat to.
 	 */
-	private wearHat(hatId: string, userId: string) {
+	private wearHat(hatId: string, userId: MRE.Guid) {
 		// If the user is wearing a hat, destroy it.
-		if (this.attachedHats[userId]) { this.attachedHats[userId].destroy(); }
-		delete this.attachedHats[userId];
+		this.removeHats(this.context.user(userId));
 
 		const hatRecord = HatDatabase[hatId];
 
@@ -191,7 +189,7 @@ export default class WearAHat {
 		}
 
 		// Create the hat model and attach it to the avatar's head.
-		this.attachedHats[userId] = MRE.Actor.CreateFromPrefab(this.context, {
+		this.attachedHats.set(userId, MRE.Actor.CreateFromPrefab(this.context, {
 			prefabId: this.prefabs[hatId].id,
 			actor: {
 				transform: {
@@ -209,6 +207,11 @@ export default class WearAHat {
 					userId
 				}
 			}
-		});
+		}));
+	}
+
+	private removeHats(user: MRE.User) {
+		if (this.attachedHats.has(user.id)) { this.attachedHats.get(user.id).destroy(); }
+		this.attachedHats.delete(user.id);
 	}
 }
