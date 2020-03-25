@@ -31,6 +31,23 @@ export default class HelloWorld {
 	 * Once the context is "started", initialize the app.
 	 */
 	private started() {
+		// Check whether code is running in a debuggable watched filesystem
+		// environment and if so delay starting the app by 1 second to give
+		// the debugger time to detect the server has restarted and reconnect
+		// (the numeric argument to the setTimeout command below is in milliseconds
+		// so 1000 is a one second delay - you may need to increase the delay or
+		// be able to decrease it depending on the speed of your PC)
+		const argv = process.execArgv.join();
+		const isDebug = argv.includes('inspect') || argv.includes('debug');
+		if (isDebug) {
+			setTimeout(this.startedImpl, 1000);
+		} else {
+			this.startedImpl();
+		}
+	}
+
+	// use () => {} syntax here to get proper scope binding when called via setTimeout()
+	private startedImpl = () => {
 		// Create a new actor with no mesh, but some text.
 		this.text = Actor.Create(this.context, {
 			actor: {
