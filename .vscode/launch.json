@@ -6,76 +6,39 @@
   "configurations": [
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch tic-tac-toe project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
+      "request": "attach",
+      "name": "Attach to tic-tac-toe project",
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/tic-tac-toe",
-      "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
-      "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Launch hello-world project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/hello-world",
-      "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
-      "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to hello-world-with-debuggable-hot-reload project",
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/hello-world-with-debuggable-hot-reload",
       "internalConsoleOptions": "openOnSessionStart",
       "restart": true,
     },
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch solar-system project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
+      "request": "attach",
+      "name": "Attach to hello-world project",
       "port": 9229,
-      "cwd": "${workspaceFolder}/samples/solar-system",
+      "cwd": "${workspaceFolder}/samples/hello-world",
       "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
-      "outputCapture": "std"
+      "restart": true,
     },
     {
       "type": "node",
-      "request": "launch",
-      "name": "Launch wear-a-hat project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
+      "request": "attach",
+      "name": "Attach to solar-system project",
+      "port": 9229,
+      "cwd": "${workspaceFolder}/samples/solar-system",
+      "internalConsoleOptions": "openOnSessionStart",
+      "restart": true,
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to wear-a-hat project",
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/wear-a-hat",
       "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
-      "outputCapture": "std"
+      "restart": true,
     }
   ]
 }
