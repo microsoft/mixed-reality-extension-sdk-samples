@@ -65,6 +65,35 @@ export default class TicTacToe {
 	 * Once the context is "started", initialize the app.
 	 */
 	private async started() {
+		// Check whether code is running in a debuggable watched filesystem
+		// environment and if so delay starting the app by 1 second to give
+		// the debugger time to detect that the server has restarted and reconnect.
+		// The delay value below is in milliseconds so 1000 is a one second delay.
+		// You may need to increase the delay or be able to decrease it depending
+		// on the speed of your PC.
+		const delay = 1000;
+		const argv = process.execArgv.join();
+		const isDebug = argv.includes('inspect') || argv.includes('debug');
+
+		// // version to use with non-async code
+		// if (isDebug) {
+		// 	setTimeout(this.startedImpl, delay);
+		// } else {
+		// 	this.startedImpl();
+		// }
+
+		// version to use with async code
+		if (isDebug) {
+			await new Promise(resolve => setTimeout(resolve, delay));
+			await this.startedImpl();
+		} else {
+			await this.startedImpl();
+		}
+	}
+
+	// use () => {} syntax here to get proper scope binding when called via setTimeout()
+	// if async is required, next line becomes private startedImpl = async () => {
+	private startedImpl = async () => {
 		// Create a new actor with no mesh, but some text.
 		this.textAnchor = Actor.Create(this.context, {
 			actor: {
@@ -83,6 +112,8 @@ export default class TicTacToe {
 					local: { position: { x: 0, y: 0.0, z: -1.5 } }
 				},
 				text: {
+					// NOTE: this is not actually the spinning text you see in your world
+					// that Tic-Tac-Toe! text is in the beginGameStateIntro() function below
 					contents: "Tic-Tac-Toe!",
 					anchor: TextAnchorLocation.MiddleCenter,
 					color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
