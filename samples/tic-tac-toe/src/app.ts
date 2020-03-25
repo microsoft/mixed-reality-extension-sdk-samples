@@ -112,7 +112,7 @@ export default class TicTacToe {
 					local: { position: { x: 0, y: 0.0, z: -1.5 } }
 				},
 				text: {
-					// NOTE: this is not actually the spinning text you see in your world
+					// NOTE: this is NOT the spinning text you see in your world
 					// that Tic-Tac-Toe! text is in the beginGameStateIntro() function below
 					contents: "Tic-Tac-Toe!",
 					anchor: TextAnchorLocation.MiddleCenter,
