@@ -27,7 +27,7 @@
     "lint": "eslint --ext .ts src",
     "start-watch": "nodemon --nolazy --inspect .",
     "start": "node .",
-    "debug": "concurrently \"npm run *-watch\""
+    "debug": "npm run build && concurrently \"npm run *-watch\""
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.17.0",
