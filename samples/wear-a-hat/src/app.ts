@@ -4,7 +4,6 @@
  */
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
-import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
 
 /**
  * The structure of a hat entry in the hat database.
@@ -165,7 +164,7 @@ export default class WearAHat {
 						.then(assets => {
 							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRE.Prefab;
 						})
-						.catch(e => log.error("app", e));
+						.catch(e => MRE.log.error("app", e));
 				} else {
 					return Promise.resolve();
 				}

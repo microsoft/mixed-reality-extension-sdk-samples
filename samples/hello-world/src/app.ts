@@ -3,27 +3,16 @@
  * Licensed under the MIT License.
  */
 
-import {
-	Actor,
-	AnimationEaseCurves,
-	AnimationKeyframe,
-	AnimationWrapMode,
-	AssetContainer,
-	ButtonBehavior,
-	Context,
-	Quaternion,
-	TextAnchorLocation,
-	Vector3
-} from '@microsoft/mixed-reality-extension-sdk';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
 /**
  * The main class of this app. All the logic goes here.
  */
 export default class HelloWorld {
-	private text: Actor = null;
-	private cube: Actor = null;
+	private text: MRE.Actor = null;
+	private cube: MRE.Actor = null;
 
-	constructor(private context: Context, private baseUrl: string) {
+	constructor(private context: MRE.Context, private baseUrl: string) {
 		this.context.onStarted(() => this.started());
 	}
 
@@ -32,7 +21,7 @@ export default class HelloWorld {
 	 */
 	private started() {
 		// Create a new actor with no mesh, but some text.
-		this.text = Actor.Create(this.context, {
+		this.text = MRE.Actor.Create(this.context, {
 			actor: {
 				name: 'Text',
 				transform: {
@@ -40,7 +29,7 @@ export default class HelloWorld {
 				},
 				text: {
 					contents: "Hello World!",
-					anchor: TextAnchorLocation.MiddleCenter,
+					anchor: MRE.TextAnchorLocation.MiddleCenter,
 					color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
 					height: 0.3
 				}
@@ -54,18 +43,18 @@ export default class HelloWorld {
 			"Spin", {
 				// Keyframes define the timeline for the animation: where the actor should be, and when.
 				// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-				keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
+				keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
 				// Events are points of interest during the animation. The animating actor will emit a given
 				// named event at the given timestamp with a given string value as an argument.
 				events: [],
 
 				// Optionally, we also repeat the animation infinitely. PingPong alternately runs the animation
 				// foward then backward.
-				wrapMode: AnimationWrapMode.PingPong
+				wrapMode: MRE.AnimationWrapMode.PingPong
 			});
 
 		// Load a glTF model
-		this.cube = Actor.CreateFromGltf(new AssetContainer(this.context), {
+		this.cube = MRE.Actor.CreateFromGltf(new MRE.AssetContainer(this.context), {
 			// at the given URL
 			uri: `${this.baseUrl}/altspace-cube.glb`,
 			// and spawn box colliders around the meshes.
@@ -87,7 +76,7 @@ export default class HelloWorld {
 		// Create some animations on the cube.
 		this.cube.createAnimation(
 			'DoAFlip', {
-				keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+				keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
 				events: []
 			});
 
@@ -97,16 +86,20 @@ export default class HelloWorld {
 
 		// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
 		// Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-		const buttonBehavior = this.cube.setBehavior(ButtonBehavior);
+		const buttonBehavior = this.cube.setBehavior(MRE.ButtonBehavior);
 
 		// Trigger the grow/shrink animations on hover.
 		buttonBehavior.onHover('enter', () => {
 			this.cube.animateTo(
-				{ transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+				{ transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } },
+				0.3,
+				MRE.AnimationEaseCurves.EaseOutSine);
 		});
 		buttonBehavior.onHover('exit', () => {
 			this.cube.animateTo(
-				{ transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }, 0.3, AnimationEaseCurves.EaseOutSine);
+				{ transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } },
+				0.3,
+				MRE.AnimationEaseCurves.EaseOutSine);
 		});
 
 		// When clicked, do a 360 sideways.
@@ -120,22 +113,22 @@ export default class HelloWorld {
 	 * @param duration The length of time in seconds it takes to complete a full revolution.
 	 * @param axis The axis of rotation in local space.
 	 */
-	private generateSpinKeyframes(duration: number, axis: Vector3): AnimationKeyframe[] {
+	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): MRE.AnimationKeyframe[] {
 		return [{
 			time: 0 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 0) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 0) } } }
 		}, {
 			time: 0.25 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI / 2) } } }
 		}, {
 			time: 0.5 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI) } } }
 		}, {
 			time: 0.75 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
 		}, {
 			time: 1 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
 		}];
 	}
 }

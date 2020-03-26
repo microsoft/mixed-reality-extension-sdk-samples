@@ -90,16 +90,6 @@ module.exports = {
 			"warn",
 			{ "args": "none" }
 		],
-		"@typescript-eslint/unbound-method": "error",
-		"header/header": [
-			"error",
-			"block",
-			[
-				"!",
-				" * Copyright (c) Microsoft Corporation. All rights reserved.",
-				" * Licensed under the MIT License.",
-				" "
-			]
-		]
+		"@typescript-eslint/unbound-method": "error"
 	}
 };

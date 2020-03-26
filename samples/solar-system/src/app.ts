@@ -4,7 +4,6 @@
  */
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
-import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
 
 /**
  * Solar system database
@@ -216,7 +215,7 @@ export default class SolarSystem {
 
 			this.createAnimations(bodyName);
 		} catch (e) {
-			log.info('app', `createBody failed ${bodyName}, ${e}`);
+			MRE.log.info('app', `createBody failed ${bodyName}, ${e}`);
 		}
 	}
 

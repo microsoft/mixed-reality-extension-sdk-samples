@@ -3,19 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import {
-	Actor,
-	AnimationKeyframe,
-	AnimationWrapMode,
-	AssetContainer,
-	ButtonBehavior,
-	Context,
-	DegreesToRadians,
-	Quaternion,
-	TextAnchorLocation,
-	Vector3
-} from '@microsoft/mixed-reality-extension-sdk';
-import { log } from '@microsoft/mixed-reality-extension-sdk/built/log';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 
 enum GameState {
 	Intro,
@@ -32,10 +20,10 @@ enum GamePiece {
  * The main class of this app. All the logic goes here.
  */
 export default class TicTacToe {
-	private assets: AssetContainer;
-	private text: Actor = null;
-	private textAnchor: Actor = null;
-	private light: Actor = null;
+	private assets: MRE.AssetContainer;
+	private text: MRE.Actor = null;
+	private textAnchor: MRE.Actor = null;
+	private light: MRE.Actor = null;
 	private gameState: GameState;
 
 	private currentPlayerGamePiece: GamePiece;
@@ -43,7 +31,7 @@ export default class TicTacToe {
 
 	private boardState: GamePiece[];
 
-	private gamePieceActors: Actor[];
+	private gamePieceActors: MRE.Actor[];
 
 	private victoryChecks = [
 		[0 * 3 + 0, 0 * 3 + 1, 0 * 3 + 2],
@@ -56,8 +44,8 @@ export default class TicTacToe {
 		[2 * 3 + 0, 1 * 3 + 1, 0 * 3 + 2]
 	];
 
-	constructor(private context: Context, private baseUrl: string) {
-		this.assets = new AssetContainer(context);
+	constructor(private context: MRE.Context, private baseUrl: string) {
+		this.assets = new MRE.AssetContainer(context);
 		this.context.onStarted(() => this.started());
 	}
 
@@ -66,7 +54,7 @@ export default class TicTacToe {
 	 */
 	private async started() {
 		// Create a new actor with no mesh, but some text.
-		this.textAnchor = Actor.Create(this.context, {
+		this.textAnchor = MRE.Actor.Create(this.context, {
 			actor: {
 				name: 'TextAnchor',
 				transform: {
@@ -75,7 +63,7 @@ export default class TicTacToe {
 			}
 		});
 
-		this.text = Actor.Create(this.context, {
+		this.text = MRE.Actor.Create(this.context, {
 			actor: {
 				parentId: this.textAnchor.id,
 				name: 'Text',
@@ -84,20 +72,20 @@ export default class TicTacToe {
 				},
 				text: {
 					contents: "Tic-Tac-Toe!",
-					anchor: TextAnchorLocation.MiddleCenter,
+					anchor: MRE.TextAnchorLocation.MiddleCenter,
 					color: { r: 30 / 255, g: 206 / 255, b: 213 / 255 },
 					height: 0.3
 				},
 			}
 		});
-		this.light = Actor.Create(this.context, {
+		this.light = MRE.Actor.Create(this.context, {
 			actor: {
 				parentId: this.text.id,
 				name: 'Light',
 				transform: {
 					local: {
 						position: { x: 0, y: 1.0, z: -0.5 },
-						rotation: Quaternion.RotationAxis(Vector3.Left(), -45.0 * DegreesToRadians),
+						rotation: MRE.Quaternion.RotationAxis(MRE.Vector3.Left(), -45.0 * MRE.DegreesToRadians),
 					}
 				},
 				light: {
@@ -105,7 +93,7 @@ export default class TicTacToe {
 					type: 'spot',
 					intensity: 20,
 					range: 6,
-					spotAngle: 45 * DegreesToRadians
+					spotAngle: 45 * MRE.DegreesToRadians
 				},
 
 			}
@@ -118,13 +106,13 @@ export default class TicTacToe {
 			"Spin", {
 				// Keyframes define the timeline for the animation: where the actor should be, and when.
 				// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-				keyframes: this.generateSpinKeyframes(20, Vector3.Up()),
+				keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
 				// Events are points of interest during the animation. The animating actor will emit a given
 				// named event at the given timestamp with a given string value as an argument.
 				events: [],
 
 				// Optionally, we also repeat the animation infinitely.
-				wrapMode: AnimationWrapMode.Loop
+				wrapMode: MRE.AnimationWrapMode.Loop
 			}
 		);
 
@@ -138,7 +126,7 @@ export default class TicTacToe {
 		for (let tileIndexX = 0; tileIndexX < 3; tileIndexX++) {
 			for (let tileIndexZ = 0; tileIndexZ < 3; tileIndexZ++) {
 				// Create a glTF actor
-				const cube = Actor.CreateFromPrefab(this.context, {
+				const cube = MRE.Actor.CreateFromPrefab(this.context, {
 					// Use the preloaded glTF for each box
 					firstPrefabFrom: gltf,
 					// Also apply the following generic actor properties.
@@ -168,13 +156,13 @@ export default class TicTacToe {
 
 				cube.createAnimation(
 					'DoAFlip', {
-						keyframes: this.generateSpinKeyframes(1.0, Vector3.Right()),
+						keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
 						events: []
 					});
 
 				// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
 				// Button behaviors have two pairs of events: hover start/stop, and click start/stop.
-				const buttonBehavior = cube.setBehavior(ButtonBehavior);
+				const buttonBehavior = cube.setBehavior(MRE.ButtonBehavior);
 
 				// Trigger the grow/shrink animations on hover.
 				buttonBehavior.onHover('enter', () => {
@@ -199,14 +187,14 @@ export default class TicTacToe {
 						case GameState.Play:
 							// When clicked, put down a tile, and do a victory check
 							if (this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-								log.info("app", "Putting an " + GamePiece[this.currentPlayerGamePiece] +
+								MRE.log.info("app", "Putting an " + GamePiece[this.currentPlayerGamePiece] +
 									" on: (" + tileIndexX + "," + tileIndexZ + ")");
-								const gamePiecePosition: Vector3 = new Vector3(
+								const gamePiecePosition = new MRE.Vector3(
 									cube.transform.local.position.x,
 									cube.transform.local.position.y + 0.55,
 									cube.transform.local.position.z);
 								if (this.currentPlayerGamePiece === GamePiece.O) {
-									this.gamePieceActors.push(Actor.Create(this.context, {
+									this.gamePieceActors.push(MRE.Actor.Create(this.context, {
 										actor: {
 											name: 'O',
 											appearance: { meshId: circle.id },
@@ -216,7 +204,7 @@ export default class TicTacToe {
 										}
 									}));
 								} else {
-									this.gamePieceActors.push(Actor.Create(this.context, {
+									this.gamePieceActors.push(MRE.Actor.Create(this.context, {
 										actor: {
 											name: 'X',
 											appearance: { meshId: square.id },
@@ -271,21 +259,21 @@ export default class TicTacToe {
 	}
 
 	private beginGameStateCelebration(winner: GamePiece) {
-		log.info("app", "BeginGameState Celebration");
+		MRE.log.info("app", "BeginGameState Celebration");
 		this.gameState = GameState.Celebration;
 		this.light.light.color = { r: 0.3, g: 1.0, b: 0.3 };
 
 		if (winner === undefined) {
-			log.info("app", "Tie");
+			MRE.log.info("app", "Tie");
 			this.text.text.contents = "Tie";
 		} else {
-			log.info("app", "Winner: " + GamePiece[winner]);
+			MRE.log.info("app", "Winner: " + GamePiece[winner]);
 			this.text.text.contents = "Winner: " + GamePiece[winner];
 		}
 	}
 
 	private beginGameStateIntro() {
-		log.info("app", "BeginGameState Intro");
+		MRE.log.info("app", "BeginGameState Intro");
 		this.gameState = GameState.Intro;
 		this.text.text.contents = "Tic-Tac-Toe\nClick To Play";
 
@@ -303,7 +291,7 @@ export default class TicTacToe {
 	}
 
 	private beginGameStatePlay() {
-		log.info("app", "BeginGameState Play");
+		MRE.log.info("app", "BeginGameState Play");
 		this.gameState = GameState.Play;
 		this.text.text.contents = "First Piece: " + GamePiece[this.currentPlayerGamePiece];
 	}
@@ -313,26 +301,26 @@ export default class TicTacToe {
 	 * @param duration The length of time in seconds it takes to complete a full revolution.
 	 * @param axis The axis of rotation in local space.
 	 */
-	private generateSpinKeyframes(duration: number, axis: Vector3): AnimationKeyframe[] {
+	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): MRE.AnimationKeyframe[] {
 		return [{
 			time: 0 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 0) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 0) } } }
 		}, {
 			time: 0.25 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI / 2) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI / 2) } } }
 		}, {
 			time: 0.5 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, Math.PI) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI) } } }
 		}, {
 			time: 0.75 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
 		}, {
 			time: 1 * duration,
-			value: { transform: { local: { rotation: Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
+			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
 		}];
 	}
 
-	private growAnimationData: AnimationKeyframe[] = [{
+	private growAnimationData: MRE.AnimationKeyframe[] = [{
 		time: 0,
 		value: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }
 	}, {
@@ -340,7 +328,7 @@ export default class TicTacToe {
 		value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
 	}];
 
-	private shrinkAnimationData: AnimationKeyframe[] = [{
+	private shrinkAnimationData: MRE.AnimationKeyframe[] = [{
 		time: 0,
 		value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
 	}, {
