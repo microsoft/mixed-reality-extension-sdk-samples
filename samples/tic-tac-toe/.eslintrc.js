@@ -22,8 +22,7 @@ module.exports = {
 		"project": "./tsconfig.json"
 	},
 	"plugins": [
-		"@typescript-eslint",
-		"header"
+		"@typescript-eslint"
 	],
 	"rules": {
 		"block-spacing": ["warn", "always"],
