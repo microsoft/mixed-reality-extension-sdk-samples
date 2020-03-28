@@ -25,9 +25,9 @@
     "build-only": "tsc --build",
     "build-watch": "tsc --build -w",
     "lint": "eslint --ext .ts src",
-    "start-watch": "nodemon --nolazy --inspect .",
     "start": "node .",
-    "debug": "npm run build && concurrently \"npm run *-watch\""
+    "debug": "node --nolazy --inspect-brk=9229 .",
+    "debug-watch": "npm run build && concurrently \"npm run build-watch\" \"nodemon --nolazy --inspect=9229 .\""
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.17.0",

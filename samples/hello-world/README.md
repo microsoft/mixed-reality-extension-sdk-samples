@@ -15,7 +15,7 @@ Shows a text that animates when highlighting or clicking on a cube.
 
 ## Debug
 
-* `npm run debug`
+* `npm run debug-watch`
 * Switch to the VSCode debugger panel using the icon at the far left of VSCode that looks like a little bug over a Play button
 * Select `Attach to hello-world project` from the dropdown at the top of the debugger panel
 * Click the green triangular play button next to the dropdown to attach the debugger 
