@@ -71,38 +71,10 @@
     {
       "type": "node",
       "request": "attach",
-      "name": "Attach to hello-world project",
+      "name": "Attach to running project",
       "port": 9229,
-      "cwd": "${workspaceFolder}/samples/hello-world",
       "internalConsoleOptions": "openOnSessionStart",
       "restart": true,
     },
-    {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to solar-system project",
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/solar-system",
-      "internalConsoleOptions": "openOnSessionStart",
-      "restart": true,
-    },
-    {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to tic-tac-toe project",
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/tic-tac-toe",
-      "internalConsoleOptions": "openOnSessionStart",
-      "restart": true,
-    },
-    {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to wear-a-hat project",
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/wear-a-hat",
-      "internalConsoleOptions": "openOnSessionStart",
-      "restart": true,
-    }
   ]
 }
