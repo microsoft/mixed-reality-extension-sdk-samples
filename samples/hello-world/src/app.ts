@@ -82,7 +82,7 @@ export default class HelloWorld {
 
 		// Now that the text and its animation are all being set up, we can start playing
 		// the animation.
-		this.text.enableAnimation('Spin');
+		this.text.animationsByName.get('Spin').play();
 
 		// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
 		// Button behaviors have two pairs of events: hover start/stop, and click start/stop.
@@ -104,7 +104,7 @@ export default class HelloWorld {
 
 		// When clicked, do a 360 sideways.
 		buttonBehavior.onClick(_ => {
-			this.cube.enableAnimation('DoAFlip');
+			this.cube.animationsByName.get('DoAFlip').play(true);
 		});
 	}
 
