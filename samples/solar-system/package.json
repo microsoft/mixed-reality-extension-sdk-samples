@@ -38,7 +38,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@microsoft/mixed-reality-extension-sdk": "^0.15.0",
+    "@microsoft/mixed-reality-extension-sdk": "^0.16.1",
     "@types/dotenv": "^6.1.0",
     "@types/node": "^10.3.1",
     "concurrently": "^5.1.0",
