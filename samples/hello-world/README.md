@@ -46,9 +46,9 @@ This setup requires launching the app from a terminal. VSCode has a built-in ter
 
 ### See hot-reload in action
 
-Once you have hello-world up and running, and you've successfully spawned an instance in AltspaceVR or another supported platform, it is time to make some code changes and see hot reload in action:
+Once you have your MRE up and running, and you've successfully spawned an instance in AltspaceVR or another supported platform, it is time to make some code changes and see hot reload in action:
 
 * In VSCode, open `samples/hello-world/app.ts`.
 * In the `App.started()` method, find the line that reads `contents: "Hello World!",` and change the string to `"Hello Brave New World!"`.
-* Save the file. (highly recommended: Enable 'Auto Save' in VSCode from the File menu).
+* Save the file.
 * Watch how the changes to your code are automatically detected and reloaded. The text in your app should change to `"Hello Brave New World!"`
