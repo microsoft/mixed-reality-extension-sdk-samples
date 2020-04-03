@@ -23,7 +23,7 @@ little if there are no changes)
 In AltspaceVR
 * Go to your personal home
 * Make sure you are signed in properly, not a guest
-* Activate the Space Editor
+* Activate the Space Editor (only available if you indicate you want to participate in the Early Access Program in your AltspaceVR settings)
 * Click Basics group
 * Click on SDKApp
 * For the URL field, enter `ws://localhost:3901`
@@ -47,10 +47,10 @@ To learn more about the SDK, please read the [MRE SDK readme](
 https://github.com/Microsoft/mixed-reality-extension-sdk/blob/master/README.md).
 
 ## Sample Descriptions
-* Hello World - shows a text that animates when highlighting or clicking on a
-cube
-* Solar System - loads a 3d model for each planet, generates keyframe
-animations, and when all assets are ready, start all animations simultaneously.
+* Hello World - Shows text and a cube that animates when highlighted or clicked. Demonstrates basic scene creation and interaction.
+* Solar System - Loads a 3d model for each planet and animates planetary motion. Demonstrates animation generation and more advanced scene creation.
+* Tic-Tac-Toe - The classic game also known as "Noughts & Crosses". Demonstrates gameplay with win/lose conditions.
+* Wear A Hat - Users can choose a hat from a menu and it will appear on their head. Demonstrates attachments.
 
 ## Contributing
 

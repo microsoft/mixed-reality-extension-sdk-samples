@@ -7,22 +7,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch tic-tac-toe project",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
-      "port": 9229,
-      "cwd": "${workspaceFolder}/samples/tic-tac-toe",
-      "internalConsoleOptions": "openOnSessionStart",
-      "autoAttachChildProcesses": true,
-      "console": "internalConsole",
-      "outputCapture": "std"
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Launch hello-world project",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
@@ -55,6 +39,22 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch tic-tac-toe project",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run-script",
+        "debug"
+      ],
+      "port": 9229,
+      "cwd": "${workspaceFolder}/samples/tic-tac-toe",
+      "internalConsoleOptions": "openOnSessionStart",
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch wear-a-hat project",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
@@ -67,6 +67,14 @@
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
       "outputCapture": "std"
-    }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to running project",
+      "port": 9229,
+      "internalConsoleOptions": "openOnSessionStart",
+      "restart": true,
+    },
   ]
 }
