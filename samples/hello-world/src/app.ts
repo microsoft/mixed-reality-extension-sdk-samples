@@ -11,6 +11,7 @@ import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 export default class HelloWorld {
 	private text: MRE.Actor = null;
 	private cube: MRE.Actor = null;
+	private assets: MRE.AssetContainer;
 
 	constructor(private context: MRE.Context, private baseUrl: string) {
 		this.context.onStarted(() => this.started());
@@ -19,7 +20,9 @@ export default class HelloWorld {
 	/**
 	 * Once the context is "started", initialize the app.
 	 */
-	private started() {
+	private async started() {
+		this.assets = new MRE.AssetContainer(this.context);
+
 		// Create a new actor with no mesh, but some text.
 		this.text = MRE.Actor.Create(this.context, {
 			actor: {
@@ -36,25 +39,33 @@ export default class HelloWorld {
 			}
 		});
 
-		// Here we create an animation on our text actor. Animations have three mandatory arguments:
-		// a name, an array of keyframes, and an array of events.
-		this.text.createAnimation(
-			// The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
-			"Spin", {
-				// Keyframes define the timeline for the animation: where the actor should be, and when.
-				// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-				keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
-				// Events are points of interest during the animation. The animating actor will emit a given
-				// named event at the given timestamp with a given string value as an argument.
-				events: [],
-
-				// Optionally, we also repeat the animation infinitely. PingPong alternately runs the animation
-				// foward then backward.
-				wrapMode: MRE.AnimationWrapMode.PingPong
+		// Here we create an animation for our text actor. First we create animation data, which can be used on any
+		// actor. We'll reference that actor with the placeholder "text".
+		const spinAnimData = this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Spin",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("text").transform.local.rotation,
+					// And the rotation will be set to spin over 20 seconds
+					keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
+					// And it will move smoothly from one frame to the next
+					easing: MRE.AnimationEaseCurves.Linear
+				}]
 			});
+		// Once the animation data is created, we can create a real animation from it.
+		spinAnimData.bind(
+			// We assign our text actor to the actor placeholder "text"
+			{ text: this.text },
+			// And set it to play immediately, and bounce back and forth from start to end
+			{ isPlaying: true, wrapMode: MRE.AnimationWrapMode.PingPong });
 
 		// Load a glTF model
-		this.cube = MRE.Actor.CreateFromGltf(new MRE.AssetContainer(this.context), {
+		this.cube = MRE.Actor.CreateFromGltf(this.assets, {
 			// at the given URL
 			uri: `${this.baseUrl}/altspace-cube.glb`,
 			// and spawn box colliders around the meshes.
@@ -74,15 +85,12 @@ export default class HelloWorld {
 		});
 
 		// Create some animations on the cube.
-		this.cube.createAnimation(
-			'DoAFlip', {
-				keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
-				events: []
-			});
-
-		// Now that the text and its animation are all being set up, we can start playing
-		// the animation.
-		this.text.enableAnimation('Spin');
+		const flipAnimData = this.assets.createAnimationData("DoAFlip", { tracks: [{
+			target: MRE.ActorPath("target").transform.local.rotation,
+			keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
+			easing: MRE.AnimationEaseCurves.Linear
+		}]});
+		const flipAnim = await flipAnimData.bind({ target: this.cube });
 
 		// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
 		// Button behaviors have two pairs of events: hover start/stop, and click start/stop.
@@ -104,7 +112,7 @@ export default class HelloWorld {
 
 		// When clicked, do a 360 sideways.
 		buttonBehavior.onClick(_ => {
-			this.cube.enableAnimation('DoAFlip');
+			flipAnim.play();
 		});
 	}
 
@@ -113,22 +121,22 @@ export default class HelloWorld {
 	 * @param duration The length of time in seconds it takes to complete a full revolution.
 	 * @param axis The axis of rotation in local space.
 	 */
-	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): MRE.AnimationKeyframe[] {
+	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): Array<MRE.Keyframe<MRE.Quaternion>> {
 		return [{
 			time: 0 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 0) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 0)
 		}, {
 			time: 0.25 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI / 2) } } }
+			value: MRE.Quaternion.RotationAxis(axis, Math.PI / 2)
 		}, {
 			time: 0.5 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI) } } }
+			value: MRE.Quaternion.RotationAxis(axis, Math.PI)
 		}, {
 			time: 0.75 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2)
 		}, {
 			time: 1 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI)
 		}];
 	}
 }

@@ -130,22 +130,40 @@ export default class TicTacToe {
 			}
 		});
 
-		// Here we create an animation on our text actor. Animations have three mandatory arguments:
-		// a name, an array of keyframes, and an array of events.
-		this.textAnchor.createAnimation(
-			// The name is a unique identifier for this animation. We'll pass it to "startAnimation" later.
-			"Spin", {
-				// Keyframes define the timeline for the animation: where the actor should be, and when.
-				// We're calling the generateSpinKeyframes function to produce a simple 20-second revolution.
-				keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
-				// Events are points of interest during the animation. The animating actor will emit a given
-				// named event at the given timestamp with a given string value as an argument.
-				events: [],
+		// Here we create an animation for our text actor. First we create animation data, which can be used on any
+		// actor. We'll reference that actor with the placeholder "text".
+		const spinAnimData = this.assets.createAnimationData(
+			// The name is a unique identifier for this data. You can use it to find the data in the asset container,
+			// but it's merely descriptive in this sample.
+			"Spin",
+			{
+				// Animation data is defined by a list of animation "tracks": a particular property you want to change,
+				// and the values you want to change it to.
+				tracks: [{
+					// This animation targets the rotation of an actor named "text"
+					target: MRE.ActorPath("text").transform.local.rotation,
+					// And the rotation will be set to spin over 20 seconds
+					keyframes: this.generateSpinKeyframes(20, MRE.Vector3.Up()),
+					// And it will move smoothly from one frame to the next
+					easing: MRE.AnimationEaseCurves.Linear
+				}]
+			});
+		// Once the animation data is created, we can create a real animation from it.
+		spinAnimData.bind(
+			// We assign our text actor to the actor placeholder "text"
+			{ text: this.text },
+			// And set it to play immediately, and bounce back and forth from start to end
+			{ isPlaying: true, wrapMode: MRE.AnimationWrapMode.PingPong });
 
-				// Optionally, we also repeat the animation infinitely.
-				wrapMode: MRE.AnimationWrapMode.Loop
-			}
-		);
+		const growAnimData = this.assets.createAnimationData("Grow", { tracks: [{
+			target: MRE.ActorPath("target").transform.local.scale,
+			keyframes: this.GrowKeyframeData
+		}]});
+
+		const flipAnimData = this.assets.createAnimationData("DoAFlip", { tracks: [{
+			target: MRE.ActorPath("target").transform.local.rotation,
+			keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right())
+		}]});
 
 		// Load box model from glTF
 		const gltf = await this.assets.loadGltf(`${this.baseUrl}/altspace-cube.glb`, 'box');
@@ -173,23 +191,9 @@ export default class TicTacToe {
 				});
 
 				// Create some animations on the cube.
-				cube.createAnimation(
-					'GrowIn', {
-						keyframes: this.growAnimationData,
-						events: []
-					});
-
-				cube.createAnimation(
-					'ShrinkOut', {
-						keyframes: this.shrinkAnimationData,
-						events: []
-					});
-
-				cube.createAnimation(
-					'DoAFlip', {
-						keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
-						events: []
-					});
+				growAnimData.bind({ target: cube }, { name: "GrowIn", speed: 1 });
+				growAnimData.bind({ target: cube }, { name: "ShrinkOut", speed: -1 });
+				flipAnimData.bind({ target: cube });
 
 				// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
 				// Button behaviors have two pairs of events: hover start/stop, and click start/stop.
@@ -199,13 +203,15 @@ export default class TicTacToe {
 				buttonBehavior.onHover('enter', () => {
 					if (this.gameState === GameState.Play &&
 						this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-						cube.enableAnimation('GrowIn');
+						cube.targetingAnimationsByName.get("GrowIn").play();
+						cube.targetingAnimationsByName.get("ShrinkOut").stop();
 					}
 				});
 				buttonBehavior.onHover('exit', () => {
 					if (this.gameState === GameState.Play &&
 						this.boardState[tileIndexX * 3 + tileIndexZ] === undefined) {
-						cube.enableAnimation('ShrinkOut');
+						cube.targetingAnimationsByName.get("GrowIn").stop();
+						cube.targetingAnimationsByName.get("ShrinkOut").play();
 					}
 				});
 
@@ -213,7 +219,7 @@ export default class TicTacToe {
 					switch (this.gameState) {
 						case GameState.Intro:
 							this.beginGameStatePlay();
-							cube.enableAnimation('GrowIn');
+							cube.targetingAnimationsByName.get("GrowIn").play();
 							break;
 						case GameState.Play:
 							// When clicked, put down a tile, and do a victory check
@@ -246,8 +252,8 @@ export default class TicTacToe {
 									}));
 								}
 								this.boardState[tileIndexX * 3 + tileIndexZ] = this.currentPlayerGamePiece;
-								cube.disableAnimation('GrowIn');
-								cube.enableAnimation('ShrinkOut');
+								cube.targetingAnimationsByName.get("GrowIn").stop();
+								cube.targetingAnimationsByName.get("ShrinkOut").play();
 
 								const tempGamePiece = this.currentPlayerGamePiece;
 								this.currentPlayerGamePiece = this.nextPlayerGamePiece;
@@ -285,7 +291,6 @@ export default class TicTacToe {
 		}
 		// Now that the text and its animation are all being set up, we can start playing
 		// the animation.
-		this.textAnchor.enableAnimation('Spin');
 		this.beginGameStateIntro();
 	}
 
@@ -332,38 +337,30 @@ export default class TicTacToe {
 	 * @param duration The length of time in seconds it takes to complete a full revolution.
 	 * @param axis The axis of rotation in local space.
 	 */
-	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): MRE.AnimationKeyframe[] {
+	private generateSpinKeyframes(duration: number, axis: MRE.Vector3): Array<MRE.Keyframe<MRE.Quaternion>> {
 		return [{
 			time: 0 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 0) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 0)
 		}, {
 			time: 0.25 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI / 2) } } }
+			value: MRE.Quaternion.RotationAxis(axis, Math.PI / 2)
 		}, {
 			time: 0.5 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, Math.PI) } } }
+			value: MRE.Quaternion.RotationAxis(axis, Math.PI)
 		}, {
 			time: 0.75 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 3 * Math.PI / 2)
 		}, {
 			time: 1 * duration,
-			value: { transform: { local: { rotation: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI) } } }
+			value: MRE.Quaternion.RotationAxis(axis, 2 * Math.PI)
 		}];
 	}
 
-	private growAnimationData: MRE.AnimationKeyframe[] = [{
+	private GrowKeyframeData: Array<MRE.Keyframe<MRE.Vector3>> = [{
 		time: 0,
-		value: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }
+		value: { x: 0.4, y: 0.4, z: 0.4 }
 	}, {
 		time: 0.3,
-		value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
-	}];
-
-	private shrinkAnimationData: MRE.AnimationKeyframe[] = [{
-		time: 0,
-		value: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } }
-	}, {
-		time: 0.3,
-		value: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } }
+		value: { x: 0.5, y: 0.5, z: 0.5 }
 	}];
 }

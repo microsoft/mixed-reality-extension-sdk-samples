@@ -89,16 +89,8 @@ export default class SolarSystem {
 		const sunEntity = this.celestialBodies.sol;
 		if (sunEntity && sunEntity.model) {
 			const sun = sunEntity.model;
-			const sunPrimitives = sun.findChildrenByName('Primitive', true);
-
-			sunPrimitives.forEach((prim) => {
-				// Add a collider so that the behavior system will work properly on Unity host apps.
-				const radius = 3;
-				prim.setCollider(MRE.ColliderType.Sphere, false, radius);
-
-				const buttonBehavior = prim.setBehavior(MRE.ButtonBehavior);
-
-				buttonBehavior.onClick(_ => {
+			sun.setBehavior(MRE.ButtonBehavior)
+				.onClick(() => {
 					if (this.animationsRunning) {
 						this.pauseAnimations();
 						this.animationsRunning = false;
@@ -107,7 +99,6 @@ export default class SolarSystem {
 						this.animationsRunning = true;
 					}
 				});
-			});
 		}
 
 		this.resumeAnimations();
@@ -122,20 +113,14 @@ export default class SolarSystem {
 	}
 
 	private resumeAnimations() {
-		const keys = Object.keys(database);
-		for (const bodyName of keys) {
-			const celestialBody = this.celestialBodies[bodyName];
-			celestialBody.model.resumeAnimation(`${bodyName}:axial`);
-			celestialBody.position.resumeAnimation(`${bodyName}:orbital`);
+		for (const anim of this.context.animations) {
+			anim.play();
 		}
 	}
 
 	private pauseAnimations() {
-		const keys = Object.keys(database);
-		for (const bodyName of keys) {
-			const celestialBody = this.celestialBodies[bodyName];
-			celestialBody.model.pauseAnimation(`${bodyName}:axial`);
-			celestialBody.position.pauseAnimation(`${bodyName}:orbital`);
+		for (const anim of this.context.animations) {
+			anim.stop();
 		}
 	}
 
@@ -260,50 +245,28 @@ export default class SolarSystem {
 	private createAxialAnimation(bodyName: string) {
 		const facts = database[bodyName];
 		const celestialBody = this.celestialBodies[bodyName];
+		const axialSpinData = this.assets.animationData.find(ad => ad.name === "axialSpin") ||
+			this.assets.createAnimationData("axialSpin", { tracks: [{
+				target: MRE.ActorPath("target").transform.local.rotation,
+				keyframes: [
+					{ time: 0, value: MRE.Quaternion.Identity() },
+					{ time: 0.333, value: MRE.Quaternion.FromEulerAngles(0, 0.667 * Math.PI, 0) },
+					{ time: 0.667, value: MRE.Quaternion.FromEulerAngles(0, 1.333 * Math.PI, 0) },
+					{ time: 1, value: MRE.Quaternion.Identity() }
+				]
+			}]});
 
 		if (facts.day > 0) {
 			const spin = facts.retrograde ? -1 : 1;
 			// days = seconds (not in agreement with orbital animation)
 			const axisTimeInSeconds = facts.day / this.timeFactor;
-			const timeStep = axisTimeInSeconds / this.axialKeyframeCount;
-			const keyframes: MRE.AnimationKeyframe[] = [];
-			const angleStep = 360 / this.axialKeyframeCount;
-			const initial = celestialBody.model.transform.local.rotation.clone();
-			let value: Partial<MRE.ActorLike>;
-
-			for (let i = 0; i < this.axialKeyframeCount; ++i) {
-				const rotDelta = MRE.Quaternion.RotationAxis(
-					MRE.Vector3.Up(), (-angleStep * i * spin) * MRE.DegreesToRadians);
-				const rotation = initial.multiply(rotDelta);
-				value = {
-					transform: {
-						local: { rotation }
-					}
-				};
-				keyframes.push({
-					time: timeStep * i,
-					value,
-				});
-			}
-
-			// Final frame
-			value = {
-				transform: {
-					local: { rotation: celestialBody.model.transform.local.rotation }
-				}
-			};
-			keyframes.push({
-				time: axisTimeInSeconds,
-				value,
-			});
 
 			// Create the animation on the actor
-			celestialBody.model.createAnimation(
-				`${bodyName}:axial`, {
-					keyframes,
-					events: [],
-					wrapMode: MRE.AnimationWrapMode.Loop
-				});
+			axialSpinData.bind({ target: celestialBody.model }, {
+				name: `${bodyName}:axial`,
+				speed: spin / axisTimeInSeconds,
+				wrapMode: MRE.AnimationWrapMode.Loop
+			});
 		}
 	}
 
@@ -316,43 +279,32 @@ export default class SolarSystem {
 			const orbitTimeInSeconds = facts.year / this.timeFactor;
 			const timeStep = orbitTimeInSeconds / this.orbitalKeyframeCount;
 			const angleStep = 360 / this.orbitalKeyframeCount;
-			const keyframes: MRE.AnimationKeyframe[] = [];
+			const keyframes: Array<MRE.Keyframe<MRE.Vector3>> = [];
 			const initial = celestialBody.position.transform.local.position.clone();
-			let value: Partial<MRE.ActorLike>;
 
 			for (let i = 0; i < this.orbitalKeyframeCount; ++i) {
 				const rotDelta = MRE.Quaternion.RotationAxis(
 					MRE.Vector3.Up(), (-angleStep * i) * MRE.DegreesToRadians);
 				const position = initial.rotateByQuaternionToRef(rotDelta, new MRE.Vector3());
-				value = {
-					transform: {
-						local: { position }
-					}
-				};
 				keyframes.push({
 					time: timeStep * i,
-					value,
+					value: position,
 				});
 			}
 
 			// Final frame
-			value = {
-				transform: {
-					local: { position: celestialBody.position.transform.local.position }
-				}
-			};
 			keyframes.push({
 				time: orbitTimeInSeconds,
-				value,
+				value: celestialBody.position.transform.local.position,
 			});
 
+			const animData = this.assets.createAnimationData(`${bodyName}:orbital`, { tracks: [{
+				target: MRE.ActorPath("target").transform.local.position,
+				keyframes: keyframes
+			}]});
+
 			// Create the animation on the actor
-			celestialBody.position.createAnimation(
-				`${bodyName}:orbital`, {
-					keyframes,
-					events: [],
-					wrapMode: MRE.AnimationWrapMode.Loop
-				});
+			animData.bind({ target: celestialBody.position }, { wrapMode: MRE.AnimationWrapMode.Loop });
 		}
 	}
 }
