@@ -11,7 +11,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-        "debug"
+				"debug",
+				"--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/tic-tac-toe",
@@ -27,7 +28,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-        "debug"
+        "debug",
+				"--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/hello-world",
@@ -43,7 +45,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-        "debug"
+        "debug",
+				"--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/solar-system",
@@ -59,7 +62,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-        "debug"
+        "debug",
+				"--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/chess-game",
@@ -75,7 +79,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-        "debug"
+        "debug",
+				"--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/wear-a-hat",
@@ -83,6 +88,14 @@
       "autoAttachChildProcesses": true,
       "console": "internalConsole",
       "outputCapture": "std"
-    }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to running project",
+      "port": 9229,
+      "internalConsoleOptions": "openOnSessionStart",
+      "restart": true,
+    },
   ]
 }

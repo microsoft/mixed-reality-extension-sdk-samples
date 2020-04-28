@@ -70,3 +70,5 @@ app.zip
 
 # git .orig files
 .orig
+
+*.tsbuildinfo
