@@ -11,8 +11,8 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run-script",
-				"debug",
-				"--preserve-symlinks"
+        "debug",
+        "--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/tic-tac-toe",
@@ -29,7 +29,7 @@
       "runtimeArgs": [
         "run-script",
         "debug",
-				"--preserve-symlinks"
+        "--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/hello-world",
@@ -46,7 +46,7 @@
       "runtimeArgs": [
         "run-script",
         "debug",
-				"--preserve-symlinks"
+        "--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/solar-system",
@@ -63,7 +63,7 @@
       "runtimeArgs": [
         "run-script",
         "debug",
-				"--preserve-symlinks"
+        "--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/chess-game",
@@ -80,7 +80,7 @@
       "runtimeArgs": [
         "run-script",
         "debug",
-				"--preserve-symlinks"
+        "--preserve-symlinks"
       ],
       "port": 9229,
       "cwd": "${workspaceFolder}/samples/wear-a-hat",
