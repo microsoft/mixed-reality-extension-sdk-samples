@@ -3,34 +3,23 @@
  * Licensed under the MIT License.
  */
 
-// tslint:disable:object-literal-key-quotes
-// tslint:disable:max-line-length
-// tslint:disable:no-string-literal
-// tslint:disable:max-classes-per-file
-
-/**
- *  *** Notes ***
- */
-
 import {
 	Actor,
 	AnimationEaseCurves,
-	AnimationWrapMode,
 	Asset,
 	AssetContainer,
 	ButtonBehavior,
 	Context,
-	DegreesToRadians,
-	PrimitiveShape,
+	Guid,
+	parseGuid,
 	Quaternion,
-	QuaternionLike,
 	User,
 	Vector3,
-	Vector3Like,
 } from '@microsoft/mixed-reality-extension-sdk';
 
-// tslint:disable:no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const chess = require('chess');
+/* eslint-enable @typescript-eslint/no-var-requires */
 
 type Game = {
 	move: (src: Coordinate, dst: Coordinate, promo?: string) => MoveResult;
@@ -179,26 +168,41 @@ export default class ChessGame {
 	}
 
 	private userJoined = (user: User) => {
-		console.log(user.properties);
+		// console.log(user.properties);
 	}
 
 	private async preloadAllModels() {
-		const preloads: Array<Promise<Asset[]>> = [];
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/Chessboard_Main.gltf`, 'mesh').then(value => this.preloads['chessboard'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Bishop_White.gltf`, 'mesh').then(value => this.preloads['white-bishop'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_King_White.gltf`, 'mesh').then(value => this.preloads['white-king'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Knight_White.gltf`, 'mesh').then(value => this.preloads['white-knight'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Pawn_White.gltf`, 'mesh').then(value => this.preloads['white-pawn'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Queen_White.gltf`, 'mesh').then(value => this.preloads['white-queen'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Rook_White.gltf`, 'mesh').then(value => this.preloads['white-rook'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Bishop_Black.gltf`, 'mesh').then(value => this.preloads['black-bishop'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_King_Black.gltf`, 'mesh').then(value => this.preloads['black-king'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Knight_Black.gltf`, 'mesh').then(value => this.preloads['black-knight'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Pawn_Black.gltf`, 'mesh').then(value => this.preloads['black-pawn'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Queen_Black.gltf`, 'mesh').then(value => this.preloads['black-queen'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Rook_Black.gltf`, 'mesh').then(value => this.preloads['black-rook'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/UI_Glow_Blue.gltf`, 'mesh').then(value => this.preloads['move-marker'] = value));
-		preloads.push(this.assets.loadGltf(`${this.baseUrl}/UI_Glow_Orange.gltf`, 'mesh').then(value => this.preloads['check-marker'] = value));
+		const preloads = [];
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/Chessboard_Main.gltf`, 'mesh')
+			.then(value => this.preloads['chessboard'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Bishop_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-bishop'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_King_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-king'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Knight_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-knight'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Pawn_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-pawn'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Queen_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-queen'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Rook_White.gltf`, 'mesh')
+			.then(value => this.preloads['white-rook'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Bishop_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-bishop'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_King_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-king'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Knight_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-knight'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Pawn_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-pawn'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Queen_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-queen'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/ChessPieces_Rook_Black.gltf`, 'mesh')
+			.then(value => this.preloads['black-rook'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/UI_Glow_Blue.gltf`, 'mesh')
+			.then(value => this.preloads['move-marker'] = value));
+		preloads.push(this.assets.loadGltf(`${this.baseUrl}/UI_Glow_Orange.gltf`, 'mesh')
+			.then(value => this.preloads['check-marker'] = value));
 		await Promise.all(preloads);
 	}
 
@@ -206,7 +210,8 @@ export default class ChessGame {
 		// Create a root actor everything gets parented to. Offset from origin so the chess board
 		// is centered on it.
 		this.sceneRoot = Actor.CreateEmpty(
-			this.context, {
+			this.context,
+			{
 				actor: {
 					transform: {
 						local: {
@@ -221,7 +226,7 @@ export default class ChessGame {
 	private createChessboard() {
 		const loads: Array<Promise<void>> = [];
 		this.chessboard = Actor.CreateFromPrefab(this.context, {
-			prefabId: this.preloads['chessboard'][0].prefab.id,
+			prefabId: this.preloads['chessboard'].filter(asset => asset.prefab)[0].prefab.id,
 			actor: {
 				name: "chessboard",
 				parentId: this.sceneRoot.id,
@@ -242,7 +247,7 @@ export default class ChessGame {
 		});
 		loads.push(this.boardOffset.created());
 
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		for (const file of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']) {
 			for (const rank of [1, 2, 3, 4, 5, 6, 7, 8]) {
 				const position = this.coordinate({ file, rank });
@@ -269,7 +274,7 @@ export default class ChessGame {
 
 	private createChessPieces() {
 		const loads: Array<Promise<void>> = [];
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		for (const square of status.board.squares) {
 			if (square.piece) {
 				const side = modelConfigs[square.piece.side.name];
@@ -277,7 +282,8 @@ export default class ChessGame {
 				const name = `${square.piece.side.name}-${square.piece.type}`;
 				const position = new Vector3();
 				position.copy(this.coordinate(square));
-				const prefab = this.preloads[`${square.piece.side.name}-${square.piece.type}`][0].prefab;
+				const prefab = this.preloads[`${square.piece.side.name}-${square.piece.type}`]
+					.filter(asset => asset.prefab)[0].prefab;
 				const actor = Actor.CreateFromPrefab(this.context, {
 					prefabId: prefab.id,
 					actor: {
@@ -296,12 +302,12 @@ export default class ChessGame {
 
 	private createMoveMarkers() {
 		const loads: Array<Promise<void>> = [];
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		for (const square of status.board.squares) {
 			const position = new Vector3();
 			position.copy(this.coordinate(square));
 			position.y = 1000;
-			const prefab = this.preloads['move-marker'][0].prefab;
+			const prefab = this.preloads['move-marker'].filter(asset => asset.prefab)[0].prefab;
 			const actor = Actor.CreateFromPrefab(this.context, {
 				prefabId: prefab.id,
 				actor: {
@@ -317,7 +323,7 @@ export default class ChessGame {
 	}
 
 	private createCheckMarker() {
-		const prefab = this.preloads['check-marker'][0].prefab;
+		const prefab = this.preloads['check-marker'].filter(asset => asset.prefab)[0].prefab;
 		const actor = Actor.CreateFromPrefab(this.context, {
 			prefabId: prefab.id,
 			actor: {
@@ -335,7 +341,7 @@ export default class ChessGame {
 	}
 
 	private addEventHandlers() {
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		// Add input handlers to chess pieces.
 		status.board.squares.map(square => square.piece).filter(piece => piece).forEach(piece => {
 			const actor = piece.actor;
@@ -355,7 +361,7 @@ export default class ChessGame {
 				square.actor.transform.app.position.x, 0,
 				square.actor.transform.app.position.z));
 
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		const sorted = [...status.board.squares].sort((a, b) => distance(a) - distance(b));
 		return sorted.shift();
 	}
@@ -364,14 +370,14 @@ export default class ChessGame {
 		this.showCheckMarker(attack.kingSquare);
 	}
 
-	public onDragBegin(userId: string, actor: Actor) {
+	public onDragBegin(userId: Guid, actor: Actor) {
 		this.showMoveMarkers(actor);
 	}
 
-	private onDragEnd(userId: string, actor: Actor) {
+	private onDragEnd(userId: Guid, actor: Actor) {
 		this.hideMoveMarkers();
 		this.hideCheckMarker();
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		// Get populated squares for current board state.
 		const prevBoard = this.readOccupiedBoard(status);
 		// Get the nearest square to the drop location.
@@ -380,20 +386,21 @@ export default class ChessGame {
 			// Get valid moves for this piece.
 			const move = status.validMoves.filter(item => item.src.piece.actor.id === actor.id).shift();
 			if (move) {
-				const destSquare = move.squares.filter(item => item.file === dropSquare.file && item.rank === dropSquare.rank).shift();
+				const destSquare = move.squares
+					.filter(item => item.file === dropSquare.file && item.rank === dropSquare.rank).shift();
 				if (destSquare) {
 					// Move the piece.
-					const result = this.game.move(move.src, destSquare);
+					this.game.move(move.src, destSquare);
 				}
 			}
 		}
 		// Get populated squares for new board state.
-		const newStatus = this.game.getStatus() as Status;
+		const newStatus = this.game.getStatus();
 		const newBoard = this.readOccupiedBoard(newStatus);
 		// Move pieces to match new positions on board.
-		this.animateActorMovements(prevBoard, newBoard).catch();
+		this.animateActorMovements(prevBoard, newBoard);
 		if (newStatus.isCheckmate) {
-			console.log("checkmate");
+			// console.log("checkmate");
 		} else if (newStatus.isCheck) {
 			//
 		} else if (newStatus.isRepetition) {
@@ -403,11 +410,11 @@ export default class ChessGame {
 		}
 	}
 
-	private startHoverPiece(userId: string, actor: Actor) {
+	private startHoverPiece(userId: Guid, actor: Actor) {
 		this.showMoveMarkers(actor);
 	}
 
-	private stopHoverPiece(userId: string, actor: Actor) {
+	private stopHoverPiece(userId: Guid, actor: Actor) {
 		this.showMoveMarkers(null);
 	}
 
@@ -431,13 +438,13 @@ export default class ChessGame {
 
 	private validMovesForActor(actor: Actor) {
 		if (actor) {
-			const status = this.game.getStatus() as Status;
+			const status = this.game.getStatus();
 			return status.validMoves.filter(item => item.src.piece.actor.id === actor.id).shift();
 		}
 	}
 
 	private hideMoveMarkers() {
-		const status = this.game.getStatus() as Status;
+		const status = this.game.getStatus();
 		for (const square of status.board.squares) {
 			const marker = square.marker;
 			marker.transform.local.position.y = 1000;
@@ -455,7 +462,8 @@ export default class ChessGame {
 
 	private coordinate(coord: Coordinate): Vector3 {
 		// Given a file and rank, return the coordinates of the center of the corresponding square.
-		const fileIndices: { [id: string]: number } = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7 };
+		const fileIndices: { [id: string]: number } =
+			{ 'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7 };
 		const file = fileIndices[coord.file];
 		const rank = coord.rank - 1;
 		const x = file * -boardStep;
@@ -482,12 +490,12 @@ export default class ChessGame {
 		return board;
 	}
 
-	private async animateActorMovements(oldBoard: Board, newBoard: Board) {
+	private animateActorMovements(oldBoard: Board, newBoard: Board) {
 		// Diff old and new board states, and move the pieces around to match.
 		const oldSquares: { [id: string]: Square } = {};
 		const newSquares: { [id: string]: Square } = {};
-		oldBoard.squares.forEach(square => oldSquares[square.piece.actor.id] = square);
-		newBoard.squares.forEach(square => newSquares[square.piece.actor.id] = square);
+		oldBoard.squares.forEach(square => oldSquares[square.piece.actor.id.toString()] = square);
+		newBoard.squares.forEach(square => newSquares[square.piece.actor.id.toString()] = square);
 
 		type Change = {
 			actor: Actor;
@@ -501,7 +509,7 @@ export default class ChessGame {
 		for (const key of Object.keys(oldSquares)) {
 			const oldSquare = oldSquares[key];
 			const newSquare = newSquares[key];
-			const actor = this.context.actor(key);
+			const actor = this.context.actor(parseGuid(key));
 			if (newSquare) {
 				// Piece moved.
 				movements.push({
@@ -531,31 +539,23 @@ export default class ChessGame {
 		const moveSpeed = 3;
 		const position = new Vector3();
 		position.copy(this.coordinate(dst));
-		position.y = actor.transform.local.position.y;
-		const diff = position.subtract(actor.transform.local.position);
+		const diff = position.subtract(actor.transform.app.position);
 		const length = diff.length();
 		const [side, type] = actor.name.split('-');
 		const sideConfig = modelConfigs[side];
 		const modelConfig = sideConfig[type];
-		actor.animateTo({
+		await actor.animateTo({
 			transform: {
 				local: {
 					position,
 					rotation: modelConfig.rotation
 				}
 			}
-		}, moveSpeed * length, AnimationEaseCurves.EaseInOutSine);
+		}, length / moveSpeed, AnimationEaseCurves.EaseInOutSine);
 	}
 
 	private async animateCapture(actor: Actor) {
-		actor.animateTo({ transform: { local: { scale: { y: 0 } } } }, 1.0, AnimationEaseCurves.EaseInSine);
-		await delay(1000);
+		await actor.animateTo({ transform: { local: { scale: { y: 0 } } } }, 1.0, AnimationEaseCurves.EaseInSine);
 		actor.destroy();
 	}
-}
-
-function delay(milliseconds: number): Promise<void> {
-	return new Promise<void>((resolve) => {
-		setTimeout(() => resolve(), milliseconds);
-	});
 }
