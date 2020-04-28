@@ -528,14 +528,14 @@ export default class ChessGame {
 		}
 
 		for (const movement of movements) {
-			this.animateMovement(movement.actor, movement.newSquare).catch();
+			this.animateMovement(movement.actor, movement.newSquare);
 		}
 		for (const capture of captures) {
 			this.animateCapture(capture.actor).catch();
 		}
 	}
 
-	private async animateMovement(actor: Actor, dst: Square) {
+	private animateMovement(actor: Actor, dst: Square) {
 		const moveSpeed = 3;
 		const position = new Vector3();
 		position.copy(this.coordinate(dst));
@@ -544,7 +544,7 @@ export default class ChessGame {
 		const [side, type] = actor.name.split('-');
 		const sideConfig = modelConfigs[side];
 		const modelConfig = sideConfig[type];
-		await actor.animateTo({
+		actor.animateTo({
 			transform: {
 				local: {
 					position,
@@ -555,7 +555,16 @@ export default class ChessGame {
 	}
 
 	private async animateCapture(actor: Actor) {
-		await actor.animateTo({ transform: { local: { scale: { y: 0 } } } }, 1.0, AnimationEaseCurves.EaseInSine);
+		actor.animateTo({ transform: { local: { scale: { y: 0 } } } }, 1.0, AnimationEaseCurves.EaseInSine);
+		try {
+			await this.delay(1000);
+		} catch { }
 		actor.destroy();
+	}
+
+	private delay(milliseconds: number): Promise<void> {
+		return new Promise<void>((resolve) => {
+			setTimeout(() => resolve(), milliseconds);
+		});
 	}
 }
