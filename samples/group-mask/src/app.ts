@@ -5,9 +5,7 @@
 
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import GroupMaskManager, { ButtonMask } from './groupMaskManager'
-import { Color3, Color4 } from '@microsoft/mixed-reality-extension-sdk';
-
-export default class GroupMask {
+export default class GroupMaskSample {
 
 	private groupMaskManager: GroupMaskManager;
 	
@@ -39,15 +37,15 @@ export default class GroupMask {
 		this.groupMaskManager = new GroupMaskManager(this);
 	}
 
-	private started() {
+	private async started() {
 		this.assets = new MRE.AssetContainer(this.context);
 		const whiteMaterial = this.assets.createMaterial("whiteMat", {
-			color: Color4.FromColor3(Color3.White(), .7),
+			color: {r: 1, g: 1, b: 1, a: .7},
 			alphaMode: MRE.AlphaMode.Blend
 		})
 
 		const blackMaterial = this.assets.createMaterial("blackmat", {
-			color: Color4.FromColor3(Color3.Black(), 1),
+			color: {r: 0, g: 0, b: 0, a: 1},
 			alphaMode: MRE.AlphaMode.Opaque
 		})
 
@@ -55,6 +53,14 @@ export default class GroupMask {
 			shape: MRE.PrimitiveShape.Box,
 			dimensions: {x:0.4, y:0.4, z:0.4}
 		});
+
+		let altspaceCubeAssets: MRE.Asset[];
+
+		await this.assets.loadGltf(`${this.baseUrl}/altspace-cube.glb`).then((asset)=>{
+			altspaceCubeAssets = asset; 
+		});
+
+		const altspaceCubePrefab = altspaceCubeAssets.find((asset) => { return asset.prefab !== null })
 
 		for(let i = 0; i < 4; ++i) {
 
@@ -85,14 +91,13 @@ export default class GroupMask {
 				user.groups.clear();
 				user.groups.add(this.groupMaskManager.getButtonMaskTag(ButtonMask.CLICK_A + i));
 			});
-
 			buttonBehavior.onHover('enter', (user) => {
 				//Add hover group to user 
-				user.groups.add( this.groupMaskManager.getButtonMaskTag(ButtonMask.HOVER_A + i) );	
+				user.groups.add( this.groupMaskManager.getButtonMaskTag(ButtonMask.HOVER_A + i));	
 			});
 			buttonBehavior.onHover('exit', (user) => {
 				//Remove hover group from user
-				user.groups.delete(this.groupMaskManager.getButtonMaskTag(ButtonMask.HOVER_A + i))
+				user.groups.delete(this.groupMaskManager.getButtonMaskTag(ButtonMask.HOVER_A + i));
 			});
 
 			this.baseCubes.push(baseButton);
@@ -114,9 +119,9 @@ export default class GroupMask {
 			this.highlightCubes.push(highlightedButton);
 
 			//Load a glTF model for the selected state
-			const selectedCube = MRE.Actor.CreateFromGltf(this.assets, {
-				uri: `${this.baseUrl}/altspace-cube.glb`,
-				actor: {
+			const selectedCube = MRE.Actor.CreateFromPrefab(this.context,{
+				prefabId: altspaceCubePrefab.id,
+				actor:{
 					name: 'Altspace Cube',
 					transform: {
 						local: {
@@ -125,8 +130,7 @@ export default class GroupMask {
 						}
 					},
 					parentId: baseCube.id
-				}
-			});
+				}});
 
 			selectedCube.appearance.enabled = this.groupMaskManager.getButtonMask(ButtonMask.CLICK_A + i);
 			this.selectionCubes.push( selectedCube );

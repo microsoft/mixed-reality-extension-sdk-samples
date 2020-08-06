@@ -4,7 +4,7 @@
  * Licensed under the MIT License.
  */
 import * as MRE from '@microsoft/mixed-reality-extension-sdk';
-import GroupMask from './app';
+import GroupMaskSample from './app';
 
 export enum ButtonMask {
 	DEFAULT_A = 0,
@@ -39,7 +39,7 @@ export default class GroupMaskManager {
 	private masks: MRE.GroupMask[];
 	private readonly PREFIX = 'MASK_';
 
-	public constructor(app: GroupMask) {
+	public constructor(app: GroupMaskSample) {
 		this.masks = [];
 		for (let i = 0; i < OtherMask.MAX; i++) {
 			const mask = new MRE.GroupMask(app.context, ['MASK_' + i]);

@@ -1,4 +1,4 @@
-Shows a text that animates when highlighting or clicking on a cube.
+Shows how to control per-user visibility of Actors by using Group Masks
 
 ## Setup
 
@@ -8,12 +8,12 @@ Shows a text that animates when highlighting or clicking on a cube.
 ## Build
 
 * Command line: `npm run build`.
-* VSCode: `Shift+Ctrl+B`, then select 'build samples/hello-world'.
+* VSCode: `Shift+Ctrl+B`, then select 'build samples/group-mask'.
 
 ## Run
 
 * Command line: `npm start`.
-* VSCode: Switch to the 'Run' tab (`Ctrl+Shift+D` will open it), select 'Launch hello-world project' from the dropdown at the top, and then `F5` to start it.
+* VSCode: Switch to the 'Run' tab (`Ctrl+Shift+D` will open it), select 'Launch group-mask project' from the dropdown at the top, and then `F5` to start it.
 
 MRE apps are NodeJS servers. They operate akin to a web server. When you start your MRE, it won't do much until you connect to it from a client application like AltspaceVR or the MRETestBed.
 
@@ -32,23 +32,3 @@ MRE apps are NodeJS servers. They operate akin to a web server. When you start y
 * Open the 'MRETestBed' Unity project.
 * Select the 'Standalone' scene. This scene is preconfigured to connect to your MRE running locally.
 * Start the Unity scene, and see the app appear.
-
-## Advanced: Debug with Hot-Reload
-
-Whether developing an MRE or another kind of app, an efficient dev/test loop is essential. Devs familiar with making browser-based apps will be familiar with webpack's notion of "hot reload", that is, automatically applying changes as they're made without the need to explicitly stop/rebuild/restart your app. NodeJS apps can do this too.
-
-This setup requires launching the app from a terminal. VSCode has a built-in terminal, or you can open a separate command prompt.
-
-### Start the MRE with hot-reload enabled
-
-1. In the terminal, in this project's folder, run: `npm run debug-watch`. This will build and start the MRE. The `debug-watch` task continues to run in the background, watching for code changes. It will rebuild and restart the app whenever files are modified.
-2. In VSCode, press `Ctrl+Shift+D` to open the 'Run' tab, select 'Attach to running project' from the drop down at the top, then press `F5` to attach the VSCode debugger. This step isn't required, but allows you to set breakpoints and debug MRE execution.
-
-### See hot-reload in action
-
-Once you have your MRE up and running, and you've successfully spawned an instance in AltspaceVR or another supported platform, it is time to make some code changes and see hot reload in action:
-
-* In VSCode, open `samples/hello-world/app.ts`.
-* In the `App.started()` method, find the line that reads `contents: "Hello World!",` and change the string to `"Hello Brave New World!"`.
-* Save the file.
-* Watch how the changes to your code are automatically detected and reloaded. The text in your app should change to `"Hello Brave New World!"`
