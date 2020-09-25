@@ -195,7 +195,7 @@ export default class SolarSystem {
 			let prefab = this.assets.prefabs.find(p => p.source.uri === `assets/${bodyName}.gltf`);
 			if (!prefab) {
 				const modelData = await this.assets.loadGltf(`assets/${bodyName}.gltf`, "box");
-				prefab = modelData.find(a => a.prefab !== undefined).prefab;
+				prefab = modelData.find(a => a.prefab !== null).prefab;
 			}
 
 			const model = MRE.Actor.CreateFromPrefab(this.context, {

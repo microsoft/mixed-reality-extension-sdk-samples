@@ -45,7 +45,6 @@ module.exports = {
 		],
 		"max-classes-per-file": ["warn", 1],
 		"max-len": ["error", 120],
-		"no-console": "error",
 		"no-div-regex": "error",
 		"no-empty": ["error", { "allowEmptyCatch": true }],
 		"no-labels": "error",
