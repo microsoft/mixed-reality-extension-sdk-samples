@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { WebHost } from '@microsoft/mixed-reality-extension-sdk';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import dotenv from 'dotenv';
 import { resolve as resolvePath } from 'path';
 import App from './app';
@@ -21,7 +21,7 @@ dotenv.config();
 // the server starts accepting connections.
 function runApp() {
 	// Start listening for connections, and serve static files from the given folder
-	const server = new WebHost({
+	const server = new MRE.WebHost({
 		baseDir: resolvePath(__dirname, '../public')
 	});
 
