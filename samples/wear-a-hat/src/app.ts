@@ -54,7 +54,7 @@ export default class WearAHat {
 	 * @param context The MRE SDK context.
 	 * @param baseUrl The baseUrl to this project's `./public` folder.
 	 */
-	constructor(private context: MRE.Context, private baseUrl: string) {
+	constructor(private context: MRE.Context) {
 		this.assets = new MRE.AssetContainer(context);
 		// Hook the context events we're interested in.
 		this.context.onStarted(() => this.started());
@@ -188,8 +188,7 @@ export default class WearAHat {
 			Object.keys(HatDatabase).map(hatId => {
 				const hatRecord = HatDatabase[hatId];
 				if (hatRecord.resourceName) {
-					return this.assets.loadGltf(
-						`${this.baseUrl}/${hatRecord.resourceName}`)
+					return this.assets.loadGltf(hatRecord.resourceName)
 						.then(assets => {
 							this.prefabs[hatId] = assets.find(a => a.prefab !== null) as MRE.Prefab;
 						})
@@ -218,7 +217,7 @@ export default class WearAHat {
 
 		// Create the hat model and attach it to the avatar's head.
 		this.attachedHats.set(userId, MRE.Actor.CreateFromPrefab(this.context, {
-			prefabId: this.prefabs[hatId].id,
+			prefab: this.prefabs[hatId],
 			actor: {
 				transform: {
 					local: {

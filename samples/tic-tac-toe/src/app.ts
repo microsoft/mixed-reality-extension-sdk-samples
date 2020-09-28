@@ -44,7 +44,7 @@ export default class TicTacToe {
 		[2 * 3 + 0, 1 * 3 + 1, 0 * 3 + 2]
 	];
 
-	constructor(private context: MRE.Context, private baseUrl: string) {
+	constructor(private context: MRE.Context) {
 		this.assets = new MRE.AssetContainer(context);
 		this.context.onStarted(() => this.started());
 	}
@@ -166,7 +166,7 @@ export default class TicTacToe {
 		}]});
 
 		// Load box model from glTF
-		const gltf = await this.assets.loadGltf(`${this.baseUrl}/altspace-cube.glb`, 'box');
+		const gltf = await this.assets.loadGltf('altspace-cube.glb', 'box');
 
 		// Also load the player choice markers now, for efficiency's sake
 		const circle = this.assets.createCylinderMesh('circle', 0.2, 0.4, 'y', 16);

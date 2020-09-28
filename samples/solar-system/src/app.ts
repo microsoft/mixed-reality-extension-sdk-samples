@@ -49,7 +49,7 @@ export default class SolarSystem {
 	private animationsRunning = false;
 	private assets: MRE.AssetContainer;
 
-	constructor(private context: MRE.Context, private baseUrl: string) {
+	constructor(private context: MRE.Context) {
 		this.assets = new MRE.AssetContainer(context);
 		this.context.onStarted(() => this.started());
 	}
@@ -124,7 +124,9 @@ export default class SolarSystem {
 		}
 	}
 
-	private createBody(bodyName: string) {
+	// this function is "async", meaning that it returns a promise
+	// (even though we don't use that promise in this sample).
+	private async createBody(bodyName: string) {
 
 		const facts = database[bodyName];
 
@@ -188,8 +190,16 @@ export default class SolarSystem {
 					}
 				}
 			});
-			const model = MRE.Actor.CreateFromGltf(this.assets, {
-				uri: `${this.baseUrl}/assets/${bodyName}.gltf`,
+
+			// load the model if it hasn't been already
+			let prefab = this.assets.prefabs.find(p => p.source.uri === `assets/${bodyName}.gltf`);
+			if (!prefab) {
+				const modelData = await this.assets.loadGltf(`assets/${bodyName}.gltf`, "box");
+				prefab = modelData.find(a => a.prefab !== null).prefab;
+			}
+
+			const model = MRE.Actor.CreateFromPrefab(this.context, {
+				prefab: prefab,
 				actor: {
 					name: `${bodyName}-body`,
 					parentId: obliquity1.id,
@@ -203,7 +213,6 @@ export default class SolarSystem {
 						}
 					}
 				}
-
 			});
 
 			label.enableText({

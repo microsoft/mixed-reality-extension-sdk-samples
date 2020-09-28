@@ -3,15 +3,14 @@
  * Licensed under the MIT License.
  */
 
-import { Permissions, WebHost } from '@microsoft/mixed-reality-extension-sdk';
+import * as MRE from '@microsoft/mixed-reality-extension-sdk';
 import dotenv from 'dotenv';
 import { resolve as resolvePath } from 'path';
 import App from './app';
 
-/* eslint-disable no-console */
+// add some generic error handlers here, to log any exceptions we're not expecting
 process.on('uncaughtException', err => console.log('uncaughtException', err));
 process.on('unhandledRejection', reason => console.log('unhandledRejection', reason));
-/* eslint-enable no-console */
 
 // Read .env if file exists
 dotenv.config();
@@ -22,14 +21,12 @@ dotenv.config();
 // the server starts accepting connections.
 function runApp() {
 	// Start listening for connections, and serve static files.
-	const server = new WebHost({
-		// baseUrl: 'http://<ngrok-id>.ngrok.io',
-		baseDir: resolvePath(__dirname, '../public'),
-		optionalPermissions: [Permissions.UserInteraction]
+	const server = new MRE.WebHost({
+		baseDir: resolvePath(__dirname, '../public')
 	});
 
 	// Handle new application sessions
-	server.adapter.onConnection(context => new App(context, server.baseUrl));
+	server.adapter.onConnection(context => new App(context));
 }
 
 // Check whether code is running in a debuggable watched filesystem
