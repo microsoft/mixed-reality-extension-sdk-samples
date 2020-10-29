@@ -13,7 +13,7 @@ export default class HelloWorld {
 	private cube: MRE.Actor = null;
 	private assets: MRE.AssetContainer;
 
-	constructor(private context: MRE.Context, private baseUrl: string) {
+	constructor(private context: MRE.Context) {
 		this.context.onStarted(() => this.started());
 	}
 
@@ -21,6 +21,7 @@ export default class HelloWorld {
 	 * Once the context is "started", initialize the app.
 	 */
 	private async started() {
+		// set up somewhere to store loaded assets (meshes, textures, animations, gltfs, etc.)
 		this.assets = new MRE.AssetContainer(this.context);
 
 		// Create a new actor with no mesh, but some text.
@@ -64,16 +65,17 @@ export default class HelloWorld {
 			// And set it to play immediately, and bounce back and forth from start to end
 			{ isPlaying: true, wrapMode: MRE.AnimationWrapMode.PingPong });
 
-		// Load a glTF model
-		this.cube = MRE.Actor.CreateFromGltf(this.assets, {
-			// at the given URL
-			uri: `${this.baseUrl}/altspace-cube.glb`,
-			// and spawn box colliders around the meshes.
-			colliderType: 'box',
+		// Load a glTF model before we use it
+		const cubeData = await this.assets.loadGltf('altspace-cube.glb', "box");
+
+		// spawn a copy of the glTF model
+		this.cube = MRE.Actor.CreateFromPrefab(this.context, {
+			// using the data we loaded earlier
+			firstPrefabFrom: cubeData,
 			// Also apply the following generic actor properties.
 			actor: {
 				name: 'Altspace Cube',
-				// Parent the glTF model to the text actor.
+				// Parent the glTF model to the text actor, so the transform is relative to the text
 				parentId: this.text.id,
 				transform: {
 					local: {
@@ -85,11 +87,19 @@ export default class HelloWorld {
 		});
 
 		// Create some animations on the cube.
-		const flipAnimData = this.assets.createAnimationData("DoAFlip", { tracks: [{
-			target: MRE.ActorPath("target").transform.local.rotation,
-			keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
-			easing: MRE.AnimationEaseCurves.Linear
-		}]});
+		const flipAnimData = this.assets.createAnimationData(
+			// the animation name
+			"DoAFlip",
+			{ tracks: [{
+				// applies to the rotation of an unknown actor we'll refer to as "target"
+				target: MRE.ActorPath("target").transform.local.rotation,
+				// do a spin around the X axis over the course of one second
+				keyframes: this.generateSpinKeyframes(1.0, MRE.Vector3.Right()),
+				// and do it smoothly
+				easing: MRE.AnimationEaseCurves.Linear
+			}]}
+		);
+		// apply the animation to our cube
 		const flipAnim = await flipAnimData.bind({ target: this.cube });
 
 		// Set up cursor interaction. We add the input behavior ButtonBehavior to the cube.
@@ -98,16 +108,19 @@ export default class HelloWorld {
 
 		// Trigger the grow/shrink animations on hover.
 		buttonBehavior.onHover('enter', () => {
-			this.cube.animateTo(
-				{ transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } },
-				0.3,
-				MRE.AnimationEaseCurves.EaseOutSine);
+			// use the convenience function "AnimateTo" instead of creating the animation data in advance
+			MRE.Animation.AnimateTo(this.context, this.cube, {
+				destination: { transform: { local: { scale: { x: 0.5, y: 0.5, z: 0.5 } } } },
+				duration: 0.3,
+				easing: MRE.AnimationEaseCurves.EaseOutSine
+			});
 		});
 		buttonBehavior.onHover('exit', () => {
-			this.cube.animateTo(
-				{ transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } },
-				0.3,
-				MRE.AnimationEaseCurves.EaseOutSine);
+			MRE.Animation.AnimateTo(this.context, this.cube, {
+				destination: { transform: { local: { scale: { x: 0.4, y: 0.4, z: 0.4 } } } },
+				duration: 0.3,
+				easing: MRE.AnimationEaseCurves.EaseOutSine
+			});
 		});
 
 		// When clicked, do a 360 sideways.
